@@ -1,20 +1,21 @@
+// AuthContext.js
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { login as apiLogin, signup as apiSignup } from '../api/authApi';
-import axiosInstance from '../api/axiosInstance';
+import axiosInstance, { setupAxiosInterceptors } from '../api/axiosInstance';
+
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [user, setUser] = useState(null); // 사용자 정보 상태
-  const [token, setToken] = useState(localStorage.getItem('token') || ''); // 토큰 상태
-  const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || ''); // Refresh Token 상태
-  const [isAuthenticated, setIsAuthenticated] = useState(!!token); // 로그인 여부 상태
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem('token') || '');
+  const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || '');
+  const [isAuthenticated, setIsAuthenticated] = useState(!!token);
 
   // 토큰 유효성 검사 함수
   const validateToken = useCallback(async () => {
     if (!token) return false;
     try {
-      // 서버에 토큰 유효성 검사를 요청합니다.
-      await axiosInstance.get('/validate-token'); // 유효성 검사 엔드포인트는 '/validate-token'으로 가정합니다.
+      await axiosInstance.get('/validate');
       return true;
     } catch (error) {
       console.error('토큰 유효성 검사 실패:', error.message);
@@ -26,13 +27,26 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const response = await apiLogin(credentials);
-      const { user, token, refreshToken } = response; // 서버 응답에서 사용자 정보와 토큰을 추출
-      setUser(user);
-      setToken(token);
+      const { accessToken, refreshToken, user } = response;
+
+      if (!accessToken || !refreshToken || !user) {
+        throw new Error('유효하지 않은 로그인 응답입니다.');
+      }
+
+      const userInfo = {
+        userId: user.userId,
+        email: user.email,
+      };
+
+      setUser(userInfo);
+      setToken(accessToken);
       setRefreshToken(refreshToken);
-      localStorage.setItem('token', token); // 토큰을 로컬 스토리지에 저장하여 상태 유지
-      localStorage.setItem('refreshToken', refreshToken); // Refresh Token을 로컬 스토리지에 저장
-      setIsAuthenticated(true); // 로그인 성공 시 인증 상태를 true로 설정
+
+      localStorage.setItem('token', accessToken);
+      localStorage.setItem('refreshToken', refreshToken);
+      localStorage.setItem('user', JSON.stringify(userInfo));
+
+      setIsAuthenticated(true);
     } catch (error) {
       console.error('로그인 실패:', error.message);
       throw error;
@@ -42,62 +56,71 @@ export const AuthProvider = ({ children }) => {
   // 회원가입 함수
   const signup = async (userData) => {
     try {
-      await apiSignup(userData); // 회원가입 API 호출
+      await apiSignup(userData);
     } catch (error) {
       console.error('회원가입 실패:', error.message);
       throw error;
     }
   };
 
-  // 로그아웃 함수
-  const logout = () => {
+  // 로그아웃 함수 (useCallback으로 변경)
+  const logout = useCallback(() => {
     setUser(null);
     setToken('');
     setRefreshToken('');
-    localStorage.removeItem('token'); // 로컬 스토리지에서 토큰 제거
-    localStorage.removeItem('refreshToken'); // 로컬 스토리지에서 Refresh Token 제거
-    setIsAuthenticated(false); // 로그아웃 시 인증 상태를 false로 설정
-  };
+    localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    setIsAuthenticated(false);
+  }, []);
 
   // 토큰 갱신 함수
   const refreshAccessToken = useCallback(async () => {
     if (!refreshToken) return false;
     try {
-      const response = await axiosInstance.post('/refresh-token', { refreshToken }); // Refresh Token을 사용해 새로운 Access Token 요청
+      const response = await axiosInstance.post('/refresh', { refreshToken });
       const newAccessToken = response.data.token;
       setToken(newAccessToken);
       localStorage.setItem('token', newAccessToken);
-      setIsAuthenticated(true); // 갱신 성공 시 인증 상태를 true로 유지
+      setIsAuthenticated(true);
       return true;
     } catch (error) {
       console.error('토큰 갱신 실패:', error.message);
       logout();
       return false;
     }
-  }, [refreshToken]);
+  }, [refreshToken, logout]);
 
-  // 앱이 처음 시작될 때 로컬 스토리지에서 토큰을 가져와 사용자 상태 복원
+  // 초기 로그인 상태 설정 및 인터셉터 초기화
   useEffect(() => {
+    setupAxiosInterceptors(logout); // 인터셉터에 logout 함수 전달
+    
     const initializeAuth = async () => {
       if (token) {
         const isValid = await validateToken();
         if (isValid) {
-          // 실제로는 API 호출을 통해 사용자 데이터를 가져오는 것이 좋습니다.
-          setUser({ name: '사용자', id: 'exampleUser' }); // 예시로 하드코딩된 사용자 데이터 설정
-          setIsAuthenticated(true); // 토큰이 유효하면 로그인 상태 유지
+          const savedUserInfo = JSON.parse(localStorage.getItem('user'));
+          if (savedUserInfo) {
+            setUser(savedUserInfo);
+            setIsAuthenticated(true);
+            console.log('사용자가 로그인 되었습니다.');
+          } else {
+            console.error('저장된 사용자 정보가 없습니다.');
+            logout();
+          }
         } else {
-          const refreshed = await refreshAccessToken(); // 토큰이 유효하지 않으면 갱신 시도
+          const refreshed = await refreshAccessToken();
           if (!refreshed) {
-            logout(); // 갱신이 실패하면 로그아웃
+            logout();
           }
         }
       }
     };
     initializeAuth();
-  }, [token, validateToken, refreshAccessToken]);
+  }, [token, validateToken, refreshAccessToken, logout]);
 
   return (
-    <AuthContext.Provider value={{  isAuthenticated, user, token, login, logout, signup }}>
+    <AuthContext.Provider value={{ isAuthenticated, user, token, login, logout, signup }}>
       {children}
     </AuthContext.Provider>
   );

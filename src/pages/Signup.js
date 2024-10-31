@@ -4,10 +4,9 @@ import { signup } from '../api/authApi';
 import { Container, Box, Typography, TextField, Button, Alert } from '@mui/material';
 
 function Signup() {
-  const [name, setName] = useState('');
-  const [id, setId] = useState('');
+  const [userId, setuserId] = useState('');
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [userPw, setuserPw] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
@@ -16,18 +15,18 @@ function Signup() {
     e.preventDefault();
 
     // 유효성 검사 추가
-    if (id.length < 4) {
+    if (userId.length < 4) {
       setMessage('아이디는 최소 4자 이상이어야 합니다.');
       return;
     }
 
-    if (password !== confirmPassword) {
+    if (userPw !== confirmPassword) {
       setMessage('비밀번호가 일치하지 않습니다. 다시 확인해주세요.');
       return;
     }
 
     try {
-      const response = await signup({ name, id, email, password });
+      const response = await signup({ userId, email, userPw });
       console.log('회원가입 성공:', response);
       setMessage('회원가입이 성공적으로 완료되었습니다!');
       navigate('/login'); // 회원가입 성공 시 로그인 페이지로 이동
@@ -51,20 +50,10 @@ function Signup() {
           <Box mb={3}>
             <TextField
               fullWidth
-              label="이름"
-              variant="outlined"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-          </Box>
-          <Box mb={3}>
-            <TextField
-              fullWidth
               label="아이디"
               variant="outlined"
-              value={id}
-              onChange={(e) => setId(e.target.value)}
+              value={userId}
+              onChange={(e) => setuserId(e.target.value)}
               required
             />
           </Box>
@@ -85,8 +74,8 @@ function Signup() {
               label="비밀번호"
               type="password"
               variant="outlined"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={userPw}
+              onChange={(e) => setuserPw(e.target.value)}
               required
             />
           </Box>

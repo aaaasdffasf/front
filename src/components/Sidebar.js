@@ -1,19 +1,31 @@
 // Sidebar.js
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Sidebar.css';
-import { FaHome, FaBell, FaUser, FaQuestionCircle, FaSignInAlt } from 'react-icons/fa';
+import { FaHome, FaBell, FaUser, FaQuestionCircle, FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
+import { AuthContext } from '../context/AuthContext';
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // AuthContext의 상태 및 함수 가져오기
+  const { isAuthenticated, logout } = useContext(AuthContext);
+
   const isActive = (path) => location.pathname === path;
 
-  // 로그아웃 버튼 대신 로그인 버튼을 눌렀을 때 login 페이지로 이동하도록 설정
+  const handleLogoutClick = () => {
+    logout();
+    navigate('/login'); // 로그아웃 후 로그인 페이지로 이동
+  };
+
   const handleLoginClick = () => {
     navigate('/login'); // 로그인 페이지로 이동
   };
+
+  useEffect(() => {
+    // 로그인 상태 변경 감지
+  }, [isAuthenticated]); // isAuthenticated가 변경되면 리렌더링
 
   return (
     <div className="sidebar">
@@ -29,11 +41,6 @@ const Sidebar = () => {
 
       <h3 className="sidebar-title">Service</h3>
       <ul className="sidebar-section">
-        <li className={isActive('/') ? 'active' : ''}>
-          <Link to="/" className="sidebar-link">
-            Dashboard <span className="notification-badge">3</span>
-          </Link>
-        </li>
         <li className={isActive('/problems') ? 'active' : ''}>
           <Link to="/problems" className="sidebar-link">문제풀이 화면</Link>
         </li>
@@ -70,12 +77,17 @@ const Sidebar = () => {
         </li>
       </ul>
 
-      {/* 로그아웃 버튼 대신 로그인 버튼으로 변경 */}
+      {/* 로그인/로그아웃 버튼 */}
       <div className="logout-section">
-        <button className="logout-button" onClick={handleLoginClick}>
-          <FaSignInAlt className="sidebar-icon" />
-          로그인
-        </button>
+        {isAuthenticated ? (
+          <button className="logout-button" onClick={handleLogoutClick}>
+            <FaSignOutAlt className="sidebar-icon" /> 로그아웃
+          </button>
+        ) : (
+          <button className="logout-button" onClick={handleLoginClick}>
+            <FaSignInAlt className="sidebar-icon" /> 로그인
+          </button>
+        )}
       </div>
     </div>
   );

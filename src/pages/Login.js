@@ -1,23 +1,32 @@
-import React, { useState } from 'react';
+// Login.js
+import React, { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '../api/authApi'; // login 함수가 자동으로 토큰을 저장
 import { Container, Box, Typography, TextField, Button, Alert } from '@mui/material';
+import { AuthContext } from '../context/AuthContext'; // AuthContext 가져오기
 
 function Login() {
-  const [id, setId] = useState('');
-  const [password, setPassword] = useState('');
+  const [userId, setuserId] = useState('');
+  const [userPw, setuserPw] = useState('');
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
+
+  // AuthContext에서 login 함수 가져오기
+  const { login, isAuthenticated } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      // login 함수 호출: 토큰이 자동으로 저장됩니다.
-      const response = await login({ id, password });
-      console.log('로그인 성공:', response);
+      // AuthContext의 login 함수 호출
+      await login({ userId, userPw });
       setMessage('로그인에 성공하였습니다.');
-      navigate('/'); // 로그인 성공 시 메인 페이지로 이동
+
+      // 로그인 상태가 업데이트될 때까지 잠시 대기 후 이동
+      setTimeout(() => {
+        if (isAuthenticated) {
+          navigate('/'); // 메인 페이지로 이동
+        }
+      }, 300); // 약간의 딜레이를 줍니다.
     } catch (error) {
       console.error('로그인 실패:', error.message);
       setMessage('로그인에 실패하였습니다. 아이디와 비밀번호를 확인해주세요.');
@@ -40,8 +49,8 @@ function Login() {
               fullWidth
               label="아이디"
               variant="outlined"
-              value={id}
-              onChange={(e) => setId(e.target.value)}
+              value={userId}
+              onChange={(e) => setuserId(e.target.value)}
               required
             />
           </Box>
@@ -51,8 +60,8 @@ function Login() {
               label="비밀번호"
               type="password"
               variant="outlined"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={userPw}
+              onChange={(e) => setuserPw(e.target.value)}
               required
             />
           </Box>
