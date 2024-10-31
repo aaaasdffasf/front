@@ -19,7 +19,8 @@ export const login = async (credentials) => {
     return {
       accessToken: response.data.accessToken,
       // refreshToken: response.data.refreshToken,
-      user: response.data.user,
+      // user: response.data.user,
+      user: response.data.userId,
     };
   } catch (error) {
     console.error(
