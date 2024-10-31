@@ -8,16 +8,18 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(localStorage.getItem('token') || '');
-  const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || '');
+  const [refreshToken, setRefreshToken] = useState(
+    localStorage.getItem('refreshToken') || ''
+  );
   const [isAuthenticated, setIsAuthenticated] = useState(!!token);
 
   // 로그인 함수
   const login = async (credentials) => {
     try {
       const response = await apiLogin(credentials);
-      const { accessToken, refreshToken, user } = response;
+      const { accessToken, user } = response;
 
-      if (!accessToken || !refreshToken || !user) {
+      if (!accessToken || !user) {
         throw new Error('유효하지 않은 로그인 응답입니다.');
       }
 
@@ -28,10 +30,10 @@ export const AuthProvider = ({ children }) => {
 
       setUser(userInfo);
       setToken(accessToken);
-      setRefreshToken(refreshToken);
+      // setRefreshToken(refreshToken);
 
       localStorage.setItem('token', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
+      // localStorage.setItem('refreshToken', refreshToken);
       localStorage.setItem('user', JSON.stringify(userInfo));
 
       setIsAuthenticated(true);
@@ -69,6 +71,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axiosInstance.post('/refresh', { refreshToken });
       const newAccessToken = response.data.token;
+      console.log('새로운 토큰을 받아왔습니다.');
       setToken(newAccessToken);
       localStorage.setItem('token', newAccessToken);
       setIsAuthenticated(true);
@@ -83,7 +86,7 @@ export const AuthProvider = ({ children }) => {
   // 초기 로그인 상태 설정 및 인터셉터 초기화
   useEffect(() => {
     setupAxiosInterceptors(logout, refreshAccessToken); // 인터셉터에 logout과 refreshAccessToken 전달
-    
+
     const initializeAuth = () => {
       const savedUserInfo = JSON.parse(localStorage.getItem('user'));
       if (token && savedUserInfo) {
@@ -98,7 +101,9 @@ export const AuthProvider = ({ children }) => {
   }, [token, logout, refreshAccessToken]);
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, token, login, logout, signup }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, user, token, login, logout, signup }}
+    >
       {children}
     </AuthContext.Provider>
   );
