@@ -11,18 +11,6 @@ export const AuthProvider = ({ children }) => {
   const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || '');
   const [isAuthenticated, setIsAuthenticated] = useState(!!token);
 
-  // 토큰 유효성 검사 함수
-  const validateToken = useCallback(async () => {
-    if (!token) return false;
-    try {
-      await axiosInstance.get('/validate');
-      return true;
-    } catch (error) {
-      console.error('토큰 유효성 검사 실패:', error.message);
-      return false;
-    }
-  }, [token]);
-
   // 로그인 함수
   const login = async (credentials) => {
     try {
@@ -63,8 +51,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  // 로그아웃 함수 (useCallback으로 변경)
+  // 로그아웃 함수
   const logout = useCallback(() => {
+    // 모든 토큰 및 사용자 정보 삭제
     setUser(null);
     setToken('');
     setRefreshToken('');
@@ -93,31 +82,20 @@ export const AuthProvider = ({ children }) => {
 
   // 초기 로그인 상태 설정 및 인터셉터 초기화
   useEffect(() => {
-    setupAxiosInterceptors(logout); // 인터셉터에 logout 함수 전달
+    setupAxiosInterceptors(logout, refreshAccessToken); // 인터셉터에 logout과 refreshAccessToken 전달
     
-    const initializeAuth = async () => {
-      if (token) {
-        const isValid = await validateToken();
-        if (isValid) {
-          const savedUserInfo = JSON.parse(localStorage.getItem('user'));
-          if (savedUserInfo) {
-            setUser(savedUserInfo);
-            setIsAuthenticated(true);
-            console.log('사용자가 로그인 되었습니다.');
-          } else {
-            console.error('저장된 사용자 정보가 없습니다.');
-            logout();
-          }
-        } else {
-          const refreshed = await refreshAccessToken();
-          if (!refreshed) {
-            logout();
-          }
-        }
+    const initializeAuth = () => {
+      const savedUserInfo = JSON.parse(localStorage.getItem('user'));
+      if (token && savedUserInfo) {
+        setUser(savedUserInfo);
+        setIsAuthenticated(true);
+        console.log('사용자가 로그인 되었습니다.');
+      } else {
+        logout();
       }
     };
     initializeAuth();
-  }, [token, validateToken, refreshAccessToken, logout]);
+  }, [token, logout, refreshAccessToken]);
 
   return (
     <AuthContext.Provider value={{ isAuthenticated, user, token, login, logout, signup }}>

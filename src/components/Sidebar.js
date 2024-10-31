@@ -1,5 +1,5 @@
 // Sidebar.js
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 import { FaHome, FaBell, FaUser, FaQuestionCircle, FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
@@ -8,24 +8,18 @@ import { AuthContext } from '../context/AuthContext';
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-
-  // AuthContext의 상태 및 함수 가져오기
   const { isAuthenticated, logout } = useContext(AuthContext);
 
   const isActive = (path) => location.pathname === path;
 
   const handleLogoutClick = () => {
     logout();
-    navigate('/login'); // 로그아웃 후 로그인 페이지로 이동
+    navigate('/'); // 로그아웃 후 메인 페이지로 이동
   };
 
   const handleLoginClick = () => {
     navigate('/login'); // 로그인 페이지로 이동
   };
-
-  useEffect(() => {
-    // 로그인 상태 변경 감지
-  }, [isAuthenticated]); // isAuthenticated가 변경되면 리렌더링
 
   return (
     <div className="sidebar">

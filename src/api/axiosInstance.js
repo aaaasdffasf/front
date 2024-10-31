@@ -9,26 +9,25 @@ const axiosInstance = axios.create({
 });
 
 // 인터셉터 설정 함수
-export const setupAxiosInterceptors = (logout) => {
+export const setupAxiosInterceptors = (logout, refreshAccessToken) => {
   axiosInstance.interceptors.response.use(
     (response) => response,
     async (error) => {
       const originalRequest = error.config;
+
       if (error.response.status === 401 && !originalRequest._retry) {
         originalRequest._retry = true;
-        try {
-          const refreshToken = localStorage.getItem('refreshToken');
-          const { data } = await axiosInstance.post('/refresh', { refreshToken });
-          localStorage.setItem('token', data.newAccessToken);
-          axiosInstance.defaults.headers['Authorization'] = `Bearer ${data.newAccessToken}`;
+        const success = await refreshAccessToken();
+        
+        if (success) {
+          // 갱신 성공 시 Authorization 헤더에 새 토큰 추가 후 요청 재시도
+          originalRequest.headers['Authorization'] = `Bearer ${localStorage.getItem('token')}`;
           return axiosInstance(originalRequest);
-        } catch (e) {
-          console.error('토큰 갱신 실패:', e.message);
-          if (logout) {
-            logout();
-          }
+        } else {
+          logout(); // 갱신 실패 시 로그아웃
         }
       }
+      
       return Promise.reject(error);
     }
   );
