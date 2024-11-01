@@ -7,17 +7,19 @@ import {jwtDecode} from 'jwt-decode';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const isTokenValid = (token) => {
+  const getCurrentTimeInSeconds = () => Math.floor(Date.now() / 1000);
+
+  const isTokenValid = useCallback((token) => {
     if (!token) return false;
     try {
       const { exp } = jwtDecode(token);
-      const currentTime = Date.now() / 1000;
-      return exp > currentTime;
+      return exp > getCurrentTimeInSeconds();
     } catch (error) {
       console.error('토큰 디코딩 실패:', error.message);
       return false;
     }
-  };
+  }, []);
+  
 
   const [user, setUser] = useState(() => {
     const savedUserInfo = localStorage.getItem('user');
@@ -68,7 +70,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.removeItem('refreshToken');
     localStorage.removeItem('user');
     setIsAuthenticated(false);
-    console.log("사용자가 로그아웃 되었습니다");
+    console.log('사용자가 로그아웃 되었습니다');
   }, []);
 
   const refreshAccessToken = useCallback(async () => {
@@ -76,7 +78,8 @@ export const AuthProvider = ({ children }) => {
     try {
       const response = await axiosInstance.post('/refresh', { refreshToken });
       const newAccessToken = response.data.token;
-      console.log('새로운 토큰을 받아왔습니다.');
+      
+      console.log('새로운 엑세스토큰을 받아왔습니다.', newAccessToken);
       setToken(newAccessToken);
       localStorage.setItem('token', newAccessToken);
       setIsAuthenticated(true);
@@ -91,7 +94,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, [refreshToken, logout]);
 
-  // useEffect 훅을 logout과 refreshAccessToken 정의 이후에 작성
   useEffect(() => {
     setupAxiosInterceptors(logout, refreshAccessToken);
 
@@ -104,7 +106,22 @@ export const AuthProvider = ({ children }) => {
       }
     };
     initializeAuth();
-  }, [token, user, logout, refreshAccessToken]);
+  }, [token, user, logout, refreshAccessToken, isTokenValid]);
+
+  // 액세스 토큰 만료 시간 추적 및 자동 갱신
+  useEffect(() => {
+    if (!token) return;
+
+    const { exp } = jwtDecode(token);
+    const timeUntilExpiry = exp - getCurrentTimeInSeconds();
+
+    // 토큰이 만료되기 1분 전에 갱신 시도
+    const timeoutId = setTimeout(() => {
+      refreshAccessToken();
+    }, (timeUntilExpiry - 60) * 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [token, refreshAccessToken]);
 
   return (
     <AuthContext.Provider
