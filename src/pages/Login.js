@@ -2,39 +2,36 @@
 import React, { useState, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Box, Typography, TextField, Button, Alert } from '@mui/material';
-import { AuthContext } from '../context/AuthContext'; // AuthContext 가져오기
+import { AuthContext } from '../context/AuthContext';
 
 function Login() {
-  const [userId, setuserId] = useState('');
-  const [userPw, setuserPw] = useState('');
+  const [userId, setUserId] = useState(''); // setUserId로 수정
+  const [userPw, setUserPw] = useState(''); // setUserPw로 수정
   const [message, setMessage] = useState('');
   const navigate = useNavigate();
 
-  // AuthContext에서 login 함수와 isAuthenticated 상태 가져오기
   const { login, isAuthenticated } = useContext(AuthContext);
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      // AuthContext의 login 함수 호출
       await login({ userId, userPw });
       setMessage('로그인에 성공하였습니다.');
     } catch (error) {
       console.error('로그인 실패:', error.message);
-      setMessage('로그인에 실패하였습니다. 아이디와 비밀번호를 확인해주세요.');
+      setMessage(error.response?.data?.message || '로그인에 실패하였습니다. 아이디와 비밀번호를 확인해주세요.');
     }
   };
 
-  // 로그인 상태가 변경되면 메인 페이지로 이동
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/'); // 메인 페이지로 이동
+      navigate('/');
     }
   }, [isAuthenticated, navigate]);
 
   const handleSignupNavigation = () => {
-    navigate('/signup'); // 회원가입 페이지로 이동
+    navigate('/signup');
   };
 
   return (
@@ -50,7 +47,7 @@ function Login() {
               label="아이디"
               variant="outlined"
               value={userId}
-              onChange={(e) => setuserId(e.target.value)}
+              onChange={(e) => setUserId(e.target.value)} // 수정된 setUserId 적용
               required
             />
           </Box>
@@ -61,7 +58,7 @@ function Login() {
               type="password"
               variant="outlined"
               value={userPw}
-              onChange={(e) => setuserPw(e.target.value)}
+              onChange={(e) => setUserPw(e.target.value)} // 수정된 setUserPw 적용
               required
             />
           </Box>

@@ -8,6 +8,7 @@ import Signup from './pages/Signup';
 import MainPage from './pages/MainPage';
 import { AuthProvider } from './context/AuthContext';
 import theme from './theme';
+import ProblemPage from './pages/ProblemPage'; // 경로 수정
 
 function App() {
   return (
@@ -19,6 +20,7 @@ function App() {
             <Route path="/" element={<MainPage />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/problems" element={<ProblemPage />} />
           </Routes>
         </Router>
       </AuthProvider>
