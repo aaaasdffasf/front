@@ -2,7 +2,8 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { login as apiLogin, signup as apiSignup } from '../api/authApi';
 import axiosInstance, { setupAxiosInterceptors } from '../api/axiosInstance';
-import {jwtDecode} from 'jwt-decode';
+import { jwtDecode } from 'jwt-decode';
+
 
 export const AuthContext = createContext();
 
@@ -74,14 +75,25 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const refreshAccessToken = useCallback(async () => {
-    if (!refreshToken) return false;
+    if (!refreshToken || !token) return false;
     try {
-      const response = await axiosInstance.post('/refresh', { refreshToken });
-      const newAccessToken = response.data.token;
-      
-      console.log('새로운 엑세스토큰을 받아왔습니다.', newAccessToken);
+      const response = await axiosInstance.post('/refresh', {
+        refreshToken,
+        accessToken: token,
+      });
+  
+      const { accessToken: newAccessToken, user } = response.data;
+  
+      console.log('새로운 액세스 토큰을 받아왔습니다.', newAccessToken);
       setToken(newAccessToken);
       localStorage.setItem('token', newAccessToken);
+  
+      if (user) {
+        setUser(user);
+        localStorage.setItem('user', JSON.stringify(user));
+        console.log('사용자 정보를 업데이트했습니다.', user);
+      }
+  
       setIsAuthenticated(true);
       return true;
     } catch (error) {
@@ -92,7 +104,8 @@ export const AuthProvider = ({ children }) => {
       logout();
       return false;
     }
-  }, [refreshToken, logout]);
+  }, [refreshToken, token, logout]);
+  
 
   useEffect(() => {
     setupAxiosInterceptors(logout, refreshAccessToken);
