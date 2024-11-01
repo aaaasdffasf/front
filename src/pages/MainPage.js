@@ -5,16 +5,26 @@ import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
 import DashboardMenu from '../components/DashboardMenu';
 import { AuthContext } from '../context/AuthContext';
+import LoginModal from '../components/LoginModal';
 
 function MainPage() {
   const { isAuthenticated, user } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated !== null) {
       setLoading(false);
+      // 비로그인 상태인 경우 모달을 열어 로그인 유도
+      if (!isAuthenticated) {
+        setIsModalOpen(true);
+      }
     }
   }, [isAuthenticated]);
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
 
   if (loading) {
     return <div>로딩 중...</div>;
@@ -36,8 +46,7 @@ function MainPage() {
                   안녕하세요, {user?.userId || '사용자'}님!
                 </Typography>
                 <Typography variant="body1">
-                  Memo에 오신 것을 환영합니다. 아래에서 새로운 메모를 작성하거나
-                  기록을 관리해보세요!
+                  Memo에 오신 것을 환영합니다. 아래에서 새로운 메모를 작성하거나 기록을 관리해보세요!
                 </Typography>
               </>
             ) : (
@@ -46,13 +55,14 @@ function MainPage() {
                   환영합니다!
                 </Typography>
                 <Typography variant="body1">
-                  Memo에 오신 것을 환영합니다. 로그인하거나 회원가입을 통해 더
-                  많은 기능을 이용해보세요!
+                  Memo에 오신 것을 환영합니다. 로그인하거나 회원가입을 통해 더 많은 기능을 이용해보세요!
                 </Typography>
               </>
             )}
           </Box>
         </Container>
+        {/* 로그인 모달을 메인 페이지에서만 표시 */}
+        <LoginModal isOpen={isModalOpen} onClose={handleModalClose} />
       </div>
     </div>
   );
