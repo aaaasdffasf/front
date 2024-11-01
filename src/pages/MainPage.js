@@ -15,9 +15,11 @@ function MainPage() {
   useEffect(() => {
     if (isAuthenticated !== null) {
       setLoading(false);
-      // 비로그인 상태인 경우 모달을 열어 로그인 유도
-      if (!isAuthenticated) {
+      // 비로그인 상태일 때만 모달을 열도록 조건 추가
+      if (isAuthenticated === false) {
         setIsModalOpen(true);
+      } else {
+        setIsModalOpen(false);
       }
     }
   }, [isAuthenticated]);
@@ -62,7 +64,9 @@ function MainPage() {
           </Box>
         </Container>
         {/* 로그인 모달을 메인 페이지에서만 표시 */}
-        <LoginModal isOpen={isModalOpen} onClose={handleModalClose} />
+        {isAuthenticated === false && (
+          <LoginModal isOpen={isModalOpen} onClose={handleModalClose} />
+        )}
       </div>
     </div>
   );
