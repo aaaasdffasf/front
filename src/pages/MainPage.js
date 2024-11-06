@@ -7,13 +7,19 @@ import DashboardMenu from '../components/DashboardMenu';
 import { AuthContext } from '../context/AuthContext';
 import LoginModal from '../components/LoginModal';
 import YearSelectionTable from '../components/YearSelectionTable'; // 새 컴포넌트 임포트
+import { useNavigate } from 'react-router-dom';
 
 function MainPage() {
+  const navigate = useNavigate();
   const { isAuthenticated, user } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   const [selectedYear, setSelectedYear] = useState('2024');
+
+  // handleExamClick 함수 정의
+  const handleExamClick = (year, month) => {
+    navigate(`/questions?year=${year}&month=${month}`);
+  };
 
   const historyData = [
     { year: '2024', date: '2024-10-15', examInfo: '2024년 9월 시험' },
@@ -82,6 +88,7 @@ function MainPage() {
               selectedYear={selectedYear}
               setSelectedYear={setSelectedYear}
               filteredData={filteredData}
+              onExamClick={handleExamClick} // handleExamClick 함수 전달
             />
           )}
         </Container>

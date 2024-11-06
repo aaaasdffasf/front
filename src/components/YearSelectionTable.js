@@ -2,7 +2,7 @@
 import React from 'react';
 import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 
-function YearSelectionTable({ years, selectedYear, setSelectedYear, filteredData }) {
+function YearSelectionTable({ years, selectedYear, setSelectedYear, filteredData, onExamClick }) {
   return (
     <>
       {/* 연도 선택 버튼 */}
@@ -29,12 +29,24 @@ function YearSelectionTable({ years, selectedYear, setSelectedYear, filteredData
             </TableRow>
           </TableHead>
           <TableBody>
-            {filteredData.map((record, index) => (
-              <TableRow key={index}>
-                <TableCell>{record.date}</TableCell>
-                <TableCell>{record.examInfo}</TableCell>
-              </TableRow>
-            ))}
+            {filteredData.map((record, index) => {
+              const year = record.year;
+              const month = record.examInfo.split(' ')[1].replace('월', '');
+
+              return (
+                <TableRow key={index}>
+                  <TableCell>{record.date}</TableCell>
+                  <TableCell>
+                    <span
+                      onClick={() => onExamClick(year, month)} // 클릭 시 onExamClick 호출
+                      style={{ cursor: 'pointer', color: 'blue' }}
+                    >
+                      {record.examInfo}
+                    </span>
+                  </TableCell>
+                </TableRow>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>

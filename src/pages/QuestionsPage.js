@@ -1,56 +1,97 @@
-//Questions.js
-
-import React from 'react';
+// QuestionsPage.js
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
-import ProblemCard from '../components/Problem_Card'; // ProblemCard 컴포넌트 임포트
-import ProblemBox from '../components/Problem_Box'; // ProblemBox 컴포넌트 임포트 (수정됨)
+import ProblemCard from '../components/Problem_Card';
+import ProblemBox from '../components/Problem_Box';
+import { fetchQuestions } from '../api/questionsApi';
 import './QuestionsPage.css';
 
-function questionsPage() {
+function QuestionsPage() {
+  const [questionData, setQuestionData] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
+  // 원하는 연도와 월 설정 (하드코딩 예시, 필요한 경우 변경 가능)
+  const year = '24';
+  const month = '9';
+
+  useEffect(() => {
+    const loadQuestions = async () => {
+      try {
+        setLoading(true);
+        const allQuestions = await fetchQuestions(year, month);
+
+        if (allQuestions && allQuestions.length > 0) {
+          setQuestionData(allQuestions);
+          setCurrentQuestionIndex(0); // 첫 번째 문제로 시작
+        } else {
+          setError('No questions found for the selected year and month.');
+        }
+      } catch (error) {
+        setError('Failed to load question data');
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadQuestions();
+  }, [year, month]);
+
+  const handleNextQuestion = () => {
+    setCurrentQuestionIndex((prevIndex) => Math.min(prevIndex + 1, questionData.length - 1));
+  };
+
+  const handlePreviousQuestion = () => {
+    setCurrentQuestionIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+  };
+
+  const currentQuestion = questionData[currentQuestionIndex];
+
   return (
     <div className="problems-container">
-      {/* 사이드바 */}
       <Sidebar />
 
       <div className="content-wrapper">
-        {/* 상단 네비게이션 바 */}
         <TopNav />
 
         <div className="content-area">
-          {/* 큰 박스 안에 작은 박스 5개를 가로 스크롤로 배치 */}
           <Box className="problem-card-container">
             {Array.from({ length: 5 }).map((_, index) => (
               <ProblemCard key={index} problemNumber={index + 18} />
             ))}
           </Box>
 
-          {/* 컨텐츠 영역 */}
           <Box className="problem-main-box">
-            {/* 작은 박스 추가 */}
             <Box className="small-box">
-              {/* 왼쪽: 시험 문구 */}
               <Typography variant="h6" className="left-text">시험</Typography>
-
-              {/* 중앙: 학습 시간 문구 */}
               <Typography variant="h6" className="center-text">학습 시간:</Typography>
-
-              {/* 오른쪽: 버튼 2개 */}
               <Box className="button-box">
-                <Button className="nav-button">
+                <Button onClick={handlePreviousQuestion} className="nav-button" disabled={currentQuestionIndex === 0}>
                   <ArrowBackIcon />
                 </Button>
-                <Button className="nav-button">
+                <Button onClick={handleNextQuestion} className="nav-button" disabled={currentQuestionIndex === questionData.length - 1}>
                   <ArrowForwardIcon />
                 </Button>
               </Box>
             </Box>
 
-            {/* 시험 문제 영역을 두 개의 박스로 나누기 */}
-            <ProblemBox customClass="custom-problem-style" />
+            {loading ? (
+              <Typography>Loading question data...</Typography>
+            ) : error ? (
+              <Typography color="error">{error}</Typography>
+            ) : (
+              <ProblemBox
+                customClass="custom-problem-style"
+                questionData={currentQuestion}
+                showExplanation={false} // 해설 박스 미표시
+              />
+            )}
           </Box>
         </div>
       </div>
@@ -58,4 +99,4 @@ function questionsPage() {
   );
 }
 
-export default questionsPage;
+export default QuestionsPage;
