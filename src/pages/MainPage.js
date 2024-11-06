@@ -6,16 +6,28 @@ import TopNav from '../components/TopNav';
 import DashboardMenu from '../components/DashboardMenu';
 import { AuthContext } from '../context/AuthContext';
 import LoginModal from '../components/LoginModal';
+import YearSelectionTable from '../components/YearSelectionTable'; // 새 컴포넌트 임포트
 
 function MainPage() {
   const { isAuthenticated, user } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [selectedYear, setSelectedYear] = useState('2024');
+
+  const historyData = [
+    { year: '2024', date: '2024-10-15', examInfo: '2024년 9월 시험' },
+    { year: '2023', date: '2023-09-25', examInfo: '2023년 8월 시험' },
+    { year: '2023', date: '2023-06-15', examInfo: '2023년 5월 시험' },
+    { year: '2022', date: '2022-12-11', examInfo: '2022년 11월 시험' },
+  ];
+
+  const years = [...new Set(historyData.map((item) => item.year))];
+  const filteredData = historyData.filter((record) => record.year === selectedYear);
+
   useEffect(() => {
     if (isAuthenticated !== null) {
       setLoading(false);
-      // 비로그인 상태일 때만 모달을 열도록 조건 추
       if (isAuthenticated === false) {
         setIsModalOpen(true);
       } else {
@@ -62,8 +74,17 @@ function MainPage() {
               </>
             )}
           </Box>
+
+          {/* 로그인 상태에서만 YearSelectionTable 컴포넌트 표시 */}
+          {isAuthenticated && (
+            <YearSelectionTable
+              years={years}
+              selectedYear={selectedYear}
+              setSelectedYear={setSelectedYear}
+              filteredData={filteredData}
+            />
+          )}
         </Container>
-        {/* 로그인 모달을 메인 페이지에서만 표시 */}
         {isAuthenticated === false && (
           <LoginModal isOpen={isModalOpen} onClose={handleModalClose} />
         )}
