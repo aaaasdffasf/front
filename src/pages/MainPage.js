@@ -15,7 +15,7 @@ function MainPage() {
   useEffect(() => {
     if (isAuthenticated !== null) {
       setLoading(false);
-      // 비로그인 상태일 때만 모달을 열도록 조건 추가
+      // 비로그인 상태일 때만 모달을 열도록 조건 추
       if (isAuthenticated === false) {
         setIsModalOpen(true);
       } else {
