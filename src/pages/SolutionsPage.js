@@ -11,24 +11,26 @@ import { fetchQuestions } from '../api/questionsApi';
 import './SolutionsPage.css';
 
 function Solutions() {
-  const [questionData, setQuestionData] = useState(null);
+  const [questionData, setQuestionData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const year = '24'; // 원하는 연도
-  const month = '9'; // 원하는 월
-  const questionNumber = '18'; // 가져오고 싶은 문제 번호
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
+  // 원하는 연도와 월 설정 (하드코딩 예시, 필요한 경우 변경 가능)
+  const year = '24';
+  const month = '9';
 
   useEffect(() => {
     const loadQuestions = async () => {
       try {
         setLoading(true);
         const allQuestions = await fetchQuestions(year, month);
-        const singleQuestion = allQuestions.find((q) => q.number === questionNumber);
 
-        if (singleQuestion) {
-          setQuestionData(singleQuestion);
+        if (allQuestions && allQuestions.length > 0) {
+          setQuestionData(allQuestions);
+          setCurrentQuestionIndex(0); // 첫 번째 문제로 시작
         } else {
-          setError(`Question with number ${questionNumber} not found`);
+          setError('No questions found for the selected year and month.');
         }
       } catch (error) {
         setError('Failed to load question data');
@@ -39,7 +41,17 @@ function Solutions() {
     };
 
     loadQuestions();
-  }, [year, month, questionNumber]);
+  }, [year, month]);
+
+  const handleNextQuestion = () => {
+    setCurrentQuestionIndex((prevIndex) => Math.min(prevIndex + 1, questionData.length - 1));
+  };
+
+  const handlePreviousQuestion = () => {
+    setCurrentQuestionIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+  };
+
+  const currentQuestion = questionData[currentQuestionIndex];
 
   return (
     <div className="solutions-container">
@@ -50,22 +62,18 @@ function Solutions() {
 
         <div className="content-area">
           <Box className="solution-card-container">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <SolutionCard key={index} problemNumber={index + 18} />
-            ))}
+            <SolutionCard />
           </Box>
 
           <Box className="solution-main-box">
             <Box className="small-box">
-              <Typography variant="h6" className="left-text">
-                시험
-              </Typography>
-              <Typography variant="h6" className="center-text"></Typography>
+              <Typography variant="h6" className="left-text">시험</Typography>
+              <Typography variant="h6" className="center-text">학습 시간:</Typography>
               <Box className="button-box">
-                <Button className="nav-button">
+                <Button onClick={handlePreviousQuestion} className="nav-button" disabled={currentQuestionIndex === 0}>
                   <ArrowBackIcon />
                 </Button>
-                <Button className="nav-button">
+                <Button onClick={handleNextQuestion} className="nav-button" disabled={currentQuestionIndex === questionData.length - 1}>
                   <ArrowForwardIcon />
                 </Button>
               </Box>
@@ -79,7 +87,7 @@ function Solutions() {
             ) : (
               <ProblemBox
                 customClass="custom-solutions-style"
-                questionData={questionData}
+                questionData={currentQuestion}
                 showExplanation={true} // 해설 박스 표시
               />
             )}

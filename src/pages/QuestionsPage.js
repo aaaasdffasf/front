@@ -62,9 +62,7 @@ function QuestionsPage() {
 
         <div className="content-area">
           <Box className="problem-card-container">
-            {Array.from({ length: 5 }).map((_, index) => (
-              <ProblemCard key={index} problemNumber={index + 18} />
-            ))}
+              <ProblemCard  />
           </Box>
 
           <Box className="problem-main-box">
