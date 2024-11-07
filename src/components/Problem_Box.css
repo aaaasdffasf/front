@@ -41,3 +41,46 @@
   justify-content: center;
   white-space: pre-line;
 }
+
+.problemArea {
+  margin-top: 60px;
+  display: flex;
+  flex-direction: row;
+  border-radius: 3px;
+}
+
+.problemBox {
+  flex: 1;
+  background-color: #e0e0e0;
+  border-radius: 3px 0 0 3px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  padding: 8px;
+}
+
+.answer-input {
+  width: 150px;
+}
+
+.complete-button {
+  margin-left: 8px; /* 입력 필드와 버튼 간 여백 */
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  border-radius: 12px;
+  background-color: #1976d2;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.complete-button:hover {
+  background-color: #1565c0;
+  transform: scale(1.05);
+}
+
+.complete-button:active {
+  background-color: #0d47a1;
+  transform: scale(0.95);
+}

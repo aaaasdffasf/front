@@ -1,9 +1,20 @@
-// Problem_Box.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import './Problem_Box.css';
 
-const Problem_Box = ({ customClass, questionData, showExplanation = false }) => {
+const Problem_Box = ({ customClass, questionData, showExplanation = false, onAnswerChange, initialAnswer = '', isLastQuestion, onComplete }) => {
+  const [answer, setAnswer] = useState(initialAnswer);
+
+  useEffect(() => {
+    setAnswer(initialAnswer); // 문제 변경 시 답 초기화
+  }, [initialAnswer]);
+
+  const handleInputChange = (event) => {
+    const newAnswer = event.target.value;
+    setAnswer(newAnswer);
+    onAnswerChange(newAnswer);
+  };
+
   if (!questionData) {
     return <Typography>No question data available</Typography>;
   }
@@ -17,7 +28,6 @@ const Problem_Box = ({ customClass, questionData, showExplanation = false }) => 
           className="questionImage"
         />
         
-        {/* showExplanation이 false일 때만 입력 필드와 버튼을 보여줍니다 */}
         {!showExplanation && (
           <Box mt={2} display="flex" alignItems="center" justifyContent="center">
             <TextField
@@ -25,15 +35,24 @@ const Problem_Box = ({ customClass, questionData, showExplanation = false }) => 
               placeholder="답을 입력하세요"
               size="small"
               className="answer-input"
+              value={answer}
+              onChange={handleInputChange}
             />
-            <Button variant="contained" color="primary" style={{ marginLeft: '8px' }}>
-              입력
-            </Button>
+            {/* 입력 필드 옆에 완료 버튼을 추가 */}
+            {isLastQuestion && (
+              <Button 
+                variant="contained" 
+                className="complete-button" 
+                onClick={onComplete} 
+                size="small" 
+              >
+                완료
+              </Button>
+            )}
           </Box>
         )}
       </Box>
 
-      {/* 해설 박스는 showExplanation이 true일 때만 렌더링 */}
       {showExplanation && (
         <Box className="explanationBox">
           <Typography variant="body1">{questionData.description}</Typography>
