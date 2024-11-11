@@ -14,6 +14,7 @@ import AlertsPage from './pages/AlertsPage';
 import AnalysisPage from './pages/AnalysisPage';
 import HistoryPage from './pages/HistoryPage';
 import SolutionsPage from './pages/SolutionsPage';
+import ScorePage from './pages/ScorePage';
 
 function App() {
   return (
@@ -32,6 +33,7 @@ function App() {
               <Route path="/analysis" element={<AnalysisPage />} />
               <Route path="/history" element={<HistoryPage />} />
               <Route path="/solutions" element={<SolutionsPage />} />
+              <Route path="/score" element={<ScorePage />} />
             </Route>
           </Routes>
         </Router>

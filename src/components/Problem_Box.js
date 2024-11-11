@@ -1,23 +1,39 @@
-import React, { useState, useEffect } from 'react';
+// ProblemBox.js
+import React, { useEffect, useState } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import './Problem_Box.css';
 
-const Problem_Box = ({ customClass, questionData, showExplanation = false, onAnswerChange, initialAnswer = '', isLastQuestion, onComplete }) => {
+const ProblemBox = ({ customClass, questionData, showExplanation = false, onAnswerChange, initialAnswer = '', isLastQuestion, onComplete, onTimeUpdate }) => {
   const [answer, setAnswer] = useState(initialAnswer);
+  const [isRunning, setIsRunning] = useState(true);
 
+  // 문제 변경 시 초기 답안 세팅
   useEffect(() => {
-    setAnswer(initialAnswer); // 문제 변경 시 답 초기화
+    setAnswer(initialAnswer);
   }, [initialAnswer]);
 
+  // 타이머 관리 useEffect
+  useEffect(() => {
+    if (isRunning) {
+      const timer = setInterval(() => {
+        onTimeUpdate((prevTime) => prevTime + 1); // 부모 컴포넌트로 시간 전달
+      }, 1000);
+
+      return () => clearInterval(timer); // 타이머 정리
+    }
+  }, [isRunning, onTimeUpdate]);
+
+  // 답안 입력 처리 함수
   const handleInputChange = (event) => {
     const newAnswer = event.target.value;
     setAnswer(newAnswer);
     onAnswerChange(newAnswer);
   };
 
-  if (!questionData) {
-    return <Typography>No question data available</Typography>;
-  }
+  // 완료 버튼 클릭 시 타이머 정지
+  const handleStop = () => {
+    setIsRunning(false);
+  };
 
   return (
     <Box className={`problemArea ${customClass}`}>
@@ -27,7 +43,7 @@ const Problem_Box = ({ customClass, questionData, showExplanation = false, onAns
           alt="문제 이미지"
           className="questionImage"
         />
-        
+
         {!showExplanation && (
           <Box mt={2} display="flex" alignItems="center" justifyContent="center">
             <TextField
@@ -38,13 +54,15 @@ const Problem_Box = ({ customClass, questionData, showExplanation = false, onAns
               value={answer}
               onChange={handleInputChange}
             />
-            {/* 입력 필드 옆에 완료 버튼을 추가 */}
             {isLastQuestion && (
-              <Button 
-                variant="contained" 
-                className="complete-button" 
-                onClick={onComplete} 
-                size="small" 
+              <Button
+                variant="contained"
+                className="complete-button"
+                onClick={() => {
+                  onComplete();
+                  handleStop(); // 완료 시 타이머 정지
+                }}
+                size="small"
               >
                 완료
               </Button>
@@ -55,11 +73,11 @@ const Problem_Box = ({ customClass, questionData, showExplanation = false, onAns
 
       {showExplanation && (
         <Box className="explanationBox">
-          <Typography variant="body1">{questionData.description}</Typography>
+          <Typography variant="body2">설명: {questionData.explanation}</Typography>
         </Box>
       )}
     </Box>
   );
 };
 
-export default Problem_Box;
+export default ProblemBox;
