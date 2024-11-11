@@ -3,9 +3,17 @@ import React from 'react';
 import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 
 function YearSelectionTable({ years, selectedYear, setSelectedYear, filteredData, onExamClick }) {
+  const handleExamClick = (year, month) => {
+    // 진행 상태 초기화
+    localStorage.removeItem('lastQuestionIndex');
+    localStorage.removeItem('lastSelectedTime');
+
+    // 해당 시험 페이지로 이동
+    onExamClick(year, month);
+  };
+
   return (
     <>
-      {/* 연도 선택 버튼 */}
       <Box className="yearCategories" mt={3}>
         {years.map((year) => (
           <Button 
@@ -19,7 +27,6 @@ function YearSelectionTable({ years, selectedYear, setSelectedYear, filteredData
         ))}
       </Box>
 
-      {/* 시험 기록 테이블 */}
       <TableContainer component={Paper} className="examTable" sx={{ mt: 2 }}>
         <Table>
           <TableHead>
@@ -38,7 +45,7 @@ function YearSelectionTable({ years, selectedYear, setSelectedYear, filteredData
                   <TableCell>{record.date}</TableCell>
                   <TableCell>
                     <span
-                      onClick={() => onExamClick(year, month)} // 클릭 시 onExamClick 호출
+                      onClick={() => handleExamClick(year, month)} // 클릭 시 진행 상태 초기화 및 onExamClick 호출
                       style={{ cursor: 'pointer', color: 'blue' }}
                     >
                       {record.examInfo}

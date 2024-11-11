@@ -19,7 +19,10 @@ function MainPage() {
   // handleExamClick 함수 정의
   const handleExamClick = (year, month) => {
     const shortYear = year.slice(2); // "2024" -> "24"
-    navigate(`/questions/${shortYear}/${month}`); // 경로 파라미터 형식으로 shortYear와 month 전달
+    localStorage.setItem('lastSelectedYear', shortYear); // 마지막 선택한 연도 저장
+    localStorage.setItem('lastSelectedMonth', month);    // 마지막 선택한 월 저장
+    localStorage.setItem('lastSelectedTime', '0');       // 학습 시간 초기화
+    navigate(`/questions/${shortYear}/${month}`);
   };
 
   const historyData = [

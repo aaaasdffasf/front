@@ -1,4 +1,3 @@
-// QuestionsPage.js
 import React, { useEffect, useState, useContext } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -14,17 +13,25 @@ import './QuestionsPage.css';
 
 function QuestionsPage() {
   const { user } = useContext(AuthContext);
-  const { year, month } = useParams(); // URL에서 year와 month 파라미터 가져오기
+  const { year: paramYear, month: paramMonth } = useParams();
   const [questionData, setQuestionData] = useState([]);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [time, setTime] = useState(0);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(parseInt(localStorage.getItem('lastQuestionIndex'), 10) || 0); // 저장된 인덱스 불러오기
+  const [time, setTime] = useState(parseInt(localStorage.getItem('lastSelectedTime'), 10) || 0);
   const navigate = useNavigate();
+  
   const userId = user?.userId || '';
+  const year = paramYear || localStorage.getItem('lastSelectedYear');
+  const month = paramMonth || localStorage.getItem('lastSelectedMonth');
 
   useEffect(() => {
+    if (!year || !month) {
+      console.error('No year or month found in URL or localStorage');
+      return;
+    }
+
     const loadQuestions = async () => {
       try {
         setLoading(true);
@@ -32,7 +39,10 @@ function QuestionsPage() {
 
         if (allQuestions.length > 0) {
           setQuestionData(allQuestions);
-          setCurrentQuestionIndex(0);
+
+          // 저장된 마지막 문제 인덱스를 로드
+          const savedIndex = localStorage.getItem('lastQuestionIndex');
+          setCurrentQuestionIndex(savedIndex ? parseInt(savedIndex, 10) : 0);
         } else {
           setError('No questions found for the selected year and month.');
         }
@@ -46,6 +56,24 @@ function QuestionsPage() {
 
     loadQuestions();
   }, [year, month]);
+
+  // 타이머 시작
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTime((prevTime) => {
+        const updatedTime = prevTime + 1;
+        localStorage.setItem('lastSelectedTime', updatedTime);
+        return updatedTime;
+      });
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  // currentQuestionIndex가 변경될 때마다 localStorage에 저장
+  useEffect(() => {
+    localStorage.setItem('lastQuestionIndex', currentQuestionIndex);
+  }, [currentQuestionIndex]);
 
   const handleNextQuestion = () => {
     setCurrentQuestionIndex((prevIndex) => Math.min(prevIndex + 1, questionData.length - 1));
@@ -70,8 +98,7 @@ function QuestionsPage() {
       const response = await submitAnswers(userId, year, month, answerArray, time);
       alert('답안이 성공적으로 제출되었습니다!');
 
-      // 응답에서 성적 데이터를 받아 ScorePage로 이동할 때 함께 전달
-      const { correctAnswers, incorrectAnswers, score } = response; // 백엔드 응답에 포함된 데이터
+      const { correctAnswers, incorrectAnswers, score } = response;
       const timeTaken = time;
 
       navigate('/score', {
@@ -85,6 +112,10 @@ function QuestionsPage() {
           timeTaken,
         },
       });
+
+      // 완료 후에는 저장된 진행 상태 초기화
+      localStorage.removeItem('lastSelectedTime');
+      localStorage.removeItem('lastQuestionIndex');
     } catch (error) {
       console.error('답안 제출 오류:', error);
       alert(`답안 제출에 실패했습니다: ${error.message}`);
@@ -96,7 +127,7 @@ function QuestionsPage() {
   const isLastQuestion = currentQuestionIndex === questionData.length - 1;
 
   const handleTimeUpdate = (newTime) => {
-    setTime(newTime); // ProblemBox에서 받은 시간을 QuestionsPage 상태에 저장
+    setTime(newTime);
   };
 
   return (
@@ -120,7 +151,7 @@ function QuestionsPage() {
                 <Button onClick={handlePreviousQuestion} className="nav-button" disabled={currentQuestionIndex === 0}>
                   <ArrowBackIcon />
                 </Button>
-                <Button onClick={handleNextQuestion} className="nav-button" disabled={currentQuestionIndex === questionData.length - 1}>
+                <Button onClick={handleNextQuestion} className="nav-button" disabled={isLastQuestion}>
                   <ArrowForwardIcon />
                 </Button>
               </Box>
