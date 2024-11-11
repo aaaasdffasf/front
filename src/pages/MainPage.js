@@ -6,7 +6,7 @@ import TopNav from '../components/TopNav';
 import DashboardMenu from '../components/DashboardMenu';
 import { AuthContext } from '../context/AuthContext';
 import LoginModal from '../components/LoginModal';
-import YearSelectionTable from '../components/YearSelectionTable'; // 새 컴포넌트 임포트
+import YearSelectionTable from '../components/YearSelectionTable';
 import { useNavigate } from 'react-router-dom';
 
 function MainPage() {
@@ -18,7 +18,8 @@ function MainPage() {
 
   // handleExamClick 함수 정의
   const handleExamClick = (year, month) => {
-    navigate(`/questions?year=${year}&month=${month}`);
+    const shortYear = year.slice(2); // "2024" -> "24"
+    navigate(`/questions/${shortYear}/${month}`); // 경로 파라미터 형식으로 shortYear와 month 전달
   };
 
   const historyData = [
@@ -34,11 +35,7 @@ function MainPage() {
   useEffect(() => {
     if (isAuthenticated !== null) {
       setLoading(false);
-      if (isAuthenticated === false) {
-        setIsModalOpen(true);
-      } else {
-        setIsModalOpen(false);
-      }
+      setIsModalOpen(!isAuthenticated);
     }
   }, [isAuthenticated]);
 

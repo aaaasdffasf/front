@@ -28,7 +28,7 @@ function App() {
             <Route path="/login" element={<Login />} />
 
             <Route element={<PrivateRoute />}>
-              <Route path="/questions" element={<QuestionsPage />} />
+            <Route path="/questions/:year/:month" element={<QuestionsPage />} /> {/* year와 month를 경로 파라미터로 받음 */}
               <Route path="/alerts" element={<AlertsPage />} />
               <Route path="/analysis" element={<AnalysisPage />} />
               <Route path="/history" element={<HistoryPage />} />

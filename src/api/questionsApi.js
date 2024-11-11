@@ -1,16 +1,29 @@
-// questionApi.js
+// questionsApi.js
 import axiosInstance from './axiosInstance';
 
 // 특정 연도와 월의 모든 문제 가져오기
 export const fetchQuestions = async (year, month) => {
   try {
     const response = await axiosInstance.get(`/question/${year}/${month}`);
-    const questions = response.data.map(({ number, text, description }) => ({
-      number,
-      text,
-      description,
-    }));
-    return questions;
+
+    if (response.status === 204) {
+      console.warn("No questions found for the specified year and month.");
+      return [];
+    }
+
+    console.log("Fetched data:", response.data);
+
+    if (Array.isArray(response.data)) {
+      const questions = response.data.map(({ number, text, description }) => ({
+        number,
+        text,
+        description,
+      }));
+      return questions;
+    } else {
+      console.error("Expected an array but received:", response.data);
+      throw new Error("Invalid data format: Expected an array of questions");
+    }
   } catch (error) {
     if (error.response) {
       console.error(`Error fetching questions: ${error.response.status} - ${error.response.statusText}`);
@@ -27,8 +40,8 @@ export const fetchQuestions = async (year, month) => {
 export const submitAnswers = async (userId, year, month, userAnswer, testTime) => {
   try {
     const response = await axiosInstance.post(
-      `/test/submit`, 
-      userAnswer, // `userAnswer` 배열을 JSON 배열 형식으로 전송
+      `/test/submit`,
+      userAnswer, // `userAnswer` 배열을 그대로 JSON 배열 형식으로 전송
       {
         params: { // @RequestParam으로 전달될 값들
           userId,
@@ -42,7 +55,6 @@ export const submitAnswers = async (userId, year, month, userAnswer, testTime) =
   } catch (error) {
     if (error.response) {
       console.error(`Error submitting answers: ${error.response.status} - ${error.response.statusText}`);
-      // 상태 코드에 따른 구체적인 처리
       switch (error.response.status) {
         case 400:
           console.error('잘못된 요청입니다. 요청 파라미터를 확인하세요.');

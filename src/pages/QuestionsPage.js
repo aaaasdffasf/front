@@ -3,26 +3,26 @@ import React, { useEffect, useState, useContext } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import { useParams, useNavigate } from 'react-router-dom';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
 import ProblemCard from '../components/Problem_Card';
 import ProblemBox from '../components/Problem_Box';
-import { fetchQuestions , submitAnswers} from '../api/questionsApi';
+import { fetchQuestions, submitAnswers } from '../api/questionsApi';
 import { AuthContext } from '../context/AuthContext';
 import './QuestionsPage.css';
 
 function QuestionsPage() {
   const { user } = useContext(AuthContext);
+  const { year, month } = useParams(); // URL에서 year와 month 파라미터 가져오기
   const [questionData, setQuestionData] = useState([]);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [time, setTime] = useState(0);
-
-  const year = '24';
-  const month = '9';
-  const userId = user?.userId || ''; // 사용자의 ID를 AuthContext에서 가져옴
+  const navigate = useNavigate();
+  const userId = user?.userId || '';
 
   useEffect(() => {
     const loadQuestions = async () => {
@@ -30,7 +30,7 @@ function QuestionsPage() {
         setLoading(true);
         const allQuestions = await fetchQuestions(year, month);
 
-        if (allQuestions && allQuestions.length > 0) {
+        if (allQuestions.length > 0) {
           setQuestionData(allQuestions);
           setCurrentQuestionIndex(0);
         } else {
@@ -67,8 +67,24 @@ function QuestionsPage() {
     localStorage.setItem('userAnswers', JSON.stringify(answerArray));
 
     try {
-      await submitAnswers(userId, year, month, answerArray, time); // `userId`와 총 시간 함께 전송
+      const response = await submitAnswers(userId, year, month, answerArray, time);
       alert('답안이 성공적으로 제출되었습니다!');
+
+      // 응답에서 성적 데이터를 받아 ScorePage로 이동할 때 함께 전달
+      const { correctAnswers, incorrectAnswers, score } = response; // 백엔드 응답에 포함된 데이터
+      const timeTaken = time;
+
+      navigate('/score', {
+        state: {
+          userId,
+          year,
+          month,
+          correctAnswers,
+          incorrectAnswers,
+          score,
+          timeTaken,
+        },
+      });
     } catch (error) {
       console.error('답안 제출 오류:', error);
       alert(`답안 제출에 실패했습니다: ${error.message}`);
@@ -86,21 +102,20 @@ function QuestionsPage() {
   return (
     <div className="problems-container">
       <Sidebar />
-
       <div className="content-wrapper">
         <TopNav />
-
         <div className="content-area">
           <Box className="problem-card-container">
             <ProblemCard problemNumber={currentQuestionIndex + 1} />
           </Box>
-
           <Box className="problem-main-box">
             <Box className="small-box">
               <Typography variant="h6" className="left-text">
                 {currentQuestion ? `${year}년 ${month}월 ${currentQuestion.number}번 문제` : '시험 정보를 불러오는 중...'}
               </Typography>
-              <Typography variant="h6" className="center-text">학습 시간 : {`${Math.floor(time / 3600)}시간 ${Math.floor((time % 3600) / 60)}분 ${time % 60}초`}</Typography>
+              <Typography variant="h6" className="center-text">
+                학습 시간 : {`${Math.floor(time / 3600)}시간 ${Math.floor((time % 3600) / 60)}분 ${time % 60}초`}
+              </Typography>
               <Box className="button-box">
                 <Button onClick={handlePreviousQuestion} className="nav-button" disabled={currentQuestionIndex === 0}>
                   <ArrowBackIcon />
@@ -110,7 +125,6 @@ function QuestionsPage() {
                 </Button>
               </Box>
             </Box>
-
             {loading ? (
               <Typography>Loading question data...</Typography>
             ) : error ? (
@@ -124,7 +138,7 @@ function QuestionsPage() {
                 onAnswerChange={handleAnswerChange}
                 isLastQuestion={isLastQuestion}
                 onComplete={handleComplete}
-                onTimeUpdate={handleTimeUpdate} // 시간 업데이트 콜백 전달
+                onTimeUpdate={handleTimeUpdate}
               />
             )}
           </Box>
