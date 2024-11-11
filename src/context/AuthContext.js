@@ -2,12 +2,14 @@
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { login as apiLogin, signup as apiSignup } from '../api/authApi';
 import axiosInstance, { setupAxiosInterceptors } from '../api/axiosInstance';
-import { jwtDecode } from 'jwt-decode';
-
+import {jwtDecode} from 'jwt-decode';
+import { useLocalStorage } from '../hooks/useLocalStorage';
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const { saveItem, getItem, removeItem } = useLocalStorage();
+
   const getCurrentTimeInSeconds = () => Math.floor(Date.now() / 1000);
 
   const isTokenValid = useCallback((token) => {
@@ -20,15 +22,10 @@ export const AuthProvider = ({ children }) => {
       return false;
     }
   }, []);
-  
 
-  const [user, setUser] = useState(() => {
-    const savedUserInfo = localStorage.getItem('user');
-    return savedUserInfo ? JSON.parse(savedUserInfo) : null;
-  });
-
-  const [token, setToken] = useState(localStorage.getItem('token') || '');
-  const [refreshToken, setRefreshToken] = useState(localStorage.getItem('refreshToken') || '');
+  const [user, setUser] = useState(() => getItem('user', null));
+  const [token, setToken] = useState(() => getItem('token', ''));
+  const [refreshToken, setRefreshToken] = useState(() => getItem('refreshToken', ''));
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   const login = async (credentials) => {
@@ -43,9 +40,9 @@ export const AuthProvider = ({ children }) => {
       setUser(user);
       setToken(accessToken);
       setRefreshToken(refreshToken);
-      localStorage.setItem('token', accessToken);
-      localStorage.setItem('refreshToken', refreshToken);
-      localStorage.setItem('user', JSON.stringify(user));
+      saveItem('token', accessToken);
+      saveItem('refreshToken', refreshToken);
+      saveItem('user', user);
 
       setIsAuthenticated(true);
     } catch (error) {
@@ -67,12 +64,12 @@ export const AuthProvider = ({ children }) => {
     setUser(null);
     setToken('');
     setRefreshToken('');
-    localStorage.removeItem('token');
-    localStorage.removeItem('refreshToken');
-    localStorage.removeItem('user');
+    removeItem('token');
+    removeItem('refreshToken');
+    removeItem('user');
     setIsAuthenticated(false);
     console.log('사용자가 로그아웃 되었습니다');
-  }, []);
+  }, [removeItem]);
 
   const refreshAccessToken = useCallback(async () => {
     if (!refreshToken || !token) return false;
@@ -81,19 +78,19 @@ export const AuthProvider = ({ children }) => {
         refreshToken,
         accessToken: token,
       });
-  
+
       const { accessToken: newAccessToken, user } = response.data;
-  
+
       console.log('새로운 액세스 토큰을 받아왔습니다.', newAccessToken);
       setToken(newAccessToken);
-      localStorage.setItem('token', newAccessToken);
-  
+      saveItem('token', newAccessToken);
+
       if (user) {
         setUser(user);
-        localStorage.setItem('user', JSON.stringify(user));
+        saveItem('user', user);
         console.log('사용자 정보를 업데이트했습니다.', user);
       }
-  
+
       setIsAuthenticated(true);
       return true;
     } catch (error) {
@@ -104,8 +101,7 @@ export const AuthProvider = ({ children }) => {
       logout();
       return false;
     }
-  }, [refreshToken, token, logout]);
-  
+  }, [refreshToken, token, logout, saveItem]);
 
   useEffect(() => {
     setupAxiosInterceptors(logout, refreshAccessToken);

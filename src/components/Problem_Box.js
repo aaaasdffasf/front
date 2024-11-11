@@ -3,46 +3,33 @@ import React, { useEffect, useState } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import './Problem_Box.css';
 
-const ProblemBox = ({ customClass, questionData, showExplanation = false, onAnswerChange, initialAnswer = '', isLastQuestion, onComplete, onTimeUpdate }) => {
+const ProblemBox = ({
+  customClass,
+  questionData,
+  showExplanation = false,
+  onAnswerChange,
+  initialAnswer = '',
+  isLastQuestion,
+  onComplete,
+}) => {
   const [answer, setAnswer] = useState(initialAnswer);
-  const [isRunning, setIsRunning] = useState(true);
 
   // 문제 변경 시 초기 답안 세팅
   useEffect(() => {
     setAnswer(initialAnswer);
   }, [initialAnswer]);
 
-  // 타이머 관리 useEffect
-  useEffect(() => {
-    if (isRunning) {
-      const timer = setInterval(() => {
-        onTimeUpdate((prevTime) => prevTime + 1); // 부모 컴포넌트로 시간 전달
-      }, 1000);
-
-      return () => clearInterval(timer); // 타이머 정리
-    }
-  }, [isRunning, onTimeUpdate]);
-
   // 답안 입력 처리 함수
   const handleInputChange = (event) => {
     const newAnswer = event.target.value;
     setAnswer(newAnswer);
-    onAnswerChange(newAnswer);
-  };
-
-  // 완료 버튼 클릭 시 타이머 정지
-  const handleStop = () => {
-    setIsRunning(false);
+    if (onAnswerChange) onAnswerChange(newAnswer); // 상위 컴포넌트로 답안 전달
   };
 
   return (
     <Box className={`problemArea ${customClass}`}>
       <Box className="problemBox">
-        <img
-          src={questionData.text}
-          alt="문제 이미지"
-          className="questionImage"
-        />
+        <img src={questionData.text} alt="문제 이미지" className="questionImage" />
 
         {!showExplanation && (
           <Box mt={2} display="flex" alignItems="center" justifyContent="center">
@@ -58,10 +45,7 @@ const ProblemBox = ({ customClass, questionData, showExplanation = false, onAnsw
               <Button
                 variant="contained"
                 className="complete-button"
-                onClick={() => {
-                  onComplete();
-                  handleStop(); // 완료 시 타이머 정지
-                }}
+                onClick={onComplete}
                 size="small"
               >
                 완료
@@ -71,9 +55,10 @@ const ProblemBox = ({ customClass, questionData, showExplanation = false, onAnsw
         )}
       </Box>
 
-      {showExplanation && (
+      {/* 설명(해설) 박스 추가 */}
+      {showExplanation && questionData.description && (
         <Box className="explanationBox">
-          <Typography variant="body2">설명: {questionData.explanation}</Typography>
+          <Typography variant="body2">설명: {questionData.description}</Typography>
         </Box>
       )}
     </Box>

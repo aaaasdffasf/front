@@ -1,4 +1,4 @@
-// MainPage.js
+// src/pages/MainPage.js
 import React, { useContext, useEffect, useState } from 'react';
 import { Container, Box, Typography } from '@mui/material';
 import Sidebar from '../components/Sidebar';
@@ -8,6 +8,7 @@ import { AuthContext } from '../context/AuthContext';
 import LoginModal from '../components/LoginModal';
 import YearSelectionTable from '../components/YearSelectionTable';
 import { useNavigate } from 'react-router-dom';
+import useQuestionStorage from '../hooks/useQuestionStorage'; // Custom hook import
 
 function MainPage() {
   const navigate = useNavigate();
@@ -15,14 +16,13 @@ function MainPage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState('2024');
+  
+  const { clearStorageData } = useQuestionStorage(); // Using the custom hook for storage clearing
 
-  // handleExamClick 함수 정의
+  // handleExamClick function definition to reset progress and navigate
   const handleExamClick = (year, month) => {
-    const shortYear = year.slice(2); // "2024" -> "24"
-    localStorage.setItem('lastSelectedYear', shortYear); // 마지막 선택한 연도 저장
-    localStorage.setItem('lastSelectedMonth', month);    // 마지막 선택한 월 저장
-    localStorage.setItem('lastSelectedTime', '0');       // 학습 시간 초기화
-    navigate(`/questions/${shortYear}/${month}`);
+    clearStorageData(); // Clear storage data when a new exam is started
+    navigate(`/questions/${year.slice(2)}/${month}`); // Navigate to the questions page with year and month
   };
 
   const historyData = [
@@ -81,14 +81,14 @@ function MainPage() {
             )}
           </Box>
 
-          {/* 로그인 상태에서만 YearSelectionTable 컴포넌트 표시 */}
+          {/* Show YearSelectionTable only if authenticated */}
           {isAuthenticated && (
             <YearSelectionTable
               years={years}
               selectedYear={selectedYear}
               setSelectedYear={setSelectedYear}
               filteredData={filteredData}
-              onExamClick={handleExamClick} // handleExamClick 함수 전달
+              onExamClick={handleExamClick} // Passing handleExamClick to YearSelectionTable
             />
           )}
         </Container>

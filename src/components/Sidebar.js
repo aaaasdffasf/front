@@ -23,7 +23,8 @@ const Sidebar = () => {
   // 마지막 연도와 월 정보를 가져오기 위한 변수
   const lastYear = localStorage.getItem('lastSelectedYear') || '24';
   const lastMonth = localStorage.getItem('lastSelectedMonth') || '9';
-  const questionsPath = `/questions/${lastYear}/${lastMonth}`; // 동적으로 경로 설정
+  const questionsPath = `/questions/${lastYear}/${lastMonth}`;
+  const solutionsPath = `/solutions/${lastYear}/${lastMonth}`; // 동적으로 경로 설정
 
   return (
     <div className="sidebar">
@@ -39,12 +40,11 @@ const Sidebar = () => {
 
       <h3 className="sidebar-title">Service</h3>
       <ul className="sidebar-section">
-        {/* 동적으로 설정된 questionsPath 사용 */}
         <li className={isActive(questionsPath) ? 'active' : ''}>
           <Link to={questionsPath} className="sidebar-link">문제풀이 화면</Link>
         </li>
-        <li className={isActive('/solutions') ? 'active' : ''}>
-          <Link to="/solutions" className="sidebar-link">문제 해설 화면</Link>
+        <li className={isActive(solutionsPath) ? 'active' : ''}>
+          <Link to={solutionsPath} className="sidebar-link">문제 해설 화면</Link>
         </li>
         <li className={isActive('/retry') ? 'active' : ''}>
           <Link to="/retry" className="sidebar-link">문제 다시 풀기 화면</Link>
