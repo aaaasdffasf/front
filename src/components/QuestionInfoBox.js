@@ -10,7 +10,7 @@ const QuestionInfoBox = ({
   year,
   month,
   currentQuestion,
-  time,
+  time, // 추가된 시간 관련 prop
   currentQuestionIndex,
   isLastQuestion,
   handlePreviousQuestion,
@@ -18,8 +18,8 @@ const QuestionInfoBox = ({
   isSolutionPage = false,
   userId,
   yearAndMonth,
-  questionData,
-  incorrectQuestions,
+  questionData = [], // 기본값으로 빈 배열 설정
+  incorrectQuestions = [], // 기본값으로 빈 배열 설정
   setCurrentQuestionIndex
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,6 +33,12 @@ const QuestionInfoBox = ({
       <Typography variant="h6" className="left-text">
         {currentQuestion ? `${year}년 ${month}월 ${currentQuestion.number}번 문제` : '시험 정보를 불러오는 중...'}
       </Typography>
+
+      {!isSolutionPage && (
+        <Typography variant="h6" className="center-text">
+          학습 시간 : {`${Math.floor(time / 3600)}시간 ${Math.floor((time % 3600) / 60)}분 ${time % 60}초`}
+        </Typography>
+      )}
 
       <Box className="button-box">
         <IconButton onClick={toggleModal} className="nav-button">
@@ -51,7 +57,7 @@ const QuestionInfoBox = ({
           <ComparisonTable
             questionData={questionData}
             incorrectQuestionNumbers={incorrectQuestions.map((q) => q.number)}
-            setCurrentQuestionIndex={setCurrentQuestionIndex} // 전달
+            setCurrentQuestionIndex={setCurrentQuestionIndex}
           />
         </Box>
       </Modal>
