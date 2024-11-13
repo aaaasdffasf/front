@@ -22,7 +22,7 @@ function SolutionsPage() {
 
   const userId = user?.userId;
   const yearAndMonth = `${year}-${month}`;
-  const testId = 59; // 예시로 고정된 테스트 ID
+  const testId = 59;
 
   useEffect(() => {
     const loadQuestionsAndTestResult = async () => {
@@ -90,8 +90,9 @@ function SolutionsPage() {
               isSolutionPage={true}
               userId={userId}
               yearAndMonth={yearAndMonth}
-              questionData={questionData} // 전체 문제 데이터 전달
-              incorrectQuestions={incorrectQuestions} // 틀린 문제 데이터 전달
+              questionData={questionData}
+              incorrectQuestions={incorrectQuestions}
+              setCurrentQuestionIndex={setCurrentQuestionIndex} // 전달
             />
 
             {loading ? (

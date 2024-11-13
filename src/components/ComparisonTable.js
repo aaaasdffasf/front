@@ -1,6 +1,10 @@
 import React from 'react';
 
-const ComparisonTable = ({ questionData, incorrectQuestionNumbers }) => {
+const ComparisonTable = ({ questionData, incorrectQuestionNumbers, setCurrentQuestionIndex }) => {
+  const handleRowClick = (index) => {
+    setCurrentQuestionIndex(index); // 문제 번호 클릭 시 해당 문제로 이동
+  };
+
   return (
     <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
       <table>
@@ -11,8 +15,8 @@ const ComparisonTable = ({ questionData, incorrectQuestionNumbers }) => {
           </tr>
         </thead>
         <tbody>
-          {questionData.map((question) => (
-            <tr key={question.number}>
+          {questionData.map((question, index) => (
+            <tr key={question.number} onClick={() => handleRowClick(index)} style={{ cursor: 'pointer' }}>
               <td>{question.number}</td>
               <td>{incorrectQuestionNumbers.includes(question.number) ? 'X' : 'O'}</td>
             </tr>

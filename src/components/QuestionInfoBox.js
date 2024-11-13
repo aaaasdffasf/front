@@ -3,7 +3,7 @@ import { Box, Typography, Button, IconButton, Modal } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MenuIcon from '@mui/icons-material/Menu';
-import ComparisonTable from './ComparisonTable'; // ComparisonTable 추가
+import ComparisonTable from './ComparisonTable';
 import './QuestionInfoBox.css';
 
 const QuestionInfoBox = ({
@@ -19,7 +19,8 @@ const QuestionInfoBox = ({
   userId,
   yearAndMonth,
   questionData,
-  incorrectQuestions, // 전체 문제와 틀린 문제 데이터 받기
+  incorrectQuestions,
+  setCurrentQuestionIndex
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -47,7 +48,11 @@ const QuestionInfoBox = ({
 
       <Modal open={isModalOpen} onClose={toggleModal}>
         <Box style={{ padding: 20, backgroundColor: 'white', margin: '50px auto', maxWidth: '600px' }}>
-          <ComparisonTable questionData={questionData} incorrectQuestionNumbers={incorrectQuestions.map((q) => q.number)} />
+          <ComparisonTable
+            questionData={questionData}
+            incorrectQuestionNumbers={incorrectQuestions.map((q) => q.number)}
+            setCurrentQuestionIndex={setCurrentQuestionIndex} // 전달
+          />
         </Box>
       </Modal>
     </Box>
