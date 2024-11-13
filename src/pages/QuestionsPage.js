@@ -1,60 +1,59 @@
-// src/pages/QuestionsPage.js
 import React, { useEffect, useState, useContext } from 'react';
 import { Box, Typography } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
-import ProblemCard from '../components/Problem_Card';
+import SolutionCard from '../components/Problem_Card';
 import ProblemBox from '../components/Problem_Box';
-import ScoreModal from '../components/ScoreModal';
 import QuestionInfoBox from '../components/QuestionInfoBox';
 import { useParams } from 'react-router-dom';
-import { fetchQuestions, submitAnswers } from '../api/questionsApi';
+import { fetchQuestions, fetchTestResult, fetchIncorrectQuestions } from '../api/questionsApi';
 import { AuthContext } from '../context/AuthContext';
-import useQuestionStorage from '../hooks/useQuestionStorage';
-import './QuestionsPage.css';
+import './SolutionsPage.css';
 
-function QuestionsPage() {
-  const { user } = useContext(AuthContext);
+function SolutionsPage() {
   const { year, month } = useParams();
+  const { user } = useContext(AuthContext);
   const [questionData, setQuestionData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
-  const [scoreData, setScoreData] = useState(null);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [testResult, setTestResult] = useState(null);
+  const [incorrectQuestions, setIncorrectQuestions] = useState([]);
 
-  const {
-    currentQuestionIndex,
-    setCurrentQuestionIndex,
-    elapsedTime,
-    setElapsedTime,
-    answers,
-    setAnswers,
-    clearStorageData,
-  } = useQuestionStorage();
-
-  const userId = user?.userId || '';
+  const userId = user?.userId;
+  const yearAndMonth = `${year}-${month}`;
+  const testId = 59; // 예시로 고정된 테스트 ID
 
   useEffect(() => {
-    const loadQuestions = async () => {
+    const loadQuestionsAndTestResult = async () => {
       try {
-        setLoading(true);
-        const allQuestions = await fetchQuestions(year, month);
-
-        if (allQuestions.length > 0) {
-          setQuestionData(allQuestions);
-        } else {
-          setError('No questions found for the selected year and month.');
+        if (!userId) {
+          setError('사용자 정보가 없습니다. 로그인 후 다시 시도해주세요.');
+          return;
         }
+
+        const allQuestions = await fetchQuestions(year, month);
+        setQuestionData(allQuestions);
+        console.log("Fetched questions:", allQuestions);
+
+        const testResultData = await fetchTestResult(testId, userId, yearAndMonth);
+        setTestResult(testResultData);
+        console.log("Fetched test result:", testResultData);
+
+        const incorrectData = await fetchIncorrectQuestions(testId, userId, yearAndMonth);
+        setIncorrectQuestions(incorrectData);
+        console.log("Fetched incorrect questions:", incorrectData);
+
       } catch (error) {
-        setError('Failed to load question data');
-        console.error(error);
+        setError('Failed to load data');
+        console.error("Error fetching data:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadQuestions();
-  }, [year, month]);
+    loadQuestionsAndTestResult();
+  }, [year, month, userId, yearAndMonth]);
 
   const handleNextQuestion = () => {
     setCurrentQuestionIndex((prevIndex) => Math.min(prevIndex + 1, questionData.length - 1));
@@ -64,88 +63,63 @@ function QuestionsPage() {
     setCurrentQuestionIndex((prevIndex) => Math.max(prevIndex - 1, 0));
   };
 
-  const handleAnswerChange = (newAnswer) => {
-    setAnswers({
-      ...answers,
-      [currentQuestionIndex]: newAnswer,
-    });
-  };
-
-  const handleComplete = async () => {
-    const answerArray = questionData.map((_, index) => answers[index] || '');
-
-    try {
-      const response = await submitAnswers(userId, year, month, answerArray, elapsedTime);
-
-      setScoreData({
-        userId,
-        year,
-        month,
-        correctAnswers: response.correctCount,
-        incorrectAnswers: response.wrongCount,
-        totalScore: response.totalScore,
-        timeTaken: elapsedTime,
-      });
-      setIsScoreModalOpen(true);
-
-      // 완료 후 저장된 데이터 및 타이머 초기화
-      clearStorageData();
-    } catch (error) {
-      console.error('답안 제출 오류:', error);
-      alert(`답안 제출에 실패했습니다: ${error.message}`);
-    }
-  };
-
   const currentQuestion = questionData[currentQuestionIndex];
-  const currentAnswer = answers[currentQuestionIndex] || '';
   const isLastQuestion = currentQuestionIndex === questionData.length - 1;
+  const currentAnswer = testResult?.userAnswer?.[currentQuestionIndex] || '';
 
   return (
-    <div className="problems-container">
+    <div className="solutions-container">
       <Sidebar />
       <div className="content-wrapper">
         <TopNav />
         <div className="content-area">
-          <Box className="problem-card-container">
-            <ProblemCard problemNumber={currentQuestionIndex + 1} />
+          <Box className="solution-card-container">
+            <SolutionCard problemNumber={currentQuestionIndex + 1} />
           </Box>
-          <Box className="problem-main-box">
+
+          <Box className="solution-main-box">
             <QuestionInfoBox
               year={year}
               month={month}
               currentQuestion={currentQuestion}
-              time={elapsedTime}
+              time={0}
               currentQuestionIndex={currentQuestionIndex}
               isLastQuestion={isLastQuestion}
               handlePreviousQuestion={handlePreviousQuestion}
               handleNextQuestion={handleNextQuestion}
-              isSolutionPage={false} // 메뉴 버튼 숨기기
+              isSolutionPage={true}
+              userId={userId}
+              yearAndMonth={yearAndMonth}
+              questionData={questionData}
+              incorrectQuestions={incorrectQuestions}
+              setCurrentQuestionIndex={setCurrentQuestionIndex} // 전달
             />
+
             {loading ? (
               <Typography>Loading question data...</Typography>
             ) : error ? (
               <Typography color="error">{error}</Typography>
             ) : (
-              <ProblemBox
-                customClass="custom-problem-style"
-                questionData={currentQuestion}
-                initialAnswer={currentAnswer}
-                showExplanation={false}
-                onAnswerChange={handleAnswerChange}
-                isLastQuestion={isLastQuestion}
-                onComplete={handleComplete}
-                onTimeUpdate={setElapsedTime} // 시간을 업데이트하는 함수 전달
-              />
+              <>
+                <ProblemBox
+                  customClass="custom-solutions-style"
+                  questionData={currentQuestion}
+                  showExplanation={true}
+                  userAnswer={currentAnswer}
+                />
+                {testResult && (
+                  <Box mt={4}>
+                    <Typography variant="h6">시험 총점: {testResult.score}점</Typography>
+                    <Typography variant="body1">사용자 답안: {currentAnswer}</Typography>
+                  </Box>
+                )}
+              </>
             )}
           </Box>
         </div>
       </div>
-
-      {scoreData && (
-        <ScoreModal open={isScoreModalOpen} onClose={() => setIsScoreModalOpen(false)} scoreData={scoreData} />
-      )}
     </div>
   );
 }
 
-export default QuestionsPage;
+export default SolutionsPage;

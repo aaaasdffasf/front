@@ -1,10 +1,9 @@
-// src/components/QuestionInfoBox.js
 import React, { useState } from 'react';
-import { Box, Typography, Button, IconButton } from '@mui/material';
+import { Box, Typography, Button, IconButton, Modal } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MenuIcon from '@mui/icons-material/Menu';
-import ComparisonTable from './ComparisonTable'; // 정답 비교 표 컴포넌트 import
+import ComparisonTable from './ComparisonTable'; // ComparisonTable 추가
 import './QuestionInfoBox.css';
 
 const QuestionInfoBox = ({
@@ -17,13 +16,15 @@ const QuestionInfoBox = ({
   handlePreviousQuestion,
   handleNextQuestion,
   isSolutionPage = false,
-  handleMenuClick,
-  id, // testId 추가
+  userId,
+  yearAndMonth,
+  questionData,
+  incorrectQuestions, // 전체 문제와 틀린 문제 데이터 받기
 }) => {
-  const [showComparison, setShowComparison] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const toggleComparison = () => {
-    setShowComparison((prev) => !prev);
+  const toggleModal = () => {
+    setIsModalOpen((prev) => !prev);
   };
 
   return (
@@ -32,14 +33,8 @@ const QuestionInfoBox = ({
         {currentQuestion ? `${year}년 ${month}월 ${currentQuestion.number}번 문제` : '시험 정보를 불러오는 중...'}
       </Typography>
 
-      {!isSolutionPage && (
-        <Typography variant="h6" className="center-text">
-          학습 시간 : {`${Math.floor(time / 3600)}시간 ${Math.floor((time % 3600) / 60)}분 ${time % 60}초`}
-        </Typography>
-      )}
-
       <Box className="button-box">
-        <IconButton onClick={toggleComparison} className="nav-button">
+        <IconButton onClick={toggleModal} className="nav-button">
           <MenuIcon />
         </IconButton>
         <Button onClick={handlePreviousQuestion} className="nav-button" disabled={currentQuestionIndex === 0}>
@@ -50,12 +45,11 @@ const QuestionInfoBox = ({
         </Button>
       </Box>
 
-      {/* ComparisonTable 팝업 */}
-      {showComparison && (
-        <Box className="comparison-popup">
-          <ComparisonTable id={id} yearAndMonth={`${year}${month}`} />
+      <Modal open={isModalOpen} onClose={toggleModal}>
+        <Box style={{ padding: 20, backgroundColor: 'white', margin: '50px auto', maxWidth: '600px' }}>
+          <ComparisonTable questionData={questionData} incorrectQuestionNumbers={incorrectQuestions.map((q) => q.number)} />
         </Box>
-      )}
+      </Modal>
     </Box>
   );
 };
