@@ -1,4 +1,3 @@
-// ProblemBox.js
 import React, { useEffect, useState } from 'react';
 import { Box, Typography, TextField, Button } from '@mui/material';
 import './Problem_Box.css';
@@ -11,6 +10,8 @@ const ProblemBox = ({
   initialAnswer = '',
   isLastQuestion,
   onComplete,
+  userAnswer,
+  showUserAnswer = false
 }) => {
   const [answer, setAnswer] = useState(initialAnswer);
 
@@ -29,7 +30,10 @@ const ProblemBox = ({
   return (
     <Box className={`problemArea ${customClass}`}>
       <Box className="problemBox">
-        <img src={questionData.text} alt="문제 이미지" className="questionImage" />
+        {/* 이미지 중앙 정렬 */}
+        <Box className="imageContainer">
+          <img src={questionData.text} alt="문제 이미지" className="questionImage" />
+        </Box>
 
         {!showExplanation && (
           <Box mt={2} display="flex" alignItems="center" justifyContent="center">
@@ -51,6 +55,15 @@ const ProblemBox = ({
                 완료
               </Button>
             )}
+          </Box>
+        )}
+        
+        {/* 사용자 답안 표시 (검은색으로 설정) */}
+        {showUserAnswer && userAnswer && (
+          <Box mt={2} display="flex" justifyContent="center">
+            <Typography variant="body1" style={{ color: 'black' }}>
+              사용자 답안: {userAnswer}
+            </Typography>
           </Box>
         )}
       </Box>

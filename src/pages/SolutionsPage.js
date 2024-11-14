@@ -66,6 +66,7 @@ function SolutionsPage() {
   const currentQuestion = questionData[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questionData.length - 1;
   const currentAnswer = testResult?.userAnswer?.[currentQuestionIndex] || '';
+  const totalScore = testResult?.score || 0; // 총점 설정
 
   return (
     <div className="solutions-container">
@@ -105,14 +106,13 @@ function SolutionsPage() {
                   customClass="custom-solutions-style"
                   questionData={currentQuestion}
                   showExplanation={true}
-                  userAnswer={currentAnswer}
+                  userAnswer={currentAnswer} // 사용자 답안 전달
+                  showUserAnswer={true} // 사용자 답안 표시 활성화
                 />
-                {testResult && (
-                  <Box mt={4}>
-                    <Typography variant="h6">시험 총점: {testResult.score}점</Typography>
-                    <Typography variant="body1">사용자 답안: {currentAnswer}</Typography>
-                  </Box>
-                )}
+                {/* 총점 표시 */}
+                <Box mt={4} display="flex" justifyContent="center">
+                  <Typography variant="h6">총점: {totalScore}점</Typography>
+                </Box>
               </>
             )}
           </Box>
