@@ -5,14 +5,15 @@ import TopNav from '../components/TopNav';
 import SolutionCard from '../components/Problem_Card';
 import ProblemBox from '../components/Problem_Box';
 import QuestionInfoBox from '../components/QuestionInfoBox';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { fetchQuestions, fetchTestResult, fetchIncorrectQuestions } from '../api/questionsApi';
 import { AuthContext } from '../context/AuthContext';
 import './SolutionsPage.css';
 
 function SolutionsPage() {
-  const { year, month } = useParams();
+  const { year, month, number } = useParams(); // number를 URL 파라미터로 받음
   const { user } = useContext(AuthContext);
+  const navigate = useNavigate();
   const [questionData, setQuestionData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -55,18 +56,36 @@ function SolutionsPage() {
     loadQuestionsAndTestResult();
   }, [year, month, userId, yearAndMonth]);
 
+  // questionData가 로드된 이후에 number에 해당하는 인덱스 설정
+  useEffect(() => {
+    if (questionData.length > 0 && number) {
+      const index = questionData.findIndex((q) => q.number === number);
+      if (index !== -1) {
+        setCurrentQuestionIndex(index);
+      } else {
+        console.warn(`Question with number ${number} not found`);
+      }
+    }
+  }, [questionData, number]);
+
   const handleNextQuestion = () => {
-    setCurrentQuestionIndex((prevIndex) => Math.min(prevIndex + 1, questionData.length - 1));
+    const nextIndex = Math.min(currentQuestionIndex + 1, questionData.length - 1);
+    setCurrentQuestionIndex(nextIndex);
+    const nextQuestionNumber = questionData[nextIndex].number;
+    navigate(`/solutions/${year}/${month}/${nextQuestionNumber}`);
   };
 
   const handlePreviousQuestion = () => {
-    setCurrentQuestionIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+    const prevIndex = Math.max(currentQuestionIndex - 1, 0);
+    setCurrentQuestionIndex(prevIndex);
+    const prevQuestionNumber = questionData[prevIndex].number;
+    navigate(`/solutions/${year}/${month}/${prevQuestionNumber}`);
   };
 
   const currentQuestion = questionData[currentQuestionIndex];
   const isLastQuestion = currentQuestionIndex === questionData.length - 1;
   const currentAnswer = testResult?.userAnswer?.[currentQuestionIndex] || '';
-  const totalScore = testResult?.score || 0; // 총점 설정
+  const totalScore = testResult?.score || 0;
 
   return (
     <div className="solutions-container">
@@ -93,7 +112,7 @@ function SolutionsPage() {
               yearAndMonth={yearAndMonth}
               questionData={questionData}
               incorrectQuestions={incorrectQuestions}
-              setCurrentQuestionIndex={setCurrentQuestionIndex} // 전달
+              setCurrentQuestionIndex={setCurrentQuestionIndex}
             />
 
             {loading ? (
@@ -106,10 +125,9 @@ function SolutionsPage() {
                   customClass="custom-solutions-style"
                   questionData={currentQuestion}
                   showExplanation={true}
-                  userAnswer={currentAnswer} // 사용자 답안 전달
-                  showUserAnswer={true} // 사용자 답안 표시 활성화
+                  userAnswer={currentAnswer}
+                  showUserAnswer={true}
                 />
-                {/* 총점 표시 */}
                 <Box mt={4} display="flex" justifyContent="center">
                   <Typography variant="h6">총점: {totalScore}점</Typography>
                 </Box>

@@ -13,6 +13,7 @@ import AlertsPage from './pages/AlertsPage';
 import AnalysisPage from './pages/AnalysisPage';
 import HistoryPage from './pages/HistoryPage';
 import SolutionsPage from './pages/SolutionsPage';
+import MistakeNotePage from './pages/MistakeNotePage';
 
 function App() {
   return (
@@ -30,7 +31,8 @@ function App() {
               <Route path="/alerts" element={<AlertsPage />} />
               <Route path="/analysis" element={<AnalysisPage />} />
               <Route path="/history" element={<HistoryPage />} />
-              <Route path="/solutions/:year/:month" element={<SolutionsPage />} /> {/* year와 month 파라미터 추가 */}
+              <Route path="/solutions/:year/:month/:number" element={<SolutionsPage />} /> {/* questionId 추가 */}
+              <Route path="/mistake/:year/:month" element={<MistakeNotePage />} />
             </Route>
           </Routes>
         </Router>
