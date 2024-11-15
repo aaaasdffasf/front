@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 import { FaHome, FaBell, FaUser, FaQuestionCircle, FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
@@ -20,14 +20,24 @@ const Sidebar = () => {
     navigate('/login'); // 로그인 페이지로 이동
   };
 
-  // 마지막 연도와 월, 문제 번호 정보를 가져오기 위한 변수
-  const lastYear = localStorage.getItem('lastSelectedYear') || '24';
-  const lastMonth = localStorage.getItem('lastSelectedMonth') || '9';
-  const lastNumber = localStorage.getItem('lastSelectedNumber') || 'number'; // 마지막으로 선택한 문제 번호를 가져옵니다
+  const [lastYear, setLastYear] = useState(localStorage.getItem('lastSelectedYear'));
+  const [lastMonth, setLastMonth] = useState(localStorage.getItem('lastSelectedMonth'));
+  const [lastNumber, setLastNumber] = useState(localStorage.getItem('lastSelectedNumber') || 'number');
+
+  useEffect(() => {
+    // 경로가 변경될 때마다 `localStorage`에서 새 값을 가져옵니다.
+    const storedYear = localStorage.getItem('lastSelectedYear');
+    const storedMonth = localStorage.getItem('lastSelectedMonth');
+    const storedNumber = localStorage.getItem('lastSelectedNumber') || 'number';
+
+    setLastYear(storedYear);
+    setLastMonth(storedMonth);
+    setLastNumber(storedNumber);
+  }, [location]);
 
   const questionsPath = `/questions/${lastYear}/${lastMonth}`;
-  const solutionsPath = `/solutions/${lastYear}/${lastMonth}/${lastNumber}`; // 동적으로 경로 설정
-  const mistakePath = `/mistake/${lastYear}/${lastMonth}`; // 오답 노트 경로 설정
+  const solutionsPath = `/solutions/${lastYear}/${lastMonth}/${lastNumber}`;
+  const mistakePath = `/mistake/${lastYear}/${lastMonth}`;
 
   return (
     <div className="sidebar">

@@ -21,17 +21,22 @@ function MainPage() {
 
   const handleExamClick = (year, month) => {
     clearStorageData();
+    localStorage.setItem('lastSelectedYear', year.slice(2)); // 연도 저장
+    localStorage.setItem('lastSelectedMonth', month);        // 월 저장
     navigate(`/questions/${year.slice(2)}/${month}`);
   };
-
+  
   const handleSolutionClick = (year, month) => {
     clearStorageData();
+    localStorage.setItem('lastSelectedYear', year.slice(2)); // 연도 저장
+    localStorage.setItem('lastSelectedMonth', month);        // 월 저장
     navigate(`/solutions/${year.slice(2)}/${month}`);
   };
+  
 
   const historyData = [
     { year: '2024', date: '2024-10-15', examInfo: '2024년 9월 시험' },
-    { year: '2023', date: '2023-09-25', examInfo: '2023년 8월 시험' },
+    { year: '2023', date: '2023-09-25', examInfo: '2023년 9월 시험' },
     { year: '2023', date: '2023-06-15', examInfo: '2023년 5월 시험' },
     { year: '2022', date: '2022-12-11', examInfo: '2022년 11월 시험' },
   ];
