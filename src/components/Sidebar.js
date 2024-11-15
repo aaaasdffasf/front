@@ -46,8 +46,8 @@ const Sidebar = () => {
         <li className={isActive(solutionsPath) ? 'active' : ''}>
           <Link to={solutionsPath} className="sidebar-link">문제 해설 화면</Link>
         </li>
-        <li className={isActive('/retry') ? 'active' : ''}>
-          <Link to="/retry" className="sidebar-link">문제 다시 풀기 화면</Link>
+        <li className={isActive('/retryInventory') ? 'active' : ''}>
+          <Link to="/retryInventory" className="sidebar-link">문제 다시 풀기 화면</Link>
         </li>
         <li className={isActive('/analysis') ? 'active' : ''}>
           <Link to="/analysis" className="sidebar-link">분석 or 피드백 화면</Link>

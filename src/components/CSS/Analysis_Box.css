@@ -1,0 +1,36 @@
+
+
+.analysisArea {
+  margin-top: 10px;
+  height: 600px;
+  display: flex;
+  flex-direction: row;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.recordBox {
+  flex: 1;
+  background-color: #e0e0e0;
+  border-radius: 3px 0 0 3px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 8px;
+}
+
+.recordText {
+  text-align: center;
+}
+
+.analysisBox {
+  flex: 1;
+  background-color: #d0d0d0;
+  border-radius: 3px 0 0 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+

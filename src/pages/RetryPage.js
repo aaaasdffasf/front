@@ -1,21 +1,24 @@
-// SolutionsPage.js
+// Solutions.js
 import React, { useEffect, useState } from 'react';
-import { Box, Typography } from '@mui/material';
+import { Box, Typography, Button } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
 import SolutionCard from '../components/Problem_Card';
-import ProblemBox from '../components/Problem_Box';
-import QuestionInfoBox from '../components/QuestionInfoBox';
-import { useParams } from 'react-router-dom';
+import ProblemBox from '../components/SolutionsBox';
 import { fetchQuestions } from '../api/questionsApi';
 import './SolutionsPage.css';
 
-function SolutionsPage() {
-  const { year, month } = useParams(); // URL에서 year와 month 파라미터 가져오기
+function Solutions() {
   const [questionData, setQuestionData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+
+  // 원하는 연도와 월 설정 (하드코딩 예시, 필요한 경우 변경 가능)
+  const year = '24';
+  const month = '9';
 
   useEffect(() => {
     const loadQuestions = async () => {
@@ -49,7 +52,6 @@ function SolutionsPage() {
   };
 
   const currentQuestion = questionData[currentQuestionIndex];
-  const isLastQuestion = currentQuestionIndex === questionData.length - 1;
 
   return (
     <div className="solutions-container">
@@ -60,23 +62,26 @@ function SolutionsPage() {
 
         <div className="content-area">
           <Box className="solution-card-container">
-            <SolutionCard problemNumber={currentQuestionIndex + 1} />
+            <SolutionCard />
           </Box>
 
           <Box className="solution-main-box">
-            <QuestionInfoBox
-              year={year}
-              month={month}
-              currentQuestion={currentQuestion}
-              time={0} // 학습 시간 필요 시 별도 처리
-              currentQuestionIndex={currentQuestionIndex}
-              isLastQuestion={isLastQuestion}
-              handlePreviousQuestion={handlePreviousQuestion}
-              handleNextQuestion={handleNextQuestion}
-              isSolutionPage={true} // SolutionPage임을 나타내기 위해 true로 설정
-              handleMenuClick={() => console.log("메뉴 버튼 클릭됨")} // 메뉴 클릭 핸들러
-            />
+            <Box className="small-box">
+              <Typography variant="h6" className="left-text">
+                {currentQuestion ? `${year}년 ${month}월 ${currentQuestion.number}번 문제` : '시험 정보를 불러오는 중...'}
+              </Typography>
+              <Typography variant="h6" className="center-text"></Typography>
+              <Box className="button-box">
+                <Button onClick={handlePreviousQuestion} className="nav-button" disabled={currentQuestionIndex === 0}>
+                  <ArrowBackIcon />
+                </Button>
+                <Button onClick={handleNextQuestion} className="nav-button" disabled={currentQuestionIndex === questionData.length - 1}>
+                  <ArrowForwardIcon />
+                </Button>
+              </Box>
+            </Box>
 
+            {/* ProblemBox에 불러온 문제 데이터 전달, showExplanation을 true로 설정 */}
             {loading ? (
               <Typography>Loading question data...</Typography>
             ) : error ? (
@@ -95,4 +100,4 @@ function SolutionsPage() {
   );
 }
 
-export default SolutionsPage;
+export default Solutions;

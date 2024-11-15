@@ -48,7 +48,7 @@ export const submitAnswers = async (userId, year, month, userAnswer, testTime) =
 // 시험 전체 결과를 가져오는 함수
 export const fetchTestResult = async (id, userId, yearAndMonth) => {
   try {
-    const response = await axiosInstance.get(`/test/getTest`, {
+    const response = await axiosInstance.get(`/api/auth/test/getTest`, {
       params: { id, userId, yearAndMonth },
     });
     return response.data; // 시험 전체 결과 반환
@@ -61,7 +61,7 @@ export const fetchTestResult = async (id, userId, yearAndMonth) => {
 // 틀린 문제만 가져오는 함수
 export const fetchIncorrectQuestions = async (id, userId, yearAndMonth) => {
   try {
-    const response = await axiosInstance.get(`/test/incorrectQuestions`, {
+    const response = await axiosInstance.get(`/api/auth/test/incorrectQuestions`, {
       params: { id, userId, yearAndMonth },
     });
     return response.data; // 틀린 문제 목록 반환

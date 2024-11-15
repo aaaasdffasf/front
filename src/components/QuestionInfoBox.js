@@ -1,31 +1,29 @@
+// src/components/QuestionInfoBox.js
 import React, { useState } from 'react';
-import { Box, Typography, Button, IconButton, Modal } from '@mui/material';
+import { Box, Typography, Button, IconButton } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MenuIcon from '@mui/icons-material/Menu';
-import ComparisonTable from './ComparisonTable';
+import ComparisonTable from './ComparisonTable'; // 정답 비교 표 컴포넌트 import
 import './QuestionInfoBox.css';
 
 const QuestionInfoBox = ({
   year,
   month,
   currentQuestion,
-  time, // 추가된 시간 관련 prop
+  time,
   currentQuestionIndex,
   isLastQuestion,
   handlePreviousQuestion,
   handleNextQuestion,
   isSolutionPage = false,
-  userId,
-  yearAndMonth,
-  questionData = [], // 기본값으로 빈 배열 설정
-  incorrectQuestions = [], // 기본값으로 빈 배열 설정
-  setCurrentQuestionIndex
+  handleMenuClick,
+  id, // testId 추가
 }) => {
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showComparison, setShowComparison] = useState(false);
 
-  const toggleModal = () => {
-    setIsModalOpen((prev) => !prev);
+  const toggleComparison = () => {
+    setShowComparison((prev) => !prev);
   };
 
   return (
@@ -41,7 +39,7 @@ const QuestionInfoBox = ({
       )}
 
       <Box className="button-box">
-        <IconButton onClick={toggleModal} className="nav-button">
+        <IconButton onClick={toggleComparison} className="nav-button">
           <MenuIcon />
         </IconButton>
         <Button onClick={handlePreviousQuestion} className="nav-button" disabled={currentQuestionIndex === 0}>
@@ -52,15 +50,12 @@ const QuestionInfoBox = ({
         </Button>
       </Box>
 
-      <Modal open={isModalOpen} onClose={toggleModal}>
-        <Box style={{ padding: 20, backgroundColor: 'white', margin: '50px auto', maxWidth: '600px' }}>
-          <ComparisonTable
-            questionData={questionData}
-            incorrectQuestionNumbers={incorrectQuestions.map((q) => q.number)}
-            setCurrentQuestionIndex={setCurrentQuestionIndex}
-          />
+      {/* ComparisonTable 팝업 */}
+      {showComparison && (
+        <Box className="comparison-popup">
+          <ComparisonTable id={id} yearAndMonth={`${year}${month}`} />
         </Box>
-      </Modal>
+      )}
     </Box>
   );
 };

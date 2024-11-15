@@ -1,0 +1,58 @@
+/* History_Box.css */
+
+.historyArea {
+  margin-top: 10px;
+  height: 600px;
+  display: flex;
+  flex-direction: row;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.historyBox {
+  flex: 1;
+  background-color: #e0e0e0;
+  border-radius: 3px 0 0 3px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  padding: 8px;
+}
+
+.historyText {
+  text-align: center;
+}
+
+.historyTable {
+  overflow: hidden;
+  margin-top: 8px;
+}
+
+.recentlyProblemBox {
+  flex: 1;
+  background-color: #d0d0d0;
+  border-radius: 0 3px 3px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-end;
+  position: relative;
+  padding: 8px;
+}
+
+.button-box {
+  display: flex;
+  margin-bottom: 8px;
+}
+
+.back-button {
+  margin-right: 8px;
+  background-color: #F3F6FE;
+}
+
+.forward-button {
+  background-color: #F3F6FE;
+}
+

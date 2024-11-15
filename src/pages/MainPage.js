@@ -1,6 +1,5 @@
-// src/pages/MainPage.js
-import React, { useContext, useEffect, useState } from 'react';
-import { Container, Box, Typography } from '@mui/material';
+import React, { useContext, useEffect, useRef, useState } from 'react';
+import { Container, Box, Typography, Button } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
 import DashboardMenu from '../components/DashboardMenu';
@@ -8,7 +7,8 @@ import { AuthContext } from '../context/AuthContext';
 import LoginModal from '../components/LoginModal';
 import YearSelectionTable from '../components/YearSelectionTable';
 import { useNavigate } from 'react-router-dom';
-import useQuestionStorage from '../hooks/useQuestionStorage'; // Custom hook import
+import useQuestionStorage from '../hooks/useQuestionStorage';
+import { ImageContext } from '../context/ImageContext';
 
 function MainPage() {
   const navigate = useNavigate();
@@ -16,13 +16,50 @@ function MainPage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState('2024');
-  
-  const { clearStorageData } = useQuestionStorage(); // Using the custom hook for storage clearing
 
-  // handleExamClick function definition to reset progress and navigate
+  const { setImageUrl } = useContext(ImageContext); // ImageContext에서 setImageUrl을 사용
+  const [imageFile, setImageFile] = React.useState(null);
+
+  // fileInputRef 정의
+  const fileInputRef = useRef(null);
+
+  // 파일 선택 핸들러
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setImageFile(file);
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result); // 이미지 URL을 ImageContext에 저장
+        navigate('/analysis'); // 파일이 선택되면 자동으로 Analysis 화면으로 이동
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // 분석 페이지로 이동
+  const handleUploadAndAnalyze = () => {
+    if (!imageFile) {
+      alert('파일을 선택해주세요.');
+      return;
+    }
+
+    navigate('/analysis'); // 분석 페이지로 이동
+  };
+
+  const { clearStorageData } = useQuestionStorage();
+
+  useEffect(() => {
+    if (isAuthenticated !== null) {
+      setLoading(false);
+      setIsModalOpen(!isAuthenticated);
+    }
+  }, [isAuthenticated]);
+
   const handleExamClick = (year, month) => {
-    clearStorageData(); // Clear storage data when a new exam is started
-    navigate(`/questions/${year.slice(2)}/${month}`); // Navigate to the questions page with year and month
+    clearStorageData();
+    navigate(`/questions/${year.slice(2)}/${month}`);
   };
 
   const historyData = [
@@ -31,16 +68,13 @@ function MainPage() {
     { year: '2023', date: '2023-06-15', examInfo: '2023년 5월 시험' },
     { year: '2022', date: '2022-12-11', examInfo: '2022년 11월 시험' },
   ];
-
   const years = [...new Set(historyData.map((item) => item.year))];
   const filteredData = historyData.filter((record) => record.year === selectedYear);
 
-  useEffect(() => {
-    if (isAuthenticated !== null) {
-      setLoading(false);
-      setIsModalOpen(!isAuthenticated);
-    }
-  }, [isAuthenticated]);
+  const handleButtonClick = () => {
+    // fileInputRef.current.click()을 통해 파일 선택
+    fileInputRef.current.click();
+  };
 
   const handleModalClose = () => {
     setIsModalOpen(false);
@@ -81,16 +115,28 @@ function MainPage() {
             )}
           </Box>
 
-          {/* Show YearSelectionTable only if authenticated */}
           {isAuthenticated && (
             <YearSelectionTable
               years={years}
               selectedYear={selectedYear}
               setSelectedYear={setSelectedYear}
               filteredData={filteredData}
-              onExamClick={handleExamClick} // Passing handleExamClick to YearSelectionTable
+              onExamClick={handleExamClick}
             />
           )}
+          <div>
+            {/* File upload button */}
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              ref={fileInputRef}  // fileInputRef를 연결
+              style={{ display: 'none' }}
+            />
+            <Button onClick={handleButtonClick} variant="contained">
+              Choose Photo
+            </Button>
+          </div>
         </Container>
         {isAuthenticated === false && (
           <LoginModal isOpen={isModalOpen} onClose={handleModalClose} />

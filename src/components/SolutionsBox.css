@@ -1,0 +1,86 @@
+/* Problem_Area.css */
+
+.problemArea {
+  margin-top: 60px; /* 작은 박스 아래로 밀어내기 위해 여백 추가 */
+  /* height: 800px; 남은 공간을 모두 차지하도록 높이 계산 */
+  display: flex; /* 내부 콘텐츠 정렬을 위한 flex 설정 */
+  flex-direction: row; /* 두 개의 박스를 가로로 배치 */
+  border-radius: 3px; /* 둥근 모서리 */
+}
+
+.problemBox {
+  flex: 1; /* 남은 공간을 모두 차지하도록 설정 */
+  background-color: #e0e0e0; /* 첫 번째 박스의 배경색 */
+  border-radius: 3px 0 0 3px; /* 둥근 모서리 */
+  display: flex;
+  flex-direction: column; /* 세로 방향으로 배치 */
+  justify-content: space-between; /* 상하 여백을 균등하게 */
+  position: relative; /* 상대 위치 설정 */
+  padding: 8px; /* 패딩 추가 */
+}
+
+.problemText {
+  text-align: center;
+}
+
+.answer-box {
+  display: flex;
+  justify-content: flex-end; /* 오른쪽 정렬 */
+}
+
+.answerInput {
+  width: 150px; /* 너비 조정 */
+}
+
+.explanationBox {
+  flex: 1; /* 남은 공간을 모두 차지하도록 설정 */
+  background-color: #d0d0d0; /* 두 번째 박스의 배경색 */
+  border-radius: 0 3px 3px 0; /* 둥근 모서리 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: pre-line;
+}
+
+.problemArea {
+  margin-top: 60px;
+  display: flex;
+  flex-direction: row;
+  border-radius: 3px;
+}
+
+.problemBox {
+  flex: 1;
+  background-color: #e0e0e0;
+  border-radius: 3px 0 0 3px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  position: relative;
+  padding: 8px;
+}
+
+.answer-input {
+  width: 150px;
+}
+
+.complete-button {
+  margin-left: 8px; /* 입력 필드와 버튼 간 여백 */
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  border-radius: 12px;
+  background-color: #1976d2;
+  color: white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.complete-button:hover {
+  background-color: #1565c0;
+  transform: scale(1.05);
+}
+
+.complete-button:active {
+  background-color: #0d47a1;
+  transform: scale(0.95);
+}
