@@ -16,8 +16,6 @@ const QuestionInfoBox = ({
   handlePreviousQuestion,
   handleNextQuestion,
   isSolutionPage = false,
-  userId,
-  yearAndMonth,
   questionData = [],
   incorrectQuestions = [],
   setCurrentQuestionIndex
