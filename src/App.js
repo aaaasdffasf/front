@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import MainPage from './pages/MainPage';
 import { AuthProvider } from './context/AuthContext';
+import { ImageProvider } from './context/ImageContext'; // ImageProvider import 추가
 import theme from './theme';
 import QuestionsPage from './pages/QuestionsPage';
 import PrivateRoute from './components/PrivateRoute';
@@ -22,28 +23,30 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <AuthProvider>
-        <Router>
-          <Routes>
-            <Route path="/" element={<MainPage />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/login" element={<Login />} />
+        <ImageProvider> {/* ImageProvider import 및 사용 */}
+          <Router>
+            <Routes>
+              <Route path="/" element={<MainPage />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/login" element={<Login />} />
 
-            <Route element={<PrivateRoute />}>
-              <Route path="/questions/:year/:month" element={<QuestionsPage />} />
-              <Route path="/alerts" element={<AlertsPage />} />
-              <Route path="/analysis" element={<AnalysisPage />} />
-              <Route path="/history" element={<HistoryPage />} />
+              <Route element={<PrivateRoute />}>
+                <Route path="/questions/:year/:month" element={<QuestionsPage />} />
+                <Route path="/alerts" element={<AlertsPage />} />
+                <Route path="/analysis" element={<AnalysisPage />} />
+                <Route path="/history" element={<HistoryPage />} />
 
-              {/* 일반 문제 풀이 */}
-              <Route path="/solutions/:year/:month/:number" element={<SolutionsPage />} />
+                {/* 일반 문제 풀이 */}
+                <Route path="/solutions/:year/:month/:number" element={<SolutionsPage />} />
 
-              {/* 오답 문제 풀이 */}
-              <Route path="/solutions/:year/:month/:number/mistake" element={<SolutionsPage />} />
-              
-              <Route path="/mistake/:year/:month" element={<MistakeNotePage />} />
-            </Route>
-          </Routes>
-        </Router>
+                {/* 오답 문제 풀이 */}
+                <Route path="/solutions/:year/:month/:number/mistake" element={<SolutionsPage />} />
+                
+                <Route path="/mistake/:year/:month" element={<MistakeNotePage />} />
+              </Route>
+            </Routes>
+          </Router>
+        </ImageProvider>
       </AuthProvider>
     </ThemeProvider>
   );

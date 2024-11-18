@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { Container, Box, Typography, ButtonGroup, Button } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
@@ -8,14 +8,18 @@ import LoginModal from '../components/LoginModal';
 import YearSelectionTable from '../components/YearSelectionTable';
 import { useNavigate } from 'react-router-dom';
 import useQuestionStorage from '../hooks/useQuestionStorage';
+import { ImageContext } from '../context/ImageContext';
 
 function MainPage() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useContext(AuthContext);
+  const { setImageUrl } = useContext(ImageContext); // ImageContext에서 setImageUrl을 사용
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState('2024');
-  const [selectedCategory, setSelectedCategory] = useState('문제풀이'); // 카테고리 상태 추가
+  const [selectedCategory, setSelectedCategory] = useState('문제풀이');
+  const [imageFile, setImageFile] = useState(null);
+  const fileInputRef = useRef(null);
 
   const { clearStorageData } = useQuestionStorage();
 
@@ -25,14 +29,54 @@ function MainPage() {
     localStorage.setItem('lastSelectedMonth', month);        // 월 저장
     navigate(`/questions/${year.slice(2)}/${month}`);
   };
-  
+
   const handleSolutionClick = (year, month) => {
     clearStorageData();
     localStorage.setItem('lastSelectedYear', year.slice(2)); // 연도 저장
     localStorage.setItem('lastSelectedMonth', month);        // 월 저장
     navigate(`/solutions/${year.slice(2)}/${month}`);
   };
-  
+
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setImageFile(file);
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result); // 이미지 URL을 ImageContext에 저장
+        navigate('/analysis'); // 파일이 선택되면 자동으로 Analysis 화면으로 이동
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleUploadAndAnalyze = () => {
+    if (!imageFile) {
+      alert('파일을 선택해주세요.');
+      return;
+    }
+    navigate('/analysis');
+  };
+
+  const handleButtonClick = () => {
+    fileInputRef.current.click();
+  };
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
+  };
+
+  const handleModalClose = () => {
+    setIsModalOpen(false);
+  };
+
+  useEffect(() => {
+    if (isAuthenticated !== null) {
+      setLoading(false);
+      setIsModalOpen(!isAuthenticated);
+    }
+  }, [isAuthenticated]);
 
   const historyData = [
     { year: '2024', date: '2024-10-15', examInfo: '2024년 9월 시험' },
@@ -43,21 +87,6 @@ function MainPage() {
 
   const years = [...new Set(historyData.map((item) => item.year))];
   const filteredData = historyData.filter((record) => record.year === selectedYear);
-
-  useEffect(() => {
-    if (isAuthenticated !== null) {
-      setLoading(false);
-      setIsModalOpen(!isAuthenticated);
-    }
-  }, [isAuthenticated]);
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
-
-  const handleCategoryChange = (category) => {
-    setSelectedCategory(category);
-  };
 
   if (loading) {
     return <div>로딩 중...</div>;
@@ -94,7 +123,7 @@ function MainPage() {
             )}
           </Box>
 
-          {/* 카테고리 버튼 그룹 추가 */}
+          {/* 카테고리 버튼 그룹 */}
           {isAuthenticated && (
             <Box textAlign="center" mt={2} mb={4}>
               <ButtonGroup>
@@ -124,7 +153,23 @@ function MainPage() {
               onExamClick={selectedCategory === '문제풀이' ? handleExamClick : handleSolutionClick}
             />
           )}
+
+          {/* File upload button */}
+          <Box textAlign="center" mt={4}>
+            <input
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+            />
+            <Button onClick={handleButtonClick} variant="contained">
+              사진 선택
+            </Button>
+          </Box>
         </Container>
+
+        {/* 로그인 모달 */}
         {isAuthenticated === false && (
           <LoginModal isOpen={isModalOpen} onClose={handleModalClose} />
         )}
