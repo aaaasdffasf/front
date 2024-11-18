@@ -15,7 +15,8 @@ export const analyzeImage = async (imageFile) => {
     const response = await axiosInstance.post('/GPT/image', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'Authorization': 'Bearer ${process.env.CHATGPT_API_KEY}'
+        'Authorization': `Bearer ${process.env.CHATGPT_API_KEY}`
+
       },
     });
 
@@ -40,7 +41,8 @@ export const similarProblem = async (imageFile) => {
     const response = await axiosInstance.post('/GPT/image', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'Authorization': 'Bearer ${process.env.CHATGPT_API_KEY}'
+        'Authorization': `Bearer ${process.env.CHATGPT_API_KEY}`
+
       },
     });
 
@@ -65,7 +67,8 @@ export const similarProblemAnswer = async (_requestText) => {
     const response = await axiosInstance.post('/GPT/text', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'Authorization': 'Bearer ${process.env.CHATGPT_API_KEY}'
+        'Authorization': `Bearer ${process.env.CHATGPT_API_KEY}`
+
       },
     });
 
@@ -86,7 +89,8 @@ export const similarProblem_text = async (_requestText) => {
     const response = await axiosInstance.post('/GPT/text', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        'Authorization': 'Bearer ${process.env.CHATGPT_API_KEY}'
+        'Authorization': `Bearer ${process.env.CHATGPT_API_KEY}`
+
       },
     });
 

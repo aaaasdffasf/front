@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from 'react';
+import React, { useState, useContext, useEffect, useCallback } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
@@ -6,21 +6,21 @@ import { ImageContext } from '../context/ImageContext';
 import { analyzeImage, similarProblem, similarProblem_text, similarProblemAnswer } from '../api/chatGPTApi';
 
 function Analysis() {
-  const { imageUrl, setImageUrl } = useContext(ImageContext); // ImageContext에서 이미지 URL 가져오기 및 업데이트
+  const { imageUrl, setImageUrl } = useContext(ImageContext);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isMerged, setIsMerged] = useState(false);
-  const [similarProblemText, setSimilarProblemText] = useState(null); // 비슷한 문제 텍스트 상태 추가
-  const [similarProblemAnswerText, setSimilarProblemAnswerText] = useState(null); // 해설 및 정답 상태 추가
+  const [similarProblemText, setSimilarProblemText] = useState(null);
+  const [similarProblemAnswerText, setSimilarProblemAnswerText] = useState(null);
 
   // 이미지 분석 요청
-  const handleAnalyze = async () => {
+  const handleAnalyze = useCallback(async () => {
     setLoading(true);
     try {
       const imageFile = imageUrl ? await fetch(imageUrl).then(res => res.blob()) : null;
       if (imageFile) {
         const result = await analyzeImage(imageFile);
-        setAnalysisResult(result); // 분석 결과를 저장
+        setAnalysisResult(result);
       } else {
         throw new Error('이미지가 없습니다.');
       }
@@ -30,40 +30,39 @@ function Analysis() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [imageUrl]); // imageUrl이 변경될 때만 함수를 다시 생성
 
   // 비슷한 유형 문제 생성
-  const handleSimilarProblem = async () => {
+  const handleSimilarProblem = useCallback(async () => {
     setLoading(true);
     try {
-      if (imageUrl) { // 이미지가 있을 경우 similarProblem 호출
+      if (imageUrl) {
         const imageFile = await fetch(imageUrl).then(res => res.blob());
         const result = await similarProblem(imageFile);
-        setSimilarProblemText(result); // 비슷한 문제 텍스트 저장
-      } else if (similarProblemText) { // 텍스트가 있을 경우 similarProblem_text 호출
+        setSimilarProblemText(result);
+      } else if (similarProblemText) {
         const result = await similarProblem_text(similarProblemText);
-        setSimilarProblemText(result); // 새로운 비슷한 문제 텍스트 저장
+        setSimilarProblemText(result);
       } else {
         alert('이미지 또는 텍스트가 필요합니다.');
       }
   
-      setImageUrl(null); // 기존 이미지 제거
-      setAnalysisResult(null); // 기존 분석 결과 초기화
+      setImageUrl(null);
+      setAnalysisResult(null);
     } catch (error) {
       console.error('비슷한 유형 문제 요청 실패:', error);
       alert('비슷한 유형 문제를 가져오는 데 실패했습니다.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [imageUrl, similarProblemText, setImageUrl]);
 
   // 해설 및 정답을 받아오는 함수
-  const handleSimilarProblemAnswer = async () => {
+  const handleSimilarProblemAnswer = useCallback(async () => {
     setLoading(true);
     try {
-      const answerResult = await similarProblemAnswer(similarProblemText); // 비슷한 유형 문제 해설 요청
-      setSimilarProblemAnswerText(answerResult); // 해설 및 정답 텍스트 저장
-      //setSimilarProblemText(null); // 비슷한 문제 텍스트 초기화
+      const answerResult = await similarProblemAnswer(similarProblemText);
+      setSimilarProblemAnswerText(answerResult);
       console.log(answerResult);
     } catch (error) {
       console.error('해설 및 정답 요청 실패:', error);
@@ -71,23 +70,22 @@ function Analysis() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [similarProblemText]);
 
   // 이미지 URL이 변경될 때마다 handleAnalyze 호출
   useEffect(() => {
     if (imageUrl) {
-      handleAnalyze(); // 처음 로드될 때 이미지 분석을 요청
+      handleAnalyze();
     }
-  }, [imageUrl]);
+  }, [imageUrl, handleAnalyze]);
 
-  // handleToggleAndAction 함수: 버튼 클릭에 맞는 함수 호출
   const handleToggleAndAction = () => {
-    setIsMerged(!isMerged); // 상태 변경 (화면에서 보여줄 것인지 아닌지)
+    setIsMerged(!isMerged);
 
     if (isMerged) {
-      handleSimilarProblemAnswer(); // "해설 보기" 클릭 시 해설 불러오기
+      handleSimilarProblemAnswer();
     } else {
-      handleSimilarProblem(); // "비슷한 유형 문제 풀기" 클릭 시 문제 불러오기
+      handleSimilarProblem();
     }
   };
 
@@ -175,15 +173,11 @@ function Analysis() {
                       <Typography>Loading...</Typography>
                     ) : analysisResult ? (
                       <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', textOverflow: 'ellipsis' }}>
-                        {JSON.stringify(analysisResult, null, 2)} {/* 분석 결과 표시 */}
+                        {JSON.stringify(analysisResult, null, 2)}
                       </pre>
-                    // ) : similarProblemText ? (
-                    //   <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', textOverflow: 'ellipsis' }}>
-                    //     {similarProblemText} {/* 비슷한 문제 텍스트 표시 */}
-                    //   </pre>
                     ) : similarProblemAnswerText ? (
                       <pre style={{ whiteSpace: 'pre-wrap', wordBreak: 'break-word', textOverflow: 'ellipsis' }}>
-                        {similarProblemAnswerText} {/* 해설 및 정답 표시 */}
+                        {similarProblemAnswerText}
                       </pre>
                     ) : (
                       <Typography>해설을 불러오는 중입니다.</Typography>

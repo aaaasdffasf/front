@@ -51,14 +51,6 @@ function MainPage() {
     }
   };
 
-  const handleUploadAndAnalyze = () => {
-    if (!imageFile) {
-      alert('파일을 선택해주세요.');
-      return;
-    }
-    navigate('/analysis');
-  };
-
   const handleButtonClick = () => {
     fileInputRef.current.click();
   };
@@ -70,6 +62,13 @@ function MainPage() {
   const handleModalClose = () => {
     setIsModalOpen(false);
   };
+
+  // eslint-disable-next-line no-unused-vars
+const handleUpload = () => {
+  if (imageFile) {
+      console.log("Uploading file:", imageFile);
+  }
+};
 
   useEffect(() => {
     if (isAuthenticated !== null) {
