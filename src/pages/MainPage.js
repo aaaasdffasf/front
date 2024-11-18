@@ -72,9 +72,7 @@ function MainPage() {
       <Sidebar />
       <div style={{ flex: 1 }}>
         <TopNav />
-        
-        <Container maxWidth="md" sx={{ mt: 4, ml: 2 }}>
-          <Box textAlign="center" mt={4}>
+          <Box textAlign="center" >
             {isAuthenticated ? (
               <>
                 <div className="content-area">
@@ -243,10 +241,6 @@ function MainPage() {
               </>
             )}
           </Box>
-          
-
-          
-        </Container>
         
         {isAuthenticated === false && (
           <LoginModal isOpen={isModalOpen} onClose={handleModalClose} />
