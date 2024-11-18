@@ -45,6 +45,19 @@ export const submitAnswers = async (userId, year, month, userAnswer, testTime) =
   }
 };
 
+// 특정 사용자와 연/월에 따른 모든 시험 기록 가져오기
+export const fetchAllTests = async (userId, yearAndMonth) => {
+  try {
+    const response = await axiosInstance.get('/test/getAllTest', {
+      params: { userId, yearAndMonth },
+    });
+    return response.data; // 모든 시험 기록 반환
+  } catch (error) {
+    handleApiError(error, "fetching all tests");
+    throw error;
+  }
+};
+
 // 특정 시험 결과 가져오기 함수
 export const fetchTestResult = async (id, userId, yearAndMonth) => {
   try {

@@ -1,13 +1,98 @@
-//학습 기록
-
-import React from 'react';
-import { Box, Typography, Button } from '@mui/material';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'; // 왼쪽 화살표 아이콘
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'; // 오른쪽 화살표 아이콘
-import Sidebar from '../components/Sidebar'; // Sidebar 컴포넌트 임포트
+import React, { useEffect, useState, useContext } from 'react';
+import { Box, Typography, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
+import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
+import { fetchAllTests } from '../api/questionsApi';
+import { AuthContext } from '../context/AuthContext';
 
-function Analysis() {
+function HistoryPage() {
+  const { user } = useContext(AuthContext); // 현재 로그인된 사용자 정보
+  const [tests, setTests] = useState([]); // 모든 시험 기록 저장
+  const [loading, setLoading] = useState(true); // 로딩 상태 관리
+  const [error, setError] = useState(null); // 에러 상태 관리
+  const [currentPage, setCurrentPage] = useState(1); // 현재 페이지
+  const [selectedTest, setSelectedTest] = useState(null); // 선택된 시험 데이터
+  const [isDialogOpen, setIsDialogOpen] = useState(false); // 다이얼로그 열림 상태
+  const itemsPerPage = 10; // 페이지당 항목 수
+
+  // yearAndMonth를 사람이 읽을 수 있는 형식으로 변환
+  const formatYearAndMonth = (value) => {
+    const [year, month] = value.split('-');
+    return `${2000 + parseInt(year)}년 ${month}월 모의고사`;
+  };
+
+  // testDay를 사람이 읽기 쉬운 날짜로 변환
+  const formatDate = (dateTime) => {
+    const date = new Date(dateTime);
+    return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+  };
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+
+        // 두 개의 yearAndMonth 데이터를 각각 요청
+        const data24 = await fetchAllTests(user?.userId, '24-9');
+        const data23 = await fetchAllTests(user?.userId, '23-9');
+
+        // 데이터를 병합하고 최신순으로 정렬
+        const combinedData = [...data24, ...data23].sort(
+          (a, b) => new Date(b.testDay) - new Date(a.testDay)
+        );
+
+        console.log("Fetched Tests:", combinedData); // 콘솔에 데이터 출력
+        setTests(combinedData); // 정렬된 데이터 저장
+        setLoading(false);
+      } catch (err) {
+        console.error("Error fetching tests:", err); // 콘솔에 에러 출력
+        setError('학습 기록을 불러오는 데 실패했습니다.');
+        setLoading(false);
+      }
+    };
+
+    if (user?.userId) {
+      fetchData();
+    }
+  }, [user?.userId]);
+
+  if (loading) {
+    return (
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+        <CircularProgress />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <Typography color="error" variant="h6" textAlign="center">
+        {error}
+      </Typography>
+    );
+  }
+
+  // 페이지네이션 데이터 계산
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = tests.slice(indexOfFirstItem, indexOfLastItem);
+
+  const totalPages = Math.ceil(tests.length / itemsPerPage);
+
+  // 상세 보기 다이얼로그 열기
+  const handleOpenDialog = (test) => {
+    setSelectedTest(test);
+    setIsDialogOpen(true);
+  };
+
+  // 상세 보기 다이얼로그 닫기
+  const handleCloseDialog = () => {
+    setSelectedTest(null);
+    setIsDialogOpen(false);
+  };
+
   return (
     <div style={{ display: 'flex' }}>
       {/* 사이드바 */}
@@ -21,79 +106,112 @@ function Analysis() {
           {/* 컨텐츠 영역 */}
           <Box
             sx={{
-              height: '50vh', // 높이를 화면의 50vh로 설정
-              flex: 1, // 남은 공간을 모두 차지하도록 설정
-              backgroundColor: 'white', // 내용의 가독성을 위해 흰색 배경 설정
+              flex: 1,
+              backgroundColor: 'white',
               borderRadius: 3,
               textAlign: 'center',
-              p: 1, // 패딩을 줄여 여백을 줄임
-              mx: 2, // 좌우 여백 추가
-              my: 2, // 상하 여백 추가
-              position: 'relative', // 작은 박스를 위한 상대 위치 설정
+              p: 2,
+              mx: 2,
+              my: 2,
             }}
           >
-            {/* 시험 문제 영역을 두 개의 박스로 나누기 */}
-            <Box
-              sx={{
-                marginTop: '10px', // 작은 박스 아래로 밀어내기 위해 여백 추가
-                height: '600px', // 남은 공간을 모두 차지하도록 높이 계산
-                display: 'flex', // 내부 콘텐츠 정렬을 위한 flex 설정
-                flexDirection: 'row', // 두 개의 박스를 가로로 배치
-                borderRadius: 3, // 둥근 모서리
-                overflow: 'hidden', // 내용이 넘치는 것을 방지
-              }}
-            >
-              {/* 첫 번째 박스 */}
-              <Box
-                sx={{
-                  flex: 1, // 남은 공간을 모두 차지하도록 설정
-                  backgroundColor: '#e0e0e0', // 첫 번째 박스의 배경색
-                  borderRadius: '3px 0 0 3px', // 둥근 모서리
-                  display: 'flex',
-                  flexDirection: 'column', // 세로 방향으로 배치
-                  justifyContent: 'center', // 수직 중앙 정렬
-                  alignItems: 'center', // 수평 중앙 정렬
-                  position: 'relative', // 상대 위치 설정
-                  p: 1, // 패딩 추가
-                }}
-              >
-                <Typography variant="body1" sx={{ textAlign: 'center' }}>학습 기록</Typography>
-              </Box>
+            <Typography variant="h5" sx={{ mb: 2 }}>
+              학습 기록
+            </Typography>
 
-              {/* 두 번째 박스 */}
-              <Box
-                sx={{
-                  flex: 1, // 남은 공간을 모두 차지하도록 설정
-                  backgroundColor: '#d0d0d0', // 두 번째 박스의 배경색
-                  borderRadius: '0 3px 3px 0', // 둥근 모서리
-                  display: 'flex',
-                  flexDirection: 'column', // 세로 방향으로 배치
-                  justifyContent: 'flex-start', // 상단 정렬
-                  alignItems: 'flex-end', // 오른쪽 정렬
-                  position: 'relative', // 상대 위치 설정
-                  p: 1, // 패딩 추가
-                }}
-              >
-                {/* 버튼 영역 */}
-                <Box sx={{ display: 'flex', mb: 1 }}> {/* mb: 1 to add margin at the bottom */}
-                  <Button sx={{ mr: 1, backgroundColor: '#F3F6FE' }}>
-                    <ArrowBackIcon /> {/* 왼쪽 아이콘 */}
-                  </Button>
-                  <Button sx={{ backgroundColor: '#F3F6FE' }}>
-                    <ArrowForwardIcon /> {/* 오른쪽 아이콘 */}
-                  </Button>
-                </Box>
-                {/* 문구 영역 */}
-                <Box sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                  <Typography variant="body1">최근 푼 문제</Typography>
-                </Box>
-              </Box>
-            </Box>
+            {/* 학습 기록 테이블 */}
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead>
+                  <TableRow>
+                    <TableCell>시험 날짜</TableCell>
+                    <TableCell>시험 이름</TableCell>
+                    <TableCell>테스트 시간</TableCell>
+                    <TableCell>점수</TableCell>
+                    <TableCell>상세 보기</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {currentItems.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={5} align="center">
+                        학습 기록이 없습니다.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    currentItems.map((test, index) => (
+                      <TableRow key={index}>
+                        <TableCell>{formatDate(test.testDay)}</TableCell>
+                        <TableCell>{formatYearAndMonth(test.yearAndMonth)}</TableCell>
+                        <TableCell>{`${test.testTime}분`}</TableCell>
+                        <TableCell>{test.score}</TableCell>
+                        <TableCell>
+                          <Button variant="contained" size="small" onClick={() => handleOpenDialog(test)}>
+                            상세 보기
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Box>
+
+          {/* 페이지 이동 버튼 */}
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              px: 2,
+              py: 1,
+              backgroundColor: '#f0f0f0',
+            }}
+          >
+            <Button
+              startIcon={<ArrowBackIcon />}
+              variant="outlined"
+              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              disabled={currentPage === 1}
+            >
+              이전 페이지
+            </Button>
+            <Typography>{`${currentPage} / ${totalPages}`}</Typography>
+            <Button
+              endIcon={<ArrowForwardIcon />}
+              variant="outlined"
+              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              disabled={currentPage === totalPages}
+            >
+              다음 페이지
+            </Button>
           </Box>
         </div>
       </div>
+
+      {/* 상세 보기 다이얼로그 */}
+      <Dialog open={isDialogOpen} onClose={handleCloseDialog}>
+        <DialogTitle>시험 상세 정보</DialogTitle>
+        <DialogContent>
+          {selectedTest && (
+            <>
+              <Typography>시험 날짜: {formatDate(selectedTest.testDay)}</Typography>
+              <Typography>시험 이름: {formatYearAndMonth(selectedTest.yearAndMonth)}</Typography>
+              <Typography>테스트 시간: {`${selectedTest.testTime}분`}</Typography>
+              <Typography>점수: {selectedTest.score}</Typography>
+              <Typography>사용자 답안: {selectedTest.userAnswer}</Typography>
+            </>
+          )}
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDialog} color="primary">
+            닫기
+          </Button>
+        </DialogActions>
+      </Dialog>
     </div>
   );
 }
 
-export default Analysis;
+export default HistoryPage;
