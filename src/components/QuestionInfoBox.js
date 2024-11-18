@@ -17,8 +17,10 @@ const QuestionInfoBox = ({
   handlePreviousQuestion,
   handleNextQuestion,
   isSolutionPage = false,
-  handleMenuClick,
-  id, // testId 추가
+  questionData = [],
+  incorrectQuestions = [],
+  setCurrentQuestionIndex
+
 }) => {
   const [showComparison, setShowComparison] = useState(false);
 
@@ -26,11 +28,30 @@ const QuestionInfoBox = ({
     setShowComparison((prev) => !prev);
   };
 
+  // 현재 문제 번호가 틀린 문제 목록에 있는지 확인
+  const isIncorrect = incorrectQuestions.some(q => q.number === currentQuestion?.number);
+
   return (
     <Box className="question-info-box">
       <Typography variant="h6" className="left-text">
-        {currentQuestion ? `${year}년 ${month}월 ${currentQuestion.number}번 문제` : '시험 정보를 불러오는 중...'}
+        {currentQuestion ? (
+          <>
+            {year}년 {month}월 {currentQuestion.number}번 문제
+          </>
+        ) : (
+          '시험 정보를 불러오는 중...'
+        )}
       </Typography>
+
+      {/* 정답/오답 텍스트 표시 (isSolutionPage가 true일 때만 표시) */}
+      {isSolutionPage && (
+        <Typography
+          className={`result-text ${isIncorrect ? 'incorrect' : 'correct'}`}
+          variant="h3"
+        >
+          {isIncorrect ? '오답입니다.' : '정답입니다.'}
+        </Typography>
+      )}
 
       {!isSolutionPage && (
         <Typography variant="h6" className="center-text">

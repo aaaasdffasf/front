@@ -1,5 +1,5 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Container, Box, Typography, Button } from '@mui/material';
+import React, { useContext, useEffect, useState } from 'react';
+import { Container, Box, Typography, ButtonGroup, Button } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
 import DashboardMenu from '../components/DashboardMenu';
@@ -10,16 +10,16 @@ import { useNavigate } from 'react-router-dom';
 import useQuestionStorage from '../hooks/useQuestionStorage';
 import { ImageContext } from '../context/ImageContext';
 
+
+
 function MainPage() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState('2024');
-
   const { setImageUrl } = useContext(ImageContext); // ImageContext에서 setImageUrl을 사용
   const [imageFile, setImageFile] = React.useState(null);
-
   // fileInputRef 정의
   const fileInputRef = useRef(null);
 
@@ -59,12 +59,28 @@ function MainPage() {
 
   const handleExamClick = (year, month) => {
     clearStorageData();
+  const [selectedCategory, setSelectedCategory] = useState('문제풀이'); // 카테고리 상태 추가
+
+  const { clearStorageData } = useQuestionStorage();
+
+  const handleExamClick = (year, month) => {
+    clearStorageData();
+    localStorage.setItem('lastSelectedYear', year.slice(2)); // 연도 저장
+    localStorage.setItem('lastSelectedMonth', month);        // 월 저장
     navigate(`/questions/${year.slice(2)}/${month}`);
   };
+  
+  const handleSolutionClick = (year, month) => {
+    clearStorageData();
+    localStorage.setItem('lastSelectedYear', year.slice(2)); // 연도 저장
+    localStorage.setItem('lastSelectedMonth', month);        // 월 저장
+    navigate(`/solutions/${year.slice(2)}/${month}`);
+  };
+  
 
   const historyData = [
     { year: '2024', date: '2024-10-15', examInfo: '2024년 9월 시험' },
-    { year: '2023', date: '2023-09-25', examInfo: '2023년 8월 시험' },
+    { year: '2023', date: '2023-09-25', examInfo: '2023년 9월 시험' },
     { year: '2023', date: '2023-06-15', examInfo: '2023년 5월 시험' },
     { year: '2022', date: '2022-12-11', examInfo: '2022년 11월 시험' },
   ];
@@ -78,6 +94,10 @@ function MainPage() {
 
   const handleModalClose = () => {
     setIsModalOpen(false);
+  };
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
   };
 
   if (loading) {
@@ -114,14 +134,13 @@ function MainPage() {
               </>
             )}
           </Box>
-
           {isAuthenticated && (
             <YearSelectionTable
               years={years}
               selectedYear={selectedYear}
               setSelectedYear={setSelectedYear}
               filteredData={filteredData}
-              onExamClick={handleExamClick}
+              onExamClick={selectedCategory === '문제풀이' ? handleExamClick : handleSolutionClick}
             />
           )}
           <div>

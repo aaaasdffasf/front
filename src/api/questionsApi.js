@@ -45,7 +45,7 @@ export const submitAnswers = async (userId, year, month, userAnswer, testTime) =
   }
 };
 
-// 시험 전체 결과를 가져오는 함수
+// 특정 시험 결과 가져오기 함수
 export const fetchTestResult = async (id, userId, yearAndMonth) => {
   try {
     const response = await axiosInstance.get(`/api/auth/test/getTest`, {
@@ -55,6 +55,19 @@ export const fetchTestResult = async (id, userId, yearAndMonth) => {
   } catch (error) {
     handleApiError(error, "fetching test result");
     throw error;
+  }
+};
+
+// 특정 사용자와 연/월에 대한 최신 시험 결과 가져오기 함수
+export const fetchRecentTest = async (userId, yearAndMonth) => {
+  try {
+    const response = await axiosInstance.get('/test/getRecentTest', {
+      params: {userId, yearAndMonth},
+    });
+    return response.data; // 성공 시 시험지 데이터를 반환
+  } catch (error) {
+    handleApiError(error, "fetching recent test");
+    throw error; // 오류 발생 시 오류를 다시 던짐
   }
 };
 

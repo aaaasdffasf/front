@@ -72,7 +72,7 @@ function QuestionsPage() {
   };
 
   const handleComplete = async () => {
-    const answerArray = questionData.map((_, index) => answers[index] || '');
+    const answerArray = questionData.map((_, index) => answers[index] || 'X');
 
     try {
       const response = await submitAnswers(userId, year, month, answerArray, elapsedTime);
