@@ -1,26 +1,25 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { Container, Box, Typography, List, ListItem, ListItemText } from '@mui/material';
+import { Container, Box, Typography, List, ListItem, ListItemText, Collapse } from '@mui/material';
+import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
 import { AuthContext } from '../context/AuthContext';
 import { fetchRecentTest, fetchIncorrectQuestions } from '../api/questionsApi';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './MistakeNotePage.css';
 
 function MistakeNotePage() {
-  const { user } = useContext(AuthContext); // 사용자 인증 정보
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
-  const { year, month } = useParams(); // URL에서 연도와 월을 가져옵니다.
-  const [incorrectQuestions, setIncorrectQuestions] = useState([]); // 틀린 문제 데이터를 저장할 상태
-  const [loading, setLoading] = useState(true); // 로딩 상태
-  const [error, setError] = useState(null); // 에러 상태
-  const [testId, setTestId] = useState(null); // 최신 시험 ID
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [expandedCategory, setExpandedCategory] = useState(null);
 
-  const userId = user?.userId; // 사용자 ID
-  const yearAndMonth = `${year}-${month}`; // 연도와 월 조합
+  const userId = user?.userId;
 
   useEffect(() => {
-    const loadTestIdAndIncorrectQuestions = async () => {
+    const loadCategories = async () => {
       try {
         if (!userId) {
           setError('사용자 정보가 없습니다. 로그인 후 다시 시도해주세요.');
@@ -29,34 +28,55 @@ function MistakeNotePage() {
 
         setLoading(true);
 
-        // 최신 시험 결과에서 testId 가져오기
-        const testResultData = await fetchRecentTest(userId, yearAndMonth);
-        const fetchedTestId = testResultData?.id;
+        // 가져올 연도와 월 리스트
+        const yearMonthPairs = [
+          { year: 24, month: 9 },
+          { year: 23, month: 9 },
+        ];
 
-        if (!fetchedTestId) {
-          setError('최신 시험 ID를 가져올 수 없습니다.');
-          return;
-        }
+        const categoryPromises = yearMonthPairs.map(async ({ year, month }) => {
+          const yearAndMonth = `${year}-${month}`;
+          console.log(`Fetching data for ${yearAndMonth}`);
 
-        setTestId(fetchedTestId);
+          // 최신 시험 ID 가져오기
+          const testResultData = await fetchRecentTest(userId, yearAndMonth);
+          console.log(`Fetched testResultData for ${yearAndMonth}:`, testResultData);
 
-        // 틀린 문제 데이터를 가져오기
-        const incorrectData = await fetchIncorrectQuestions(fetchedTestId, userId, yearAndMonth);
-        setIncorrectQuestions(incorrectData);
+          const fetchedTestId = testResultData?.id;
+          if (!fetchedTestId) {
+            console.warn(`No test ID found for ${yearAndMonth}`);
+            return { year, month, incorrectQuestions: [] };
+          }
+
+          // 틀린 문제 가져오기
+          const incorrectQuestions = await fetchIncorrectQuestions(fetchedTestId, userId, yearAndMonth);
+          console.log(`Fetched incorrectQuestions for ${yearAndMonth}:`, incorrectQuestions);
+
+          return { year, month, incorrectQuestions };
+        });
+
+        const categoriesData = await Promise.all(categoryPromises);
+        setCategories(categoriesData);
       } catch (error) {
         setError('데이터를 불러오는 중 문제가 발생했습니다.');
-        console.error("Error fetching data:", error);
+        console.error('Error loading categories:', error);
       } finally {
         setLoading(false);
       }
     };
 
-    loadTestIdAndIncorrectQuestions();
-  }, [userId, yearAndMonth]);
+    loadCategories();
+  }, [userId]);
 
-  const handleQuestionClick = (number) => {
-    // 특정 문제 번호 클릭 시 SolutionsPage로 이동
-    navigate(`/solutions/${year}/${month}/number`, { state: { targetNumber: number } });
+  const handleCategoryToggle = (year, month) => {
+    const categoryKey = `${year}-${month}`;
+    setExpandedCategory((prev) => (prev === categoryKey ? null : categoryKey));
+  };
+
+  const handleQuestionClick = (number, year, month) => {
+    navigate(`/solutions/${year}/${month}/${number}/mistake`, {
+      state: { targetNumber: number },
+    });
   };
 
   return (
@@ -69,38 +89,50 @@ function MistakeNotePage() {
             <Typography variant="h4" gutterBottom>
               오답노트
             </Typography>
-            <Typography variant="body1">
-              틀린 문제를 다시 풀어보세요.
-            </Typography>
+            <Typography variant="body1">틀린 문제를 다시 풀어보세요.</Typography>
           </Box>
 
           {loading ? (
-            <Typography>Loading incorrect questions...</Typography>
+            <Typography>Loading categories...</Typography>
           ) : error ? (
             <Typography color="error">{error}</Typography>
           ) : (
-            <>
-              <Typography variant="body2" color="textSecondary">
-                Test ID: {testId}
-              </Typography>
-              <List>
-                {incorrectQuestions.length > 0 ? (
-                  incorrectQuestions.map((question, index) => (
+            <List>
+              {categories.map(({ year, month, incorrectQuestions }) => {
+                const categoryKey = `${year}-${month}`;
+                return (
+                  <div key={categoryKey}>
                     <ListItem
-                      button={true}
-                      key={question.id || index}
-                      onClick={() => handleQuestionClick(question.number)}
+                      button
+                      component="div"
+                      onClick={() => handleCategoryToggle(year, month)}
                     >
-                      <ListItemText
-                        primary={`시험 날짜: 20${question.year}년-${question.month}월, 문제 번호: ${question.number}`}
-                      />
+                      <ListItemText primary={`${year}년 ${month}월 모의고사`} />
+                      {expandedCategory === categoryKey ? <ExpandLess /> : <ExpandMore />}
                     </ListItem>
-                  ))
-                ) : (
-                  <Typography>오답 데이터가 없습니다.</Typography>
-                )}
-              </List>
-            </>
+                    <Collapse in={expandedCategory === categoryKey} timeout="auto" unmountOnExit>
+                      <List component="div" disablePadding>
+                        {incorrectQuestions.length > 0 ? (
+                          incorrectQuestions.map((question) => (
+                            <ListItem
+                              button
+                              component="div"
+                              key={question.id}
+                              onClick={() => handleQuestionClick(question.number, year, month)}
+                              sx={{ pl: 4 }}
+                            >
+                              <ListItemText primary={`문제 번호: ${question.number}`} />
+                            </ListItem>
+                          ))
+                        ) : (
+                          <Typography sx={{ pl: 4 }}>오답 데이터가 없습니다.</Typography>
+                        )}
+                      </List>
+                    </Collapse>
+                  </div>
+                );
+              })}
+            </List>
           )}
         </Container>
       </div>

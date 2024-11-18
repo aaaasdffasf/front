@@ -1,3 +1,5 @@
+// src/App.js
+
 import React from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
@@ -27,11 +29,17 @@ function App() {
             <Route path="/login" element={<Login />} />
 
             <Route element={<PrivateRoute />}>
-              <Route path="/questions/:year/:month" element={<QuestionsPage />} /> {/* year와 month를 경로 파라미터로 받음 */}
+              <Route path="/questions/:year/:month" element={<QuestionsPage />} />
               <Route path="/alerts" element={<AlertsPage />} />
               <Route path="/analysis" element={<AnalysisPage />} />
               <Route path="/history" element={<HistoryPage />} />
-              <Route path="/solutions/:year/:month/:number" element={<SolutionsPage />} /> {/* questionId 추가 */}
+
+              {/* 일반 문제 풀이 */}
+              <Route path="/solutions/:year/:month/:number" element={<SolutionsPage />} />
+
+              {/* 오답 문제 풀이 */}
+              <Route path="/solutions/:year/:month/:number/mistake" element={<SolutionsPage />} />
+              
               <Route path="/mistake/:year/:month" element={<MistakeNotePage />} />
             </Route>
           </Routes>
