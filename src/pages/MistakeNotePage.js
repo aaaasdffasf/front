@@ -28,7 +28,6 @@ function MistakeNotePage() {
 
         setLoading(true);
 
-        // 가져올 연도와 월 리스트
         const yearMonthPairs = [
           { year: 24, month: 9 },
           { year: 23, month: 9 },
@@ -38,7 +37,6 @@ function MistakeNotePage() {
           const yearAndMonth = `${year}-${month}`;
           console.log(`Fetching data for ${yearAndMonth}`);
 
-          // 최신 시험 ID 가져오기
           const testResultData = await fetchRecentTest(userId, yearAndMonth);
           console.log(`Fetched testResultData for ${yearAndMonth}:`, testResultData);
 
@@ -48,7 +46,6 @@ function MistakeNotePage() {
             return { year, month, incorrectQuestions: [] };
           }
 
-          // 틀린 문제 가져오기
           const incorrectQuestions = await fetchIncorrectQuestions(fetchedTestId, userId, yearAndMonth);
           console.log(`Fetched incorrectQuestions for ${yearAndMonth}:`, incorrectQuestions);
 
@@ -74,7 +71,7 @@ function MistakeNotePage() {
   };
 
   const handleQuestionClick = (number, year, month) => {
-    navigate(`/solutions/${year}/${month}/${number}/mistake`, {
+    navigate(`/solutions/${year}/${month}/number`, {
       state: { targetNumber: number },
     });
   };
