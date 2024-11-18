@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { Container, Box, Typography, ButtonGroup, Button } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
-//import DashboardMenu from '../components/DashboardMenu';
 import { AuthContext } from '../context/AuthContext';
 import LoginModal from '../components/LoginModal';
 import YearSelectionTable from '../components/YearSelectionTable';
 import { useNavigate } from 'react-router-dom';
 import useQuestionStorage from '../hooks/useQuestionStorage';
 import ProblemCard from '../components/Problem_Card';
+import { ImageContext } from '../context/ImageContext';
 
 function MainPage() {
   const navigate = useNavigate();
@@ -19,6 +19,32 @@ function MainPage() {
   const [selectedCategory, setSelectedCategory] = useState('문제풀이'); // 카테고리 상태 추가
 
   const { clearStorageData } = useQuestionStorage();
+
+  const { setImageUrl } = useContext(ImageContext); // ImageContext에서 setImageUrl을 사용
+  const [imageFile, setImageFile] = React.useState(null);
+
+  // fileInputRef 정의
+  const fileInputRef = useRef(null);
+
+  // 파일 선택 핸들러
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setImageFile(file);
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result); // 이미지 URL을 ImageContext에 저장
+        navigate('/analysis'); // 파일이 선택되면 자동으로 Analysis 화면으로 이동
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleButtonClick = () => {
+    // fileInputRef.current.click()을 통해 파일 선택
+    fileInputRef.current.click();
+  };
 
   const handleExamClick = (year, month) => {
     clearStorageData();
@@ -76,159 +102,170 @@ function MainPage() {
             {isAuthenticated ? (
               <>
                 <div className="content-area">
-            <Box className="problem-card-container">
-              <ProblemCard />
-            </Box>
-            <Box
-              sx={{
-                //height: '50vh', // 높이를 화면의 50vh로 설정
-                flex: 1, // 남은 공간을 모두 차지하도록 설정
-                backgroundColor: 'white', // 내용의 가독성을 위해 흰색 배경 설정
-                borderRadius: 3,
-                textAlign: 'center',
-                p: 1, // 패딩을 줄여 여백을 줄임
-                mx: 2, // 좌우 여백 추가
-                //my: 2, // 상하 여백 추가
-                position: 'relative', // 작은 박스를 위한 상대 위치 설정
-              }}
-            >
-              {/* 시험 문제 영역을 두 개의 박스로 나누기 */}
-              <Box
-                sx={{
-                  //marginTop: '10px', // 작은 박스 아래로 밀어내기 위해 여백 추가
-                  height: '430px', // 남은 공간을 모두 차지하도록 높이 계산
-                  display: 'flex', // 내부 콘텐츠 정렬을 위한 flex 설정
-                  flexDirection: 'row', // 두 개의 박스를 가로로 배치
-                  borderRadius: 3, // 둥근 모서리
-                  overflow: 'hidden', // 내용이 넘치는 것을 방지
-                }}
-              >
-                {/* 첫 번째 박스 */}
-                <Box
-                  sx={{
-                    flex: 1, // 남은 공간을 모두 차지하도록 설정
-                    backgroundColor: '#e0e0e0', // 첫 번째 박스의 배경색
-                    borderRadius: '3px 0 0 3px', // 둥근 모서리
-                    display: 'flex',
-                    flexDirection: 'column', // 세로 방향으로 배치
-                    justifyContent: 'center', // 수직 중앙 정렬
-                    alignItems: 'center', // 수평 중앙 정렬
-                    position: 'relative', // 상대 위치 설정
-                    p: 1, // 패딩 추가
-                  }}
-                >
-                </Box>
+                  <Box className="problem-card-container">
+                    <ProblemCard />
+                  </Box>
+                  <Box
+                    sx={{
+                      //height: '50vh', // 높이를 화면의 50vh로 설정
+                      flex: 1, // 남은 공간을 모두 차지하도록 설정
+                      backgroundColor: 'white', // 내용의 가독성을 위해 흰색 배경 설정
+                      borderRadius: 3,
+                      textAlign: 'center',
+                      p: 1, // 패딩을 줄여 여백을 줄임
+                      mx: 2, // 좌우 여백 추가
+                      //my: 2, // 상하 여백 추가
+                      position: 'relative', // 작은 박스를 위한 상대 위치 설정
+                    }}
+                  >
+                    {/* 시험 문제 영역을 두 개의 박스로 나누기 */}
+                    <Box
+                      sx={{
+                        flex: 1,
+                        //marginTop: '10px', // 작은 박스 아래로 밀어내기 위해 여백 추가
+                        //height: '430px', // 남은 공간을 모두 차지하도록 높이 계산
+                        display: 'flex', // 내부 콘텐츠 정렬을 위한 flex 설정
+                        flexDirection: 'row', // 두 개의 박스를 가로로 배치
+                        borderRadius: 3, // 둥근 모서리
+                        overflow: 'hidden', // 내용이 넘치는 것을 방지
+                      }}
+                    >
+                      {/* 첫 번째 박스 */}
+                      <Box
+                        sx={{
+                          flex: 1, // 남은 공간을 모두 차지하도록 설정
+                          backgroundColor: '#e0e0e0', // 첫 번째 박스의 배경색
+                          borderRadius: '3px 0 0 3px', // 둥근 모서리
+                          display: 'flex',
+                          flexDirection: 'column', // 세로 방향으로 배치
+                          justifyContent: 'center', // 수직 중앙 정렬
+                          alignItems: 'center', // 수평 중앙 정렬
+                          position: 'relative', // 상대 위치 설정
+                          p: 1, // 패딩 추가
+                        }}
+                      >
+                      </Box>
 
-                {/* 두 번째 박스 */}
-                <Box
-                  sx={{
-                    flex: 1, // 남은 공간을 모두 차지하도록 설정
-                    backgroundColor: '#d0d0d0', // 두 번째 박스의 배경색
-                    borderRadius: '0 3px 3px 0', // 둥근 모서리
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                </Box>
-              </Box>
-            </Box>
-            <Box
-              sx={{
-                //height: '50vh', // 높이를 화면의 50vh로 설정
-                //flex: 1, // 남은 공간을 모두 차지하도록 설정
-                backgroundColor: 'white', // 내용의 가독성을 위해 흰색 배경 설정
-                borderRadius: 3,
-                textAlign: 'center',
-                p: 1, // 패딩을 줄여 여백을 줄임
-                mx: 2, // 좌우 여백 추가
-                //my: 2, // 상하 여백 추가
-                position: 'relative', // 작은 박스를 위한 상대 위치 설정
-              }}
-            >
-              {/* 시험 문제 영역을 두 개의 박스로 나누기 */}
-              <Box
-                sx={{
-                  //flex: 1,
-                  height: '275px', // 남은 공간을 모두 차지하도록 높이 계산
-                  display: 'flex', // 내부 콘텐츠 정렬을 위한 flex 설정
-                  flexDirection: 'row', // 두 개의 박스를 가로로 배치
-                  borderRadius: 3, // 둥근 모서리
-                  overflow: 'hidden', // 내용이 넘치는 것을 방지
-                }}
-              >
-                {/* 첫 번째 박스 */}
-                <Box
-                  sx={{
-                    flex: 1, // 남은 공간을 모두 차지하도록 설정
-                    backgroundColor: '#e0e0e0', // 첫 번째 박스의 배경색
-                    borderRadius: '3px 0 0 3px', // 둥근 모서리
-                    display: 'flex',
-                    flexDirection: 'column', // 세로 방향으로 배치
-                    justifyContent: 'center', // 수직 중앙 정렬
-                    alignItems: 'center', // 수평 중앙 정렬
-                    position: 'relative', // 상대 위치 설정
-                    p: 1, // 패딩 추가
-                  }}
-                >
-                  {/* 카테고리 버튼 그룹 추가 */}
-                  {isAuthenticated && (
-                    <Box textAlign="center" mb={1}>
-                      <ButtonGroup>
-                        <Button
-                          variant={selectedCategory === '문제풀이' ? 'contained' : 'outlined'}
-                          sx={{
-                            padding: '4px 8px',
-                            fontSize: '12px',
-                            minWidth: '60px',
-                          }}
-                          onClick={() => handleCategoryChange('문제풀이')}
-                        >
-                          문제풀이
-                        </Button>
-                        <Button
-                          variant={selectedCategory === '문제해설' ? 'contained' : 'outlined'}
-                          sx={{
-                            padding: '4px 8px',
-                            fontSize: '12px',
-                            minWidth: '60px',
-                          }}
-                          onClick={() => handleCategoryChange('문제해설')}
-                        >
-                          문제해설
-                        </Button>
-                      </ButtonGroup>
+                      {/* 두 번째 박스 */}
+                      <Box
+                        sx={{
+                          flex: 1, // 남은 공간을 모두 차지하도록 설정
+                          backgroundColor: '#d0d0d0', // 두 번째 박스의 배경색
+                          borderRadius: '0 3px 3px 0', // 둥근 모서리
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                      </Box>
                     </Box>
-                  )}
+                  </Box>
+                  <Box
+                    sx={{
+                      //height: '50vh', // 높이를 화면의 50vh로 설정
+                      //flex: 1, // 남은 공간을 모두 차지하도록 설정
+                      backgroundColor: 'white', // 내용의 가독성을 위해 흰색 배경 설정
+                      borderRadius: 3,
+                      textAlign: 'center',
+                      p: 1, // 패딩을 줄여 여백을 줄임
+                      mx: 2, // 좌우 여백 추가
+                      //my: 2, // 상하 여백 추가
+                      //position: 'relative', // 작은 박스를 위한 상대 위치 설정
+                    }}
+                  >
+                    {/* 시험 문제 영역을 두 개의 박스로 나누기 */}
+                    <Box
+                      sx={{
+                        //flex: 1,
+                        //height: '275px', // 남은 공간을 모두 차지하도록 높이 계산
+                        display: 'flex', // 내부 콘텐츠 정렬을 위한 flex 설정
+                        flexDirection: 'row', // 두 개의 박스를 가로로 배치
+                        borderRadius: 3, // 둥근 모서리
+                        overflow: 'hidden', // 내용이 넘치는 것을 방지
+                      }}
+                    >
+                      {/* 첫 번째 박스 */}
+                      <Box
+                        sx={{
+                          flex: 1, // 남은 공간을 모두 차지하도록 설정
+                          backgroundColor: '#e0e0e0', // 첫 번째 박스의 배경색
+                          borderRadius: '3px 0 0 3px', // 둥근 모서리
+                          display: 'flex',
+                          flexDirection: 'column', // 세로 방향으로 배치
+                          justifyContent: 'center', // 수직 중앙 정렬
+                          alignItems: 'center', // 수평 중앙 정렬
+                          position: 'relative', // 상대 위치 설정
+                          p: 1, // 패딩 추가
+                        }}
+                      >
+                        {/* 카테고리 버튼 그룹 추가 */}
+                        {isAuthenticated && (
+                          <Box textAlign="center" mb={1}>
+                            <ButtonGroup>
+                              <Button
+                                variant={selectedCategory === '문제풀이' ? 'contained' : 'outlined'}
+                                sx={{
+                                  padding: '4px 8px',
+                                  fontSize: '12px',
+                                  minWidth: '60px',
+                                }}
+                                onClick={() => handleCategoryChange('문제풀이')}
+                              >
+                                문제풀이
+                              </Button>
+                              <Button
+                                variant={selectedCategory === '문제해설' ? 'contained' : 'outlined'}
+                                sx={{
+                                  padding: '4px 8px',
+                                  fontSize: '12px',
+                                  minWidth: '60px',
+                                }}
+                                onClick={() => handleCategoryChange('문제해설')}
+                              >
+                                문제해설
+                              </Button>
+                            </ButtonGroup>
+                          </Box>
+                        )}
 
-                  {/* 선택된 카테고리에 따라 YearSelectionTable 표시 */}
-                  {isAuthenticated && (
-                    <YearSelectionTable
-                      years={years}
-                      selectedYear={selectedYear}
-                      setSelectedYear={setSelectedYear}
-                      filteredData={filteredData}
-                      onExamClick={selectedCategory === '문제풀이' ? handleExamClick : handleSolutionClick}
-                    />
-                  )}
-                </Box>
+                        {/* 선택된 카테고리에 따라 YearSelectionTable 표시 */}
+                        {isAuthenticated && (
+                          <YearSelectionTable
+                            years={years}
+                            selectedYear={selectedYear}
+                            setSelectedYear={setSelectedYear}
+                            filteredData={filteredData}
+                            onExamClick={selectedCategory === '문제풀이' ? handleExamClick : handleSolutionClick}
+                          />
+                        )}
+                      </Box>
 
-                {/* 두 번째 박스 */}
-                <Box
-                  sx={{
-                    flex: 1, // 남은 공간을 모두 차지하도록 설정
-                    backgroundColor: '#d0d0d0', // 두 번째 박스의 배경색
-                    borderRadius: '0 3px 3px 0', // 둥근 모서리
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  
-                </Box>
-              </Box>
-            </Box>
-          </div>
+                      {/* 두 번째 박스 */}
+                      <Box
+                        sx={{
+                          flex: 1, // 남은 공간을 모두 차지하도록 설정
+                          backgroundColor: '#d0d0d0', // 두 번째 박스의 배경색
+                          borderRadius: '0 3px 3px 0', // 둥근 모서리
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        {/* File upload button */}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          ref={fileInputRef}  // fileInputRef를 연결
+                          style={{ display: 'none' }}
+                        />
+                        <Button onClick={handleButtonClick} variant="contained">
+                          Choose Photo
+                        </Button>
+                      </Box>
+                    </Box>
+                  </Box>
+                </div>
               </>
             ) : (
               <>
