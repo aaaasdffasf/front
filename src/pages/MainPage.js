@@ -1,6 +1,5 @@
-// src/pages/MainPage.js
 import React, { useContext, useEffect, useState } from 'react';
-import { Container, Box, Typography } from '@mui/material';
+import { Container, Box, Typography, ButtonGroup, Button } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
 import DashboardMenu from '../components/DashboardMenu';
@@ -8,7 +7,7 @@ import { AuthContext } from '../context/AuthContext';
 import LoginModal from '../components/LoginModal';
 import YearSelectionTable from '../components/YearSelectionTable';
 import { useNavigate } from 'react-router-dom';
-import useQuestionStorage from '../hooks/useQuestionStorage'; // Custom hook import
+import useQuestionStorage from '../hooks/useQuestionStorage';
 
 function MainPage() {
   const navigate = useNavigate();
@@ -16,18 +15,28 @@ function MainPage() {
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState('2024');
-  
-  const { clearStorageData } = useQuestionStorage(); // Using the custom hook for storage clearing
+  const [selectedCategory, setSelectedCategory] = useState('문제풀이'); // 카테고리 상태 추가
 
-  // handleExamClick function definition to reset progress and navigate
+  const { clearStorageData } = useQuestionStorage();
+
   const handleExamClick = (year, month) => {
-    clearStorageData(); // Clear storage data when a new exam is started
-    navigate(`/questions/${year.slice(2)}/${month}`); // Navigate to the questions page with year and month
+    clearStorageData();
+    localStorage.setItem('lastSelectedYear', year.slice(2)); // 연도 저장
+    localStorage.setItem('lastSelectedMonth', month);        // 월 저장
+    navigate(`/questions/${year.slice(2)}/${month}`);
   };
+  
+  const handleSolutionClick = (year, month) => {
+    clearStorageData();
+    localStorage.setItem('lastSelectedYear', year.slice(2)); // 연도 저장
+    localStorage.setItem('lastSelectedMonth', month);        // 월 저장
+    navigate(`/solutions/${year.slice(2)}/${month}`);
+  };
+  
 
   const historyData = [
     { year: '2024', date: '2024-10-15', examInfo: '2024년 9월 시험' },
-    { year: '2023', date: '2023-09-25', examInfo: '2023년 8월 시험' },
+    { year: '2023', date: '2023-09-25', examInfo: '2023년 9월 시험' },
     { year: '2023', date: '2023-06-15', examInfo: '2023년 5월 시험' },
     { year: '2022', date: '2022-12-11', examInfo: '2022년 11월 시험' },
   ];
@@ -44,6 +53,10 @@ function MainPage() {
 
   const handleModalClose = () => {
     setIsModalOpen(false);
+  };
+
+  const handleCategoryChange = (category) => {
+    setSelectedCategory(category);
   };
 
   if (loading) {
@@ -81,14 +94,34 @@ function MainPage() {
             )}
           </Box>
 
-          {/* Show YearSelectionTable only if authenticated */}
+          {/* 카테고리 버튼 그룹 추가 */}
+          {isAuthenticated && (
+            <Box textAlign="center" mt={2} mb={4}>
+              <ButtonGroup>
+                <Button
+                  variant={selectedCategory === '문제풀이' ? 'contained' : 'outlined'}
+                  onClick={() => handleCategoryChange('문제풀이')}
+                >
+                  문제풀이
+                </Button>
+                <Button
+                  variant={selectedCategory === '문제해설' ? 'contained' : 'outlined'}
+                  onClick={() => handleCategoryChange('문제해설')}
+                >
+                  문제해설
+                </Button>
+              </ButtonGroup>
+            </Box>
+          )}
+
+          {/* 선택된 카테고리에 따라 YearSelectionTable 표시 */}
           {isAuthenticated && (
             <YearSelectionTable
               years={years}
               selectedYear={selectedYear}
               setSelectedYear={setSelectedYear}
               filteredData={filteredData}
-              onExamClick={handleExamClick} // Passing handleExamClick to YearSelectionTable
+              onExamClick={selectedCategory === '문제풀이' ? handleExamClick : handleSolutionClick}
             />
           )}
         </Container>

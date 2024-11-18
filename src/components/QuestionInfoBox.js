@@ -10,16 +10,14 @@ const QuestionInfoBox = ({
   year,
   month,
   currentQuestion,
-  time, // 추가된 시간 관련 prop
+  time,
   currentQuestionIndex,
   isLastQuestion,
   handlePreviousQuestion,
   handleNextQuestion,
   isSolutionPage = false,
-  userId,
-  yearAndMonth,
-  questionData = [], // 기본값으로 빈 배열 설정
-  incorrectQuestions = [], // 기본값으로 빈 배열 설정
+  questionData = [],
+  incorrectQuestions = [],
   setCurrentQuestionIndex
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,11 +26,30 @@ const QuestionInfoBox = ({
     setIsModalOpen((prev) => !prev);
   };
 
+  // 현재 문제 번호가 틀린 문제 목록에 있는지 확인
+  const isIncorrect = incorrectQuestions.some(q => q.number === currentQuestion?.number);
+
   return (
     <Box className="question-info-box">
       <Typography variant="h6" className="left-text">
-        {currentQuestion ? `${year}년 ${month}월 ${currentQuestion.number}번 문제` : '시험 정보를 불러오는 중...'}
+        {currentQuestion ? (
+          <>
+            {year}년 {month}월 {currentQuestion.number}번 문제
+          </>
+        ) : (
+          '시험 정보를 불러오는 중...'
+        )}
       </Typography>
+
+      {/* 정답/오답 텍스트 표시 (isSolutionPage가 true일 때만 표시) */}
+      {isSolutionPage && (
+        <Typography
+          className={`result-text ${isIncorrect ? 'incorrect' : 'correct'}`}
+          variant="h3"
+        >
+          {isIncorrect ? '오답입니다.' : '정답입니다.'}
+        </Typography>
+      )}
 
       {!isSolutionPage && (
         <Typography variant="h6" className="center-text">
