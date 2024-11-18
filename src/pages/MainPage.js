@@ -77,24 +77,7 @@ function MainPage() {
           <Box textAlign="center" mt={4}>
             {isAuthenticated ? (
               <>
-                
-              </>
-            ) : (
-              <>
-                <Typography variant="h3" gutterBottom>
-                  환영합니다!
-                </Typography>
-                <Typography variant="body1">
-                  Memo에 오신 것을 환영합니다. 로그인하거나 회원가입을 통해 더 많은 기능을 이용해보세요!
-                </Typography>
-              </>
-            )}
-          </Box>
-          
-
-          
-        </Container>
-        <div className="content-area">
+                <div className="content-area">
             <Box className="problem-card-container">
               <ProblemCard />
             </Box>
@@ -248,6 +231,23 @@ function MainPage() {
               </Box>
             </Box>
           </div>
+              </>
+            ) : (
+              <>
+                <Typography variant="h3" gutterBottom>
+                  환영합니다!
+                </Typography>
+                <Typography variant="body1">
+                  Memo에 오신 것을 환영합니다. 로그인하거나 회원가입을 통해 더 많은 기능을 이용해보세요!
+                </Typography>
+              </>
+            )}
+          </Box>
+          
+
+          
+        </Container>
+        
         {isAuthenticated === false && (
           <LoginModal isOpen={isModalOpen} onClose={handleModalClose} />
         )}
