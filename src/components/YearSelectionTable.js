@@ -14,25 +14,30 @@ function YearSelectionTable({ years, selectedYear, setSelectedYear, filteredData
 
   return (
     <>
-      <Box className="yearCategories" mt={3}>
+      <Box className="yearCategories" mt={0}>
         {years.map((year) => (
           <Button 
             key={year} 
             onClick={() => setSelectedYear(year)}
             variant={selectedYear === year ? 'contained' : 'outlined'}
             style={{ marginRight: 8 }}
+            sx={{
+              padding: '4px 8px',
+              fontSize: '12px',
+              minWidth: '60px',
+            }}
           >
             {year}년
           </Button>
         ))}
       </Box>
 
-      <TableContainer component={Paper} className="examTable" sx={{ mt: 2 }}>
+      <TableContainer component={Paper} className="examTable" sx={{ mt: 1 }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>날짜</TableCell>
-              <TableCell>시험 정보</TableCell>
+              <TableCell sx={{ padding: '6px', fontSize: '14px' }}>날짜</TableCell>
+              <TableCell sx={{ padding: '6px', fontSize: '14px' }}>시험 정보</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -41,11 +46,11 @@ function YearSelectionTable({ years, selectedYear, setSelectedYear, filteredData
               const month = record.examInfo.split(' ')[1].replace('월', '');
 
               return (
-                <TableRow key={index}>
-                  <TableCell>{record.date}</TableCell>
-                  <TableCell>
+                <TableRow key={index} sx={{ height: '36px' }}> {/* 행 높이 조정 */}
+                  <TableCell sx={{ padding: '6px', fontSize: '12px' }}>{record.date}</TableCell>
+                  <TableCell sx={{ padding: '6px', fontSize: '12px' }}>
                     <span
-                      onClick={() => handleExamClick(year, month)} // 클릭 시 진행 상태 초기화 및 onExamClick 호출
+                      onClick={() => handleExamClick(year, month)}
                       style={{ cursor: 'pointer', color: 'blue' }}
                     >
                       {record.examInfo}
@@ -57,6 +62,7 @@ function YearSelectionTable({ years, selectedYear, setSelectedYear, filteredData
           </TableBody>
         </Table>
       </TableContainer>
+
     </>
   );
 }
