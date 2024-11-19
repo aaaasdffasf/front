@@ -1,5 +1,3 @@
-// src/App.js
-
 import React from 'react';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material';
@@ -17,6 +15,7 @@ import AnalysisPage from './pages/AnalysisPage';
 import HistoryPage from './pages/HistoryPage';
 import SolutionsPage from './pages/SolutionsPage';
 import MistakeNotePage from './pages/MistakeNotePage';
+import MistakeSolutionsPage from './pages/MistakeSolutionsPage'; // 새로운 페이지 추가
 
 function App() {
   return (
@@ -26,23 +25,24 @@ function App() {
         <ImageProvider> {/* ImageProvider import 및 사용 */}
           <Router>
             <Routes>
+              {/* 공개 라우트 */}
               <Route path="/" element={<MainPage />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/login" element={<Login />} />
 
+              {/* 인증이 필요한 라우트 */}
               <Route element={<PrivateRoute />}>
                 <Route path="/questions/:year/:month" element={<QuestionsPage />} />
                 <Route path="/alerts" element={<AlertsPage />} />
                 <Route path="/analysis" element={<AnalysisPage />} />
                 <Route path="/history" element={<HistoryPage />} />
 
-                {/* 일반 문제 풀이 */}
+                {/* 문제 풀이 */}
                 <Route path="/solutions/:year/:month/:number" element={<SolutionsPage />} />
 
                 {/* 오답 문제 풀이 */}
-                <Route path="/solutions/:year/:month/:number/mistake" element={<SolutionsPage />} />
-                
                 <Route path="/mistake/:year/:month" element={<MistakeNotePage />} />
+                <Route path="/mistake/solutions/:year/:month/" element={<MistakeSolutionsPage />} />
               </Route>
             </Routes>
           </Router>

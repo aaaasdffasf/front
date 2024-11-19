@@ -5,15 +5,13 @@ import TopNav from '../components/TopNav';
 import SolutionCard from '../components/Problem_Card';
 import ProblemBox from '../components/Problem_Box';
 import QuestionInfoBox from '../components/QuestionInfoBox';
-import { useParams, useLocation } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { fetchQuestions, fetchRecentTest, fetchIncorrectQuestions } from '../api/questionsApi';
 import { AuthContext } from '../context/AuthContext';
 import './SolutionsPage.css';
 
 function SolutionsPage() {
   const { year, month } = useParams(); // URL에서 연도와 월을 가져옵니다.
-  const location = useLocation(); // 이전 페이지에서 전달된 상태를 가져옵니다.
-  const { targetNumber } = location.state || {}; // 전달된 문제 번호
   const { user } = useContext(AuthContext); // 사용자 인증 정보를 가져옵니다.
   const [questionData, setQuestionData] = useState([]); // 문제 데이터를 저장할 상태
   const [loading, setLoading] = useState(true); // 로딩 상태
@@ -65,18 +63,6 @@ function SolutionsPage() {
 
     loadQuestionsAndTestResult();
   }, [year, month, userId, yearAndMonth]);
-
-  // URL에서 받은 문제 번호를 기준으로 현재 문제 인덱스 설정
-  useEffect(() => {
-    if (questionData.length > 0 && targetNumber) {
-      const questionIndex = questionData.findIndex((q) => q.number === targetNumber);
-      if (questionIndex !== -1) {
-        setCurrentQuestionIndex(questionIndex);
-      } else {
-        console.warn(`문제 번호 ${targetNumber}에 해당하는 데이터를 찾을 수 없습니다.`);
-      }
-    }
-  }, [questionData, targetNumber]);
 
   const currentQuestion = questionData[currentQuestionIndex]; // 현재 문제
   const isLastQuestion = currentQuestionIndex === questionData.length - 1; // 마지막 문제인지 여부

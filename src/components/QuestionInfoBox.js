@@ -18,7 +18,9 @@ const QuestionInfoBox = ({
   isSolutionPage = false,
   questionData = [],
   incorrectQuestions = [],
-  setCurrentQuestionIndex
+  setCurrentQuestionIndex,
+  hideMenuIcon = false, // 기존 메뉴 아이콘 숨기기
+  hideTime = false // 학습 시간 숨기기
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -51,16 +53,20 @@ const QuestionInfoBox = ({
         </Typography>
       )}
 
-      {!isSolutionPage && (
+      {/* 학습 시간 표시 (hideTime이 false일 때만) */}
+      {!isSolutionPage && !hideTime && (
         <Typography variant="h6" className="center-text">
           학습 시간 : {`${Math.floor(time / 3600)}시간 ${Math.floor((time % 3600) / 60)}분 ${time % 60}초`}
         </Typography>
       )}
 
       <Box className="button-box">
-        <IconButton onClick={toggleModal} className="nav-button">
-          <MenuIcon />
-        </IconButton>
+        {/* 메뉴 아이콘은 hideMenuIcon이 false일 때만 표시 */}
+        {!hideMenuIcon && (
+          <IconButton onClick={toggleModal} className="nav-button">
+            <MenuIcon />
+          </IconButton>
+        )}
         <Button onClick={handlePreviousQuestion} className="nav-button" disabled={currentQuestionIndex === 0}>
           <ArrowBackIcon />
         </Button>
