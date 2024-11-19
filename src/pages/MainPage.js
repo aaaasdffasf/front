@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
-import { Container, Box, Typography, ButtonGroup, Button } from '@mui/material';
+import { Box, Typography, ButtonGroup, Button } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
 import { AuthContext } from '../context/AuthContext';
@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import useQuestionStorage from '../hooks/useQuestionStorage';
 import ProblemCard from '../components/Problem_Card';
 import { ImageContext } from '../context/ImageContext';
+import LineChart from '../components/LineChart';
 
 function MainPage() {
   const navigate = useNavigate();
@@ -112,7 +113,7 @@ function MainPage() {
                       backgroundColor: 'white', // 내용의 가독성을 위해 흰색 배경 설정
                       borderRadius: 3,
                       textAlign: 'center',
-                      p: 1, // 패딩을 줄여 여백을 줄임
+                      //p: 1, // 패딩을 줄여 여백을 줄임
                       mx: 2, // 좌우 여백 추가
                       //my: 2, // 상하 여백 추가
                       position: 'relative', // 작은 박스를 위한 상대 위치 설정
@@ -123,7 +124,7 @@ function MainPage() {
                       sx={{
                         flex: 1,
                         //marginTop: '10px', // 작은 박스 아래로 밀어내기 위해 여백 추가
-                        //height: '430px', // 남은 공간을 모두 차지하도록 높이 계산
+                        //height: '100%', // 남은 공간을 모두 차지하도록 높이 계산
                         display: 'flex', // 내부 콘텐츠 정렬을 위한 flex 설정
                         flexDirection: 'row', // 두 개의 박스를 가로로 배치
                         borderRadius: 3, // 둥근 모서리
@@ -142,14 +143,32 @@ function MainPage() {
                           alignItems: 'center', // 수평 중앙 정렬
                           position: 'relative', // 상대 위치 설정
                           p: 1, // 패딩 추가
+                          height: '100%',
                         }}
                       >
+                        <LineChart
+                          data={[
+                            {
+                              id: '1111',
+                              data: [
+                                { x: '24년 3월 모의고사', y: 72 },
+                                { x: '24년 6월 모의고사', y: 75 },
+                                { x: '24년 9월 모의고사', y: 81 },
+                                { x: '24년 수능', y: 75 },
+                                { x: '23년 3월 모의고사', y: 71 },
+                                { x: '23년 6월 모의고사', y: 93 },
+                                { x: '23년 9월 모의고사', y: 78 },
+                                { x: '23년 수능', y: 95 },
+                              ],
+                            },
+                          ]}
+                        />
                       </Box>
 
                       {/* 두 번째 박스 */}
                       <Box
                         sx={{
-                          flex: 1, // 남은 공간을 모두 차지하도록 설정
+                          //flex: 1, // 남은 공간을 모두 차지하도록 설정
                           backgroundColor: '#d0d0d0', // 두 번째 박스의 배경색
                           borderRadius: '0 3px 3px 0', // 둥근 모서리
                           display: 'flex',
@@ -198,6 +217,21 @@ function MainPage() {
                           p: 1, // 패딩 추가
                         }}
                       >
+                        {/* Choose Photo 버튼을 오른쪽 상단에 배치 */}
+                        <Button
+                          variant="contained"
+                          sx={{
+                            position: 'absolute',
+                            top: 8, // 상단에서 8px
+                            right: 8, // 우측에서 8px
+                            zIndex: 10, // 다른 요소 위에 표시
+                            fontSize: '12px', // 버튼 글씨 크기 조정
+                            padding: '4px 8px', // 패딩 조정
+                          }}
+                          onClick={handleButtonClick}
+                        >
+                          파일 불러오기
+                        </Button>
                         {/* 카테고리 버튼 그룹 추가 */}
                         {isAuthenticated && (
                           <Box textAlign="center" mb={1}>
