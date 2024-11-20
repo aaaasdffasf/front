@@ -1,4 +1,3 @@
-// src/pages/QuestionsPage.js
 import React, { useEffect, useState, useContext } from 'react';
 import { Box, Typography } from '@mui/material';
 import Sidebar from '../components/Sidebar';
@@ -22,17 +21,21 @@ function QuestionsPage() {
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
   const [scoreData, setScoreData] = useState(null);
 
-  const {
-    currentQuestionIndex,
-    setCurrentQuestionIndex,
-    elapsedTime,
-    setElapsedTime,
-    answers,
-    setAnswers,
-    clearStorageData,
-  } = useQuestionStorage();
+  const userId = user?.userId || 'guest'; // 사용자 ID를 가져옵니다. 없으면 'guest'로 처리
 
-  const userId = user?.userId || '';
+  // 사용자 ID와 시험 정보를 포함한 키로 로컬 스토리지 상태 관리
+  const { 
+    currentQuestionIndex, 
+    setCurrentQuestionIndex, 
+    elapsedTime, 
+    setElapsedTime, 
+    answers, 
+    setAnswers, 
+    clearStorageData 
+  } = useQuestionStorage(user?.userId, `${year}-${month}`);
+  
+  
+  
 
   useEffect(() => {
     const loadQuestions = async () => {
@@ -46,7 +49,7 @@ function QuestionsPage() {
           setError('No questions found for the selected year and month.');
         }
       } catch (error) {
-        setError('Failed to load question data');
+        setError('Failed to load question data.');
         console.error(error);
       } finally {
         setLoading(false);
@@ -88,8 +91,7 @@ function QuestionsPage() {
       });
       setIsScoreModalOpen(true);
 
-      // 완료 후 저장된 데이터 및 타이머 초기화
-      clearStorageData();
+      clearStorageData(); // 저장 데이터 초기화
     } catch (error) {
       console.error('답안 제출 오류:', error);
       alert(`답안 제출에 실패했습니다: ${error.message}`);
@@ -99,6 +101,22 @@ function QuestionsPage() {
   const currentQuestion = questionData[currentQuestionIndex];
   const currentAnswer = answers[currentQuestionIndex] || '';
   const isLastQuestion = currentQuestionIndex === questionData.length - 1;
+
+  if (!loading && (!questionData || questionData.length === 0)) {
+    return (
+      <div className="problems-container">
+        <Sidebar />
+        <div className="content-wrapper">
+          <TopNav />
+          <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+            <Typography variant="h4" color="error">
+              시험을 풀고 오세요.
+            </Typography>
+          </Box>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="problems-container">
@@ -110,18 +128,18 @@ function QuestionsPage() {
             <ProblemCard problemNumber={currentQuestionIndex + 1} />
           </Box>
           <Box className="problem-main-box">
-          <QuestionInfoBox
-            year={year}
-            month={month}
-            currentQuestion={currentQuestion}
-            time={elapsedTime}
-            currentQuestionIndex={currentQuestionIndex}
-            isLastQuestion={isLastQuestion}
-            handlePreviousQuestion={handlePreviousQuestion}
-            handleNextQuestion={handleNextQuestion}
-            isSolutionPage={false} // "정답입니다/오답입니다" 숨기기
-            hideMenuIcon={true} // 메뉴 아이콘 숨기기
-          />
+            <QuestionInfoBox
+              year={year}
+              month={month}
+              currentQuestion={currentQuestion}
+              time={elapsedTime}
+              currentQuestionIndex={currentQuestionIndex}
+              isLastQuestion={isLastQuestion}
+              handlePreviousQuestion={handlePreviousQuestion}
+              handleNextQuestion={handleNextQuestion}
+              isSolutionPage={false}
+              hideMenuIcon={true}
+            />
 
             {loading ? (
               <Typography>Loading question data...</Typography>
@@ -136,13 +154,13 @@ function QuestionsPage() {
                 onAnswerChange={handleAnswerChange}
                 isLastQuestion={isLastQuestion}
                 onComplete={handleComplete}
-                onTimeUpdate={setElapsedTime} // 시간을 업데이트하는 함수 전달
+                onTimeUpdate={setElapsedTime}
               />
             )}
           </Box>
         </div>
       </div>
-      
+
       {scoreData && (
         <ScoreModal open={isScoreModalOpen} onClose={() => setIsScoreModalOpen(false)} scoreData={scoreData} />
       )}

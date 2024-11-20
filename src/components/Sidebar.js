@@ -8,35 +8,35 @@ import useQuestionStorage from '../hooks/useQuestionStorage';
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, logout } = useContext(AuthContext);
+  const { isAuthenticated, logout, user } = useContext(AuthContext); // user 정보를 참조
 
   const { clearStorageData } = useQuestionStorage();
 
   const isActive = (path) => location.pathname === path;
 
   const handleLogoutClick = () => {
-    console.log('로그인 before data:', { 
+    console.log(`로그인 before data (${user?.userId || user?.email || 'Unknown User'}):`, {
       currentQuestionIndex: localStorage.getItem('currentQuestionIndex'),
       elapsedTime: localStorage.getItem('elapsedTime'),
       answers: localStorage.getItem('answers'),
       lastSelectedYear: localStorage.getItem('lastSelectedYear'),
       lastSelectedMonth: localStorage.getItem('lastSelectedMonth'),
-      lastSelectedNumber: localStorage.getItem('lastSelectedNumber')
+      lastSelectedNumber: localStorage.getItem('lastSelectedNumber'),
     });
 
-    clearStorageData(); // 로컬 스토리지 데이터를 모두 초기화
-    logout(); // 인증 상태 로그아웃 처리
+    clearStorageData(); // 로컬 스토리지 데이터 초기화
+    logout(); // AuthContext의 로그아웃 호출
 
-    console.log('로그인 after data:', { 
+    console.log(`로그인 after data (${user?.id || user?.userId || 'Unknown User'}):`, {
       currentQuestionIndex: localStorage.getItem('currentQuestionIndex'),
       elapsedTime: localStorage.getItem('elapsedTime'),
       answers: localStorage.getItem('answers'),
       lastSelectedYear: localStorage.getItem('lastSelectedYear'),
       lastSelectedMonth: localStorage.getItem('lastSelectedMonth'),
-      lastSelectedNumber: localStorage.getItem('lastSelectedNumber')
+      lastSelectedNumber: localStorage.getItem('lastSelectedNumber'),
     });
 
-    navigate('/'); // 로그아웃 후 메인 페이지로 이동
+    navigate('/'); // 메인 페이지로 이동
   };
 
   const handleLoginClick = () => {

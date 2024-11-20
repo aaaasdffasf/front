@@ -1,4 +1,3 @@
-// AuthContext.js
 import React, { createContext, useState, useEffect, useCallback } from 'react';
 import { login as apiLogin, signup as apiSignup } from '../api/authApi';
 import axiosInstance, { setupAxiosInterceptors } from '../api/axiosInstance';
@@ -31,7 +30,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (credentials) => {
     try {
       const response = await apiLogin(credentials);
-      const { accessToken, refreshToken, user } = response;
+      const { accessToken, refreshToken, user, year, month } = response;
 
       if (!accessToken || !refreshToken || !user) {
         throw new Error('유효하지 않은 로그인 응답입니다.');
@@ -40,11 +39,28 @@ export const AuthProvider = ({ children }) => {
       setUser(user);
       setToken(accessToken);
       setRefreshToken(refreshToken);
+
+      // Month와 Year가 응답에 포함되지 않은 경우 기본값 설정
+      const currentYear = year || new Date().getFullYear().toString().slice(2); // 두 자리 연도로 변환
+      const currentMonth = month || (new Date().getMonth() + 1).toString().padStart(2, '0'); // 두 자리 월
+
+      // 로컬 스토리지에 저장
       saveItem('token', accessToken);
       saveItem('refreshToken', refreshToken);
       saveItem('user', user);
+      saveItem('lastSelectedYear', currentYear);
+      saveItem('lastSelectedMonth', currentMonth);
 
       setIsAuthenticated(true);
+
+      // 로그인 성공 시 로컬 스토리지 데이터 콘솔 출력
+      console.log('로그인 성공: 로컬 스토리지 데이터', {
+        user: getItem('user'),
+        token: getItem('token'),
+        refreshToken: getItem('refreshToken'),
+        lastSelectedYear: getItem('lastSelectedYear'),
+        lastSelectedMonth: getItem('lastSelectedMonth'),
+      });
     } catch (error) {
       console.error('로그인 실패:', error.message);
       throw error;
@@ -67,6 +83,8 @@ export const AuthProvider = ({ children }) => {
     removeItem('token');
     removeItem('refreshToken');
     removeItem('user');
+    removeItem('lastSelectedYear');
+    removeItem('lastSelectedMonth');
     setIsAuthenticated(false);
     console.log('사용자가 로그아웃 되었습니다');
   }, [removeItem]);
@@ -117,14 +135,12 @@ export const AuthProvider = ({ children }) => {
     initializeAuth();
   }, [token, user, logout, refreshAccessToken, isTokenValid]);
 
-  // 액세스 토큰 만료 시간 추적 및 자동 갱신
   useEffect(() => {
     if (!token) return;
 
     const { exp } = jwtDecode(token);
     const timeUntilExpiry = exp - getCurrentTimeInSeconds();
 
-    // 토큰이 만료되기 1분 전에 갱신 시도
     const timeoutId = setTimeout(() => {
       refreshAccessToken();
     }, (timeUntilExpiry - 60) * 1000);
