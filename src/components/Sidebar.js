@@ -3,16 +3,39 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Sidebar.css';
 import { FaHome, FaBell, FaUser, FaQuestionCircle, FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
 import { AuthContext } from '../context/AuthContext';
+import useQuestionStorage from '../hooks/useQuestionStorage';
 
 const Sidebar = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { isAuthenticated, logout } = useContext(AuthContext);
 
+  const { clearStorageData } = useQuestionStorage();
+
   const isActive = (path) => location.pathname === path;
 
   const handleLogoutClick = () => {
-    logout();
+    console.log('로그인 before data:', { 
+      currentQuestionIndex: localStorage.getItem('currentQuestionIndex'),
+      elapsedTime: localStorage.getItem('elapsedTime'),
+      answers: localStorage.getItem('answers'),
+      lastSelectedYear: localStorage.getItem('lastSelectedYear'),
+      lastSelectedMonth: localStorage.getItem('lastSelectedMonth'),
+      lastSelectedNumber: localStorage.getItem('lastSelectedNumber')
+    });
+
+    clearStorageData(); // 로컬 스토리지 데이터를 모두 초기화
+    logout(); // 인증 상태 로그아웃 처리
+
+    console.log('로그인 after data:', { 
+      currentQuestionIndex: localStorage.getItem('currentQuestionIndex'),
+      elapsedTime: localStorage.getItem('elapsedTime'),
+      answers: localStorage.getItem('answers'),
+      lastSelectedYear: localStorage.getItem('lastSelectedYear'),
+      lastSelectedMonth: localStorage.getItem('lastSelectedMonth'),
+      lastSelectedNumber: localStorage.getItem('lastSelectedNumber')
+    });
+
     navigate('/'); // 로그아웃 후 메인 페이지로 이동
   };
 
@@ -25,7 +48,6 @@ const Sidebar = () => {
   const [lastNumber, setLastNumber] = useState(localStorage.getItem('lastSelectedNumber') || 'number');
 
   useEffect(() => {
-    // 경로가 변경될 때마다 `localStorage`에서 새 값을 가져옵니다.
     const storedYear = localStorage.getItem('lastSelectedYear');
     const storedMonth = localStorage.getItem('lastSelectedMonth');
     const storedNumber = localStorage.getItem('lastSelectedNumber') || 'number';
@@ -89,7 +111,6 @@ const Sidebar = () => {
         </li>
       </ul>
 
-      {/* 로그인/로그아웃 버튼 */}
       <div className="logout-section">
         {isAuthenticated ? (
           <button className="logout-button" onClick={handleLogoutClick}>
