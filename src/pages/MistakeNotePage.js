@@ -33,22 +33,26 @@ function MistakeNotePage() {
 
         const categoryPromises = yearMonthPairs.map(async ({ year, month }) => {
           const yearAndMonth = `${year}-${month}`;
-          console.log(`Fetching data for ${yearAndMonth}`);
 
-          const questions = await fetchQuestions(year, month);
-          console.log(`Fetched questions for ${yearAndMonth}:`, questions);
+          const questions = await fetchQuestions(year, month).catch((err) => {
+            console.warn(`No questions found for ${yearAndMonth}`, err);
+            return []; // 질문이 없을 경우 빈 배열 반환
+          });
 
-          const testResultData = await fetchRecentTest(userId, yearAndMonth);
-          console.log(`Fetched testResultData for ${yearAndMonth}:`, testResultData);
+          const testResultData = await fetchRecentTest(userId, yearAndMonth).catch((err) => {
+            console.warn(`No test result found for ${yearAndMonth}`, err);
+            return null; // 시험 결과가 없을 경우 null 반환
+          });
 
           const fetchedTestId = testResultData?.id;
           if (!fetchedTestId) {
-            console.warn(`No test ID found for ${yearAndMonth}`);
-            return { year, month, incorrectQuestions: [], score: 0 };
+            return null; // 시험을 푸지 않은 경우
           }
 
-          const incorrectQuestions = await fetchIncorrectQuestions(fetchedTestId, userId, yearAndMonth);
-          console.log(`Fetched incorrectQuestions for ${yearAndMonth}:`, incorrectQuestions);
+          const incorrectQuestions = await fetchIncorrectQuestions(fetchedTestId, userId, yearAndMonth).catch((err) => {
+            console.warn(`No incorrect questions found for ${yearAndMonth}`, err);
+            return []; // 오답 데이터가 없을 경우 빈 배열 반환
+          });
 
           const incorrectDetails = incorrectQuestions.map((incorrect) => {
             const question = questions.find((q) => q.number === incorrect.number);
@@ -67,12 +71,15 @@ function MistakeNotePage() {
           };
         });
 
-        const categoriesData = await Promise.all(categoryPromises);
+        const categoriesData = (await Promise.all(categoryPromises)).filter((category) => category !== null); // null 필터링
         setCategories(categoriesData);
-        console.log('Final categories data:', categoriesData);
+
+        if (categoriesData.length === 0) {
+          setError('문제를 풀고 오세요.');
+        }
       } catch (error) {
-        setError('데이터를 불러오는 중 문제가 발생했습니다.');
         console.error('Error loading categories:', error);
+        setError('데이터를 불러오는 중 문제가 발생했습니다.');
       } finally {
         setLoading(false);
       }
@@ -103,7 +110,9 @@ function MistakeNotePage() {
           {loading ? (
             <Typography>Loading categories...</Typography>
           ) : error ? (
-            <Typography color="error">{error}</Typography>
+            <Typography variant="h6" color="error" textAlign="center">
+              {error}
+            </Typography>
           ) : (
             <List>
               {categories.map(({ year, month, incorrectQuestions, score }) => (

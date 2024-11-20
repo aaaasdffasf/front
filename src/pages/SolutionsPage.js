@@ -79,6 +79,24 @@ function SolutionsPage() {
     setCurrentQuestionIndex((prevIndex) => Math.max(prevIndex - 1, 0));
   };
 
+  if (!testResult && !loading) {
+    return (
+      <div className="solutions-container">
+        <Sidebar />
+        <div className="content-wrapper">
+          <TopNav />
+          <div className="content-area">
+            <Box display="flex" justifyContent="center" alignItems="center" height="100%">
+              <Typography variant="h4" color="primary">
+                시험을 푸시오
+              </Typography>
+            </Box>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="solutions-container">
       <Sidebar />
