@@ -111,17 +111,17 @@ function QuestionsPage() {
           </Box>
           <Box className="problem-main-box">
           <QuestionInfoBox
-  year={year}
-  month={month}
-  currentQuestion={currentQuestion}
-  time={elapsedTime}
-  currentQuestionIndex={currentQuestionIndex}
-  isLastQuestion={isLastQuestion}
-  handlePreviousQuestion={handlePreviousQuestion}
-  handleNextQuestion={handleNextQuestion}
-  isSolutionPage={false} // "정답입니다/오답입니다" 숨기기
-  hideMenuIcon={true} // 메뉴 아이콘 숨기기
-/>
+            year={year}
+            month={month}
+            currentQuestion={currentQuestion}
+            time={elapsedTime}
+            currentQuestionIndex={currentQuestionIndex}
+            isLastQuestion={isLastQuestion}
+            handlePreviousQuestion={handlePreviousQuestion}
+            handleNextQuestion={handleNextQuestion}
+            isSolutionPage={false} // "정답입니다/오답입니다" 숨기기
+            hideMenuIcon={true} // 메뉴 아이콘 숨기기
+          />
 
             {loading ? (
               <Typography>Loading question data...</Typography>
@@ -142,7 +142,7 @@ function QuestionsPage() {
           </Box>
         </div>
       </div>
-
+      
       {scoreData && (
         <ScoreModal open={isScoreModalOpen} onClose={() => setIsScoreModalOpen(false)} scoreData={scoreData} />
       )}

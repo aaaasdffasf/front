@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect, useCallback } from 'react';
+import React, { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
@@ -7,11 +7,34 @@ import { analyzeImage, similarProblem, similarProblem_text, similarProblemAnswer
 
 function Analysis() {
   const { imageUrl, setImageUrl } = useContext(ImageContext);
+  const [imageFile, setImageFile] = React.useState(null);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isMerged, setIsMerged] = useState(false);
   const [similarProblemText, setSimilarProblemText] = useState(null);
   const [similarProblemAnswerText, setSimilarProblemAnswerText] = useState(null);
+
+  // fileInputRef 정의
+  const fileInputRef = useRef(null);
+
+  // 파일 선택 핸들러
+  const handleFileChange = (event) => {
+    const file = event.target.files[0];
+    setImageFile(file);
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImageUrl(reader.result); // 이미지 URL을 ImageContext에 저장
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleButtonClick = () => {
+    // fileInputRef.current.click()을 통해 파일 선택
+    fileInputRef.current.click();
+  };
 
   // 이미지 분석 요청
   const handleAnalyze = useCallback(async () => {
@@ -139,6 +162,20 @@ function Analysis() {
                   p: 1,
                 }}
               >
+                {!imageUrl && (
+                  <div>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileChange}
+                      ref={fileInputRef} // fileInputRef 연결
+                      style={{ display: 'none' }}
+                    />
+                    <Button onClick={handleButtonClick} variant="contained">
+                      Choose Photo
+                    </Button>
+                  </div>
+                )}
                 <Box sx={{ marginTop: 2, backgroundColor: '#f0f0f0', padding: 2, borderRadius: 2 }}>
                   {imageUrl ? (
                     <img

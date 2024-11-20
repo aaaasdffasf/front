@@ -217,7 +217,13 @@ function MainPage() {
                           p: 1, // 패딩 추가
                         }}
                       >
-                        {/* Choose Photo 버튼을 오른쪽 상단에 배치 */}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          onChange={handleFileChange}
+                          ref={fileInputRef}  // fileInputRef를 연결
+                          style={{ display: 'none' }}
+                        />
                         <Button
                           variant="contained"
                           sx={{
@@ -285,17 +291,6 @@ function MainPage() {
                           justifyContent: 'center',
                         }}
                       >
-                        {/* File upload button */}
-                        <input
-                          type="file"
-                          accept="image/*"
-                          onChange={handleFileChange}
-                          ref={fileInputRef}  // fileInputRef를 연결
-                          style={{ display: 'none' }}
-                        />
-                        <Button onClick={handleButtonClick} variant="contained">
-                          Choose Photo
-                        </Button>
                       </Box>
                     </Box>
                   </Box>
