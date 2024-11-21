@@ -61,7 +61,7 @@ function MistakeSolutionsPage() {
                 />
 
                 <ProblemBox
-                  customClass="custom-problem-style"
+                  customClass="custom-solutions-style"
                   questionData={currentQuestion}
                   showExplanation={true}
                 />

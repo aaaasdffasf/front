@@ -103,6 +103,11 @@ function MainPage() {
           <Box textAlign="center" >
             {isAuthenticated ? (
               <>
+
+<Typography variant="h6">
+        환영합니다, {user?.userId || '사용자'}님!
+      </Typography>
+
                 <div className="content-area">
                   <Box className="problem-card-container">
                     <ProblemCard />
