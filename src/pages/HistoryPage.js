@@ -126,7 +126,7 @@ function HistoryPage() {
                   <TableRow>
                     <TableCell>시험 날짜</TableCell>
                     <TableCell>시험 이름</TableCell>
-                    <TableCell>테스트 시간</TableCell>
+                    <TableCell>시험 시간</TableCell>
                     <TableCell>점수</TableCell>
                     <TableCell>상세 보기</TableCell>
                   </TableRow>
@@ -198,9 +198,9 @@ function HistoryPage() {
             <>
               <Typography>시험 날짜: {formatDate(selectedTest.testDay)}</Typography>
               <Typography>시험 이름: {formatYearAndMonth(selectedTest.yearAndMonth)}</Typography>
-              <Typography>테스트 시간: {`${selectedTest.testTime}분`}</Typography>
+              <Typography>시험 시간: {`${selectedTest.testTime}분`}</Typography>
               <Typography>점수: {selectedTest.score}</Typography>
-              <Typography>사용자 답안: {selectedTest.userAnswer}</Typography>
+              {/* <Typography>사용자 답안: {selectedTest.userAnswer}</Typography> */}
             </>
           )}
         </DialogContent>

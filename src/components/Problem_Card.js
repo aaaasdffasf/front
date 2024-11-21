@@ -54,7 +54,7 @@ const ProblemCard = forwardRef(({ problemNumber }, ref) => {
               alignItems: 'center',
               justifyContent: 'center',
               boxShadow: '0px 2px 4px rgba(0, 0, 0, 0.1)',
-              height: '110px',
+              height: '40px',
               marginTop: '5px',
             }}
           >
