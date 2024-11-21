@@ -53,16 +53,6 @@ const QuestionInfoBox = ({
         </Typography>
       )}
 
-      <Button
-  variant="contained"
-  className="similar-type-button"
-  onClick={() => window.location.href = `/AnalysisPage?year=${year}&month=${month}`}
->
-  비슷한 유형 문제 풀기
-</Button>
-
-
-
       {/* 학습 시간 표시 (hideTime이 false일 때만) */}
       {!isSolutionPage && !hideTime && (
         <Typography variant="h6" className="center-text">

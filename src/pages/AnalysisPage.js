@@ -152,7 +152,7 @@ function Analysis() {
               <Box
                 sx={{
                   flex: 1,
-                  //backgroundColor: '#e0e0e0',
+                  backgroundColor: '#e0e0e0',
                   borderRadius: isMerged ? '3px' : '3px 0 0 3px',
                   display: 'flex',
                   flexDirection: 'column',
@@ -172,18 +172,11 @@ function Analysis() {
                       style={{ display: 'none' }}
                     />
                     <Button onClick={handleButtonClick} variant="contained">
-                      파일 불러오기
+                      Choose Photo
                     </Button>
                   </div>
                 )}
-                <Box 
-                  sx={{ 
-                      marginTop: 2, 
-                      //backgroundColor: '#f0f0f0', 
-                      padding: 2, 
-                      borderRadius: 2 
-                    }}
-                >
+                <Box sx={{ marginTop: 2, backgroundColor: '#f0f0f0', padding: 2, borderRadius: 2 }}>
                   {imageUrl ? (
                     <img
                       src={imageUrl}
@@ -204,23 +197,14 @@ function Analysis() {
                 <Box
                   sx={{
                     flex: 1,
-                    //backgroundColor: '#d0d0d0',
+                    backgroundColor: '#d0d0d0',
                     borderRadius: '0 3px 3px 0',
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'center',
                   }}
                 >
-                  <Box 
-                    sx={{ 
-                      marginTop: 2, 
-                      marginLeft: 2, 
-                      marginRight: 2, 
-                      //backgroundColor: '#f0f0f0', 
-                      padding: 2, 
-                      borderRadius: 2 
-                    }}
-                  >
+                  <Box sx={{ marginTop: 2, marginLeft: 2, marginRight: 2, backgroundColor: '#f0f0f0', padding: 2, borderRadius: 2 }}>
                     <Typography variant="h6">GPT 해설 및 정답</Typography>
                     {loading ? (
                       <Typography>Loading...</Typography>
