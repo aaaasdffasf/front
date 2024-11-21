@@ -1,83 +1,72 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
-const getCurrentQuestionIndex = () => {
-  return parseInt(localStorage.getItem('currentQuestionIndex') || '0', 10);
+// 로컬 스토리지에서 현재 경과 시간을 가져오는 함수
+const getElapsedTime = (testId) => {
+  return parseInt(localStorage.getItem(`${testId}_elapsedTime`) || '0', 10);
 };
 
-const getElapsedTime = () => {
-  return parseInt(localStorage.getItem('elapsedTime') || '0', 10);
+const getCurrentQuestionIndex = (testId) => {
+  return parseInt(localStorage.getItem(`${testId}_currentQuestionIndex`) || '0', 10);
 };
 
-const getStoredAnswers = () => {
-  const savedAnswers = localStorage.getItem('answers');
+const getStoredAnswers = (testId) => {
+  const savedAnswers = localStorage.getItem(`${testId}_answers`);
   return savedAnswers ? JSON.parse(savedAnswers) : {};
 };
 
-function useQuestionStorage() {
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(getCurrentQuestionIndex());
-  const [elapsedTime, setElapsedTime] = useState(getElapsedTime());
-  const [answers, setAnswers] = useState(getStoredAnswers());
-  const timerRef = useRef(null); // 타이머 ID를 저장할 useRef
-  const [isTimerRunning, setIsTimerRunning] = useState(false); // 타이머 실행 여부
+// 커스텀 훅 정의
+function useQuestionStorage(userId, testId) {
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(() =>
+    getCurrentQuestionIndex(testId)
+  );
+  const [elapsedTime, setElapsedTime] = useState(() => getElapsedTime(testId));
+  const [answers, setAnswers] = useState(() => getStoredAnswers(testId));
+  const timerRef = useRef(null);
 
-  // 문제 인덱스를 변경할 때마다 로컬 스토리지에 저장
+  // 페이지가 로드되거나 컴포넌트가 마운트될 때 타이머 시작
   useEffect(() => {
-    localStorage.setItem('currentQuestionIndex', currentQuestionIndex);
-  }, [currentQuestionIndex]);
+    timerRef.current = setInterval(() => {
+      setElapsedTime((prevTime) => {
+        const newTime = prevTime + 1;
+        localStorage.setItem(`${testId}_elapsedTime`, newTime);
+        return newTime;
+      });
+    }, 1000);
 
-  // 타이머 시작
-  const startTimer = useCallback(() => {
-    if (!isTimerRunning) {
-      setIsTimerRunning(true);
-      timerRef.current = setInterval(() => {
-        setElapsedTime((prevTime) => {
-          const newTime = prevTime + 1;
-          localStorage.setItem('elapsedTime', newTime); // 시간 저장
-          return newTime;
-        });
-      }, 1000);
-    }
-  }, [isTimerRunning]);
-
-  // 타이머 멈춤
-  const stopTimer = useCallback(() => {
-    if (isTimerRunning) {
+    // 컴포넌트 언마운트 시 타이머 정리
+    return () => {
       clearInterval(timerRef.current);
-      setIsTimerRunning(false);
-    }
-  }, [isTimerRunning]);
+    };
+  }, [testId]);
 
-  // 타이머를 멈추고 데이터를 로컬 스토리지에 저장
-  const pauseTimer = useCallback(() => {
-    stopTimer();
-    localStorage.setItem('elapsedTime', elapsedTime);
-  }, [stopTimer, elapsedTime]);
-
-  // 컴포넌트가 마운트될 때 로컬 스토리지에서 데이터를 가져와 타이머 시작
+  // 경과 시간이나 현재 문제 번호를 페이지를 떠나기 전에 저장
   useEffect(() => {
-    const storedElapsedTime = getElapsedTime();
-    setElapsedTime(storedElapsedTime);
-    startTimer(); // 페이지 진입 시 타이머 시작
+    const handleBeforeUnload = () => {
+      localStorage.setItem(`${testId}_elapsedTime`, elapsedTime);
+      localStorage.setItem(`${testId}_currentQuestionIndex`, currentQuestionIndex);
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
 
     return () => {
-      stopTimer(); // 페이지 벗어날 때 타이머 정지
+      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
-  }, [startTimer, stopTimer]);
+  }, [elapsedTime, currentQuestionIndex, testId]);
 
-  // 답변이 변경될 때마다 로컬 스토리지에 저장
+  // 문제 인덱스가 변경될 때 저장
   useEffect(() => {
-    localStorage.setItem('answers', JSON.stringify(answers));
-  }, [answers]);
+    localStorage.setItem(`${testId}_currentQuestionIndex`, currentQuestionIndex);
+  }, [currentQuestionIndex, testId]);
 
-  // 문제 인덱스, 경과 시간 및 답변을 초기화하고 타이머를 멈추는 함수
-  const clearStorageData = useCallback(() => {
-    localStorage.removeItem('currentQuestionIndex');
-    localStorage.removeItem('elapsedTime');
-    localStorage.removeItem('answers');
-    setAnswers({});
-    setElapsedTime(0);
-    stopTimer(); // 타이머 정지
-  }, [stopTimer]);
+  // 답변이 변경될 때 저장
+  useEffect(() => {
+    localStorage.setItem(`${testId}_answers`, JSON.stringify(answers));
+  }, [answers, testId]);
+
+  // 저장된 데이터를 초기화하고 타이머를 멈추는 함수
+  const clearStorageData = () => {
+    localStorage.clear();
+  };
 
   return {
     currentQuestionIndex,
@@ -87,10 +76,6 @@ function useQuestionStorage() {
     answers,
     setAnswers,
     clearStorageData,
-    startTimer,
-    stopTimer,
-    pauseTimer,
-    isTimerRunning,
   };
 }
 

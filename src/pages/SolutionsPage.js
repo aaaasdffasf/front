@@ -81,17 +81,15 @@ function SolutionsPage() {
 
   if (!testResult && !loading) {
     return (
-      <div className="solutions-container">
+      <div className="problems-container">
         <Sidebar />
         <div className="content-wrapper">
           <TopNav />
-          <div className="content-area">
-            <Box display="flex" justifyContent="center" alignItems="center" height="100%">
-              <Typography variant="h4" color="primary">
-                시험을 푸시오
-              </Typography>
-            </Box>
-          </div>
+          <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
+            <Typography variant="h4" color="error">
+              시험을 풀고 오세요.
+            </Typography>
+          </Box>
         </div>
       </div>
     );
