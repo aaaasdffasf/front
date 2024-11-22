@@ -14,8 +14,10 @@ const ProblemBox = ({
   userAnswer,
   showUserAnswer = false,
   alwaysShowCompleteButton = false, // 항상 완료 버튼 표시 여부
+  withToggleExplanation = false, // 해설 보기 버튼 활성화 여부
 }) => {
   const [answer, setAnswer] = useState(initialAnswer);
+  const [showExplanationContent, setShowExplanationContent] = useState(!withToggleExplanation); // 해설 보이기 상태
 
   // 문제 변경 시 초기 답안 세팅
   useEffect(() => {
@@ -27,6 +29,11 @@ const ProblemBox = ({
     const newAnswer = event.target.value;
     setAnswer(newAnswer);
     if (onAnswerChange) onAnswerChange(newAnswer); // 상위 컴포넌트로 답안 전달
+  };
+
+  // 해설 보기 토글 함수
+  const toggleExplanation = () => {
+    setShowExplanationContent((prev) => !prev);
   };
 
   return (
@@ -71,8 +78,22 @@ const ProblemBox = ({
         )}
       </Box>
 
+      {/* 해설 보기 버튼 */}
+      {withToggleExplanation && questionData.description && (
+        <Box mt={2} textAlign="center">
+          <Button
+            variant="outlined"
+            size="small"
+            onClick={toggleExplanation}
+            className="toggle-explanation-button"
+          >
+            {showExplanationContent ? '해설 숨기기' : '해설 보기'}
+          </Button>
+        </Box>
+      )}
+
       {/* 해설(설명) 박스 */}
-      {showExplanation && questionData.description && (
+      {showExplanation && showExplanationContent && questionData.description && (
         <Box mt={2} className="explanationBox">
           <Typography variant="body2">설명: {questionData.description}</Typography>
         </Box>

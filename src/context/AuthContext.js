@@ -7,6 +7,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage';
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+  const [isLoading, setIsLoading] = useState(true); // 로딩 상태 추가
   const { saveItem, getItem, removeItem } = useLocalStorage();
 
   const getCurrentTimeInSeconds = () => Math.floor(Date.now() / 1000);
@@ -124,16 +125,18 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     setupAxiosInterceptors(logout, refreshAccessToken);
 
-    const initializeAuth = () => {
+    const initializeAuth = async () => {
+      const token = getItem('token'); // 로컬 스토리지에서 토큰 가져오기
       if (isTokenValid(token) && user) {
         setIsAuthenticated(true);
         console.log('사용자가 로그인 되었습니다.');
       } else {
         logout();
       }
+      setIsLoading(false); // 인증 초기화 후 로딩 상태 변경
     };
     initializeAuth();
-  }, [token, user, logout, refreshAccessToken, isTokenValid]);
+  }, [getItem, isTokenValid, user, logout, refreshAccessToken]);
 
   useEffect(() => {
     if (!token) return;
@@ -150,7 +153,7 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, user, token, login, logout, signup }}
+      value={{ isAuthenticated, isLoading, user, token, login, logout, signup }}
     >
       {children}
     </AuthContext.Provider>
