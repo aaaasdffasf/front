@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Container, Box, Typography, List, ListItem, ListItemText } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
 import { AuthContext } from '../context/AuthContext';
 import { fetchRecentTest, fetchIncorrectQuestions, fetchQuestions } from '../api/questionsApi';
-import { useNavigate } from 'react-router-dom';
 import './MistakeNotePage.css';
 
 function MistakeNotePage() {
@@ -66,6 +66,7 @@ function MistakeNotePage() {
           return {
             year,
             month,
+            testId: fetchedTestId, // 최신 테스트 ID 추가
             incorrectQuestions: incorrectDetails,
             score: testResultData.score,
           };
@@ -88,9 +89,9 @@ function MistakeNotePage() {
     loadCategories();
   }, [userId]);
 
-  const handleCategoryClick = (year, month, incorrectDetails, score) => {
+  const handleCategoryClick = (year, month, testId, incorrectDetails, score) => {
     navigate(`/mistake/solutions/${year}/${month}`, {
-      state: { incorrectDetails, score },
+      state: { testId, incorrectDetails, score },
     });
   };
 
@@ -115,13 +116,13 @@ function MistakeNotePage() {
             </Typography>
           ) : (
             <List>
-              {categories.map(({ year, month, incorrectQuestions, score }) => (
+              {categories.map(({ year, month, testId, incorrectQuestions, score }) => (
                 <ListItem
                   key={`${year}-${month}`}
                   button
                   component="div"
                   onClick={() =>
-                    handleCategoryClick(year, month, incorrectQuestions, score)
+                    handleCategoryClick(year, month, testId, incorrectQuestions, score)
                   }
                 >
                   <ListItemText primary={`${year}년 ${month}월 모의고사`} />

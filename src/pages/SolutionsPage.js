@@ -132,7 +132,8 @@ function SolutionsPage() {
                 <ProblemBox
                   customClass="custom-solutions-style"
                   questionData={currentQuestion}
-                  showExplanation={true}
+                  showAnswerField={false} // 답 입력 필드 표시
+                  showExplanation={true} // 해설 표시
                   userAnswer={currentAnswer}
                   showUserAnswer={true}
                 />

@@ -10,7 +10,6 @@ import useQuestionStorage from '../hooks/useQuestionStorage';
 import ProblemCard from '../components/Problem_Card';
 import { ImageContext } from '../context/ImageContext';
 import LineChart from '../components/LineChart';
-import Chatbot from '../components/Chatbot';
 
 function MainPage() {
   const navigate = useNavigate();
@@ -297,7 +296,6 @@ function MainPage() {
                           justifyContent: 'center',
                         }}
                       >
-                        <Chatbot />
                       </Box>
                     </Box>
                   </Box>

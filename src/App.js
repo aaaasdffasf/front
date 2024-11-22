@@ -38,7 +38,7 @@ function App() {
                 <Route path="/history" element={<HistoryPage />} />
 
                 {/* 문제 풀이 */}
-                <Route path="/solutions/:year/:month/:number" element={<SolutionsPage />} />
+                <Route path="/solutions/:year/:month" element={<SolutionsPage />} />
 
                 {/* 오답 문제 풀이 */}
                 <Route path="/mistake/:year/:month" element={<MistakeNotePage />} />

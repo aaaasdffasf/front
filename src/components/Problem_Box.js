@@ -5,13 +5,15 @@ import './Problem_Box.css';
 const ProblemBox = ({
   customClass,
   questionData,
-  showExplanation = false,
+  showAnswerField = true, // 답 입력 필드 표시 여부
+  showExplanation = false, // 해설 표시 여부
   onAnswerChange,
   initialAnswer = '',
   isLastQuestion,
   onComplete,
   userAnswer,
-  showUserAnswer = false
+  showUserAnswer = false,
+  alwaysShowCompleteButton = false, // 항상 완료 버튼 표시 여부
 }) => {
   const [answer, setAnswer] = useState(initialAnswer);
 
@@ -30,12 +32,13 @@ const ProblemBox = ({
   return (
     <Box className={`problemArea ${customClass}`}>
       <Box className="problemBox">
-        {/* 이미지 중앙 정렬 */}
+        {/* 문제 이미지 */}
         <Box className="imageContainer">
           <img src={questionData.text} alt="문제 이미지" className="questionImage" />
         </Box>
 
-        {!showExplanation && (
+        {/* 답 입력 필드 */}
+        {showAnswerField && (
           <Box mt={2} display="flex" alignItems="center" justifyContent="center">
             <TextField
               variant="outlined"
@@ -45,7 +48,7 @@ const ProblemBox = ({
               value={answer}
               onChange={handleInputChange}
             />
-            {isLastQuestion && (
+            {(isLastQuestion || alwaysShowCompleteButton) && (
               <Button
                 variant="contained"
                 className="complete-button"
@@ -57,8 +60,8 @@ const ProblemBox = ({
             )}
           </Box>
         )}
-        
-        {/* 사용자 답안 표시 (검은색으로 설정) */}
+
+        {/* 사용자 답안 표시 */}
         {showUserAnswer && userAnswer && (
           <Box mt={2} display="flex" justifyContent="center">
             <Typography variant="body1" style={{ color: 'black' }}>
@@ -68,9 +71,9 @@ const ProblemBox = ({
         )}
       </Box>
 
-      {/* 설명(해설) 박스 추가 */}
+      {/* 해설(설명) 박스 */}
       {showExplanation && questionData.description && (
-        <Box className="explanationBox">
+        <Box mt={2} className="explanationBox">
           <Typography variant="body2">설명: {questionData.description}</Typography>
         </Box>
       )}

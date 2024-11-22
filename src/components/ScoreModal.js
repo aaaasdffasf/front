@@ -16,7 +16,7 @@ const ScoreModal = ({ open, onClose, scoreData }) => {
   // 문제 해설 화면으로 이동하는 함수
   const handleGoToSolutionScreen = () => {
     onClose();
-    navigate(`/solutions/${year}/${month}/${number}`); // number 값을 동적으로 전달
+    navigate(`/solutions/${year}/${month}`); // number 값을 동적으로 전달
   };
 
   return (

@@ -58,6 +58,13 @@ export const fetchAllTests = async (userId, yearAndMonth) => {
   }
 };
 
+export const updateUserAnswer = async (id, userId, yearAndMonth, questionNumber, newAnswer) => {
+  const response = await axiosInstance.post('/test/updateAnswer', null, {
+    params: { id, userId, yearAndMonth, questionNumber, newAnswer },
+  });
+  return response.data;
+};
+
 // 특정 시험 결과 가져오기 함수
 export const fetchTestResult = async (id, userId, yearAndMonth) => {
   try {

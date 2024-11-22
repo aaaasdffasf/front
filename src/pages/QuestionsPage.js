@@ -150,11 +150,12 @@ function QuestionsPage() {
                 customClass="custom-problem-style"
                 questionData={currentQuestion}
                 initialAnswer={currentAnswer}
-                showExplanation={false}
                 onAnswerChange={handleAnswerChange}
                 isLastQuestion={isLastQuestion}
                 onComplete={handleComplete}
                 onTimeUpdate={setElapsedTime}
+                showAnswerField={true} // 답 입력 필드 표시
+                showExplanation={false} // 해설 표시
               />
             )}
           </Box>

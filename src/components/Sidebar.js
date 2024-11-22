@@ -45,20 +45,18 @@ const Sidebar = () => {
 
   const [lastYear, setLastYear] = useState(localStorage.getItem('lastSelectedYear'));
   const [lastMonth, setLastMonth] = useState(localStorage.getItem('lastSelectedMonth'));
-  const [lastNumber, setLastNumber] = useState(localStorage.getItem('lastSelectedNumber') || 'number');
+  
 
   useEffect(() => {
     const storedYear = localStorage.getItem('lastSelectedYear');
     const storedMonth = localStorage.getItem('lastSelectedMonth');
-    const storedNumber = localStorage.getItem('lastSelectedNumber') || 'number';
 
     setLastYear(storedYear);
     setLastMonth(storedMonth);
-    setLastNumber(storedNumber);
   }, [location]);
 
   const questionsPath = `/questions/${lastYear}/${lastMonth}`;
-  const solutionsPath = `/solutions/${lastYear}/${lastMonth}/${lastNumber}`;
+  const solutionsPath = `/solutions/${lastYear}/${lastMonth}`;
   const mistakePath = `/mistake/${lastYear}/${lastMonth}`;
 
   return (
