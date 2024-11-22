@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Box, Typography, Button, IconButton, Modal } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MenuIcon from '@mui/icons-material/Menu';
 import ComparisonTable from './ComparisonTable';
 import './QuestionInfoBox.css';
+import { useNavigate } from 'react-router-dom';
+import { ImageContext } from '../context/ImageContext';
+import { similarProblem } from '../api/chatGPTApi';
 
 const QuestionInfoBox = ({
   year,
@@ -20,9 +23,36 @@ const QuestionInfoBox = ({
   incorrectQuestions = [],
   setCurrentQuestionIndex,
   hideMenuIcon = false, // 기존 메뉴 아이콘 숨기기
-  hideTime = false // 학습 시간 숨기기
+  hideTime = false, // 학습 시간 숨기기
 }) => {
+
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const navigate = useNavigate();
+  const { imageUrl, setImageUrl } = useContext(ImageContext);
+
+  // 비슷한 유형 문제 호출 함수
+  const handleSimilarProblem = async () => {
+    try {
+      // 현재 페이지에서 이미지 URL을 가져오도록 수정
+      const imageElement = document.querySelector('img'); // 페이지 내 이미지 요소 선택
+      const currentImageUrl = imageElement ? imageElement.src : null; // 이미지 URL 가져오기
+
+      if (currentImageUrl) {
+        const imageFile = await fetch(currentImageUrl).then((res) => res.blob());
+        const result = await similarProblem(imageFile);
+        console.log('비슷한 문제:', result);
+
+        // Analysis 페이지로 이동하고, 이미지 URL을 전달
+        setImageUrl(currentImageUrl);
+        navigate('/analysis');
+      } else {
+        alert('이미지가 없습니다.');
+      }
+    } catch (error) {
+      console.error('비슷한 유형 문제 요청 실패:', error);
+      alert('비슷한 유형 문제를 가져오는 데 실패했습니다.');
+    }
+  };
 
   const toggleModal = () => {
     setIsModalOpen((prev) => !prev);
@@ -52,6 +82,14 @@ const QuestionInfoBox = ({
           {isIncorrect ? '오답입니다.' : '정답입니다.'}
         </Typography>
       )}
+
+      <Button
+        variant="contained"
+        color="primary"
+        onClick={handleSimilarProblem}
+      >
+        비슷한 유형 문제 풀기
+      </Button>
 
       {/* 학습 시간 표시 (hideTime이 false일 때만) */}
       {!isSolutionPage && !hideTime && (

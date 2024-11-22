@@ -133,7 +133,7 @@ function MainPage() {
                         display: 'flex', // 내부 콘텐츠 정렬을 위한 flex 설정
                         flexDirection: 'row', // 두 개의 박스를 가로로 배치
                         borderRadius: 3, // 둥근 모서리
-                        overflow: 'hidden', // 내용이 넘치는 것을 방지
+                        //overflow: 'hidden', // 내용이 넘치는 것을 방지
                       }}
                     >
                       {/* 첫 번째 박스 */}

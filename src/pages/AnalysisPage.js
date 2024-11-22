@@ -162,7 +162,7 @@ function Analysis() {
                   p: 1,
                 }}
               >
-                {!imageUrl && (
+                {!imageUrl && !isMerged && !similarProblemText && ( // isMerged나 similarProblemText가 있으면 버튼 숨김
                   <div>
                     <input
                       type="file"
@@ -172,7 +172,7 @@ function Analysis() {
                       style={{ display: 'none' }}
                     />
                     <Button onClick={handleButtonClick} variant="contained">
-                      Choose Photo
+                      파일 불러오기
                     </Button>
                   </div>
                 )}
