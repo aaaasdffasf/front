@@ -138,6 +138,42 @@ export const fetchEightTests = async (userId) => {
   }
 };
 
+export const fetchLastTest = async (userId) => {
+  try {
+    const response = await axiosInstance.get('/test/getLastTest', {
+      params: { userId },
+    });
+
+    if (response.status === 204) {
+      console.warn("No last test found for the specified user.");
+      return null; // 데이터가 없을 경우 null 반환
+    }
+
+    return response.data; // 성공 시 시험 데이터 반환
+  } catch (error) {
+    handleApiError(error, "fetching last test");
+    throw error; // 오류 발생 시 호출자에게 전달
+  }
+};
+
+// 문제별 유형 맞은 갯수 가져오기 함수
+export const fetchCorrectQuestionCounts = async (id, userId, yearAndMonth) => {
+  try {
+    const response = await axiosInstance.get('/test/correctQuestionCounts', {
+      params: { id, userId, yearAndMonth },
+    });
+
+    if (response.status === 204) {
+      console.warn("No correct question count data found for the given parameters.");
+      return {}; // 데이터가 없을 경우 빈 객체 반환
+    }
+
+    return response.data; // 맞은 문제 유형 개수 반환
+  } catch (error) {
+    handleApiError(error, "fetching correct question counts");
+    throw error; // 오류 발생 시 호출자에게 전달
+  }
+};
 
 // 공통 에러 핸들링 함수
 function handleApiError(error, action) {

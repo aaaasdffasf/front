@@ -10,7 +10,8 @@ import useQuestionStorage from '../hooks/useQuestionStorage';
 import { ImageContext } from '../context/ImageContext';
 import LineChart from '../components/LineChart';
 import Chatbot from '../components/Chatbot';
-import { fetchEightTests } from '../api/questionsApi'; // fetchEightTests API 함수 가져오기
+import QuestionTypeTable from '../components/QuestionTypeTable';
+import { fetchEightTests, fetchLastTest, fetchCorrectQuestionCounts } from '../api/questionsApi'; // fetchEightTests API 함수 가져오기
 
 function MainPage() {
   const navigate = useNavigate();
@@ -20,7 +21,9 @@ function MainPage() {
   const [selectedYear, setSelectedYear] = useState('2024');
   const [selectedCategory, setSelectedCategory] = useState('문제풀이'); // 카테고리 상태 추가
   const [chartData, setChartData] = useState([{ x: "No Data", y: 0 }]); // LineChart에 사용할 데이터 상태 추가
-
+  const [correctQuestionCounts, setCorrectQuestionCounts] = useState({}); // 맞은 문제 유형 개수 상태 추가
+  const [lastTestData, setLastTestData] = useState(null); // lastTestData 상태 정의
+  
   const { clearStorageData } = useQuestionStorage();
   const { setImageUrl } = useContext(ImageContext); // ImageContext에서 setImageUrl을 사용
   const [imageFile, setImageFile] = React.useState(null);
@@ -72,6 +75,62 @@ function MainPage() {
   
     loadRecentTests();
   }, [user, isAuthenticated]);
+  
+  useEffect(() => {
+    const loadLastTest = async () => {
+      try {
+        if (isAuthenticated === null) {
+          return; // 아직 인증 여부가 결정되지 않은 상태
+        }
+  
+        if (!user || !user.userId) {
+          console.warn("사용자 정보가 유효하지 않습니다. userId를 확인하세요.");
+          return;
+        }
+  
+        // 가장 최근의 시험 데이터 가져오기
+        const lastTest = await fetchLastTest(user.userId);
+        console.log("가장 최근 시험 데이터:", lastTest); // 데이터 확인
+  
+        if (lastTest) {
+          setLastTestData(lastTest);
+        }
+      } catch (error) {
+        console.error("가장 최근 시험 데이터를 가져오는 중 오류 발생:", error);
+      }
+    };
+  
+    if (user && isAuthenticated) {
+      loadLastTest();
+    }
+  }, [user, isAuthenticated]);
+  
+
+  useEffect(() => {
+    const loadCorrectQuestionCounts = async () => {
+      try {
+        if (!lastTestData || !lastTestData.id) {
+          return; // 가장 최근 시험 데이터가 없을 경우 반환
+        }
+  
+        // lastTestData에서 필요한 데이터 추출
+        const { id, yearAndMonth, userId } = lastTestData;
+  
+        // 맞은 문제 유형 개수 요청 보내기
+        const counts = await fetchCorrectQuestionCounts(id, userId, yearAndMonth);
+        console.log("맞은 문제 유형 개수:", counts);
+  
+        // 상태 업데이트
+        setCorrectQuestionCounts(counts);
+      } catch (error) {
+        console.error("맞은 문제 유형 개수를 가져오는 중 오류 발생:", error);
+      }
+    };
+  
+    if (lastTestData) {
+      loadCorrectQuestionCounts();
+    }
+  }, [lastTestData]);
   
 
   // 파일 선택 핸들러
@@ -212,7 +271,7 @@ function MainPage() {
                           justifyContent: 'center',
                         }}
                       >
-                        
+                        <QuestionTypeTable correctQuestionCounts={correctQuestionCounts} />
                       </Box>
                     </Box>
                   </Box>
