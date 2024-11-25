@@ -104,6 +104,41 @@ export const fetchIncorrectQuestions = async (id, userId, yearAndMonth) => {
   }
 };
 
+export const fetchEightTests = async (userId) => {
+  try {
+    // API 요청
+    const response = await axiosInstance.get('/test/getEightTest', {
+      params: { userId }, // userId를 쿼리 파라미터로 전달
+    });
+
+    // 상태 코드가 204일 경우 데이터가 없음
+    if (response.status === 204) {
+      console.warn("No recent tests found for the specified user.");
+      return []; // 빈 배열 반환
+    }
+
+    // 응답 데이터가 배열인지 확인
+    if (!Array.isArray(response.data)) {
+      console.error("Expected an array but received:", response.data);
+      throw new Error("Invalid data format: Expected an array of tests");
+    }
+
+    // 데이터 변환
+    return response.data.map(({ id, testTime, score, testDay, yearAndMonth }) => ({
+      id,
+      testTime,
+      score,
+      testDay,
+      yearAndMonth
+    }));
+  } catch (error) {
+    // 에러 처리 함수 호출
+    handleApiError(error, "fetching recent eight tests");
+    throw error; // 오류 발생 시 호출자에게 전달
+  }
+};
+
+
 // 공통 에러 핸들링 함수
 function handleApiError(error, action) {
   if (error.response) {

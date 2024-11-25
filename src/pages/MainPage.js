@@ -7,9 +7,9 @@ import LoginModal from '../components/LoginModal';
 import YearSelectionTable from '../components/YearSelectionTable';
 import { useNavigate } from 'react-router-dom';
 import useQuestionStorage from '../hooks/useQuestionStorage';
-import ProblemCard from '../components/Problem_Card';
 import { ImageContext } from '../context/ImageContext';
 import LineChart from '../components/LineChart';
+import { fetchEightTests } from '../api/questionsApi'; // fetchEightTests API 함수 가져오기
 
 function MainPage() {
   const navigate = useNavigate();
@@ -18,14 +18,60 @@ function MainPage() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState('2024');
   const [selectedCategory, setSelectedCategory] = useState('문제풀이'); // 카테고리 상태 추가
+  const [chartData, setChartData] = useState([{ x: "No Data", y: 0 }]); // LineChart에 사용할 데이터 상태 추가
 
   const { clearStorageData } = useQuestionStorage();
-
   const { setImageUrl } = useContext(ImageContext); // ImageContext에서 setImageUrl을 사용
   const [imageFile, setImageFile] = React.useState(null);
 
   // fileInputRef 정의
   const fileInputRef = useRef(null);
+
+  useEffect(() => {
+    const loadRecentTests = async () => {
+      try {
+        if (isAuthenticated === null) {
+          return; // 아직 인증 여부가 결정되지 않은 상태
+        }
+  
+        if (!user || !user.userId) {
+          console.warn("사용자 정보가 유효하지 않습니다. userId를 확인하세요.");
+          return;
+        }
+  
+        setLoading(true);
+        setIsModalOpen(!isAuthenticated);
+  
+        // 최근 8개의 시험 기록 가져오기
+        const tests = await fetchEightTests(user.userId);
+        console.log(`최근 8개의 시험 기록 데이터 (userId: ${user.userId}):`, tests); // 데이터 콘솔에 출력
+  
+        if (tests && tests.length > 0) {
+          // id를 기준으로 오름차순 정렬 (id가 큰 값이 나중에 나옴)
+          const sortedTests = tests.sort((a, b) => a.id - b.id);
+  
+          // id를 x축, score를 y축으로 설정하여 chartData 구성
+          const chartData = sortedTests.map((test) => ({
+            x: test.id, // x축에 id 사용
+            y: parseInt(test.score), // 점수를 숫자로 변환
+            label: test.yearAndMonth, // 추가로 라벨을 yearAndMonth로 설정
+          }));
+          
+          setChartData(chartData);
+        } else {
+          setChartData([{ x: "No Data", y: 0 }]);
+        }
+      } catch (error) {
+        console.error("최근 8개의 시험 기록 가져오는 중 오류 발생:", error);
+        setChartData([{ x: "Error", y: 0 }]);
+      } finally {
+        setLoading(false);
+      }
+    };
+  
+    loadRecentTests();
+  }, [user, isAuthenticated]);
+  
 
   // 파일 선택 핸들러
   const handleFileChange = (event) => {
@@ -98,19 +144,12 @@ function MainPage() {
     <div style={{ display: 'flex' }}>
       <Sidebar />
       <div style={{ flex: 1 }}>
-        <TopNav />
+        <TopNav isAuthenticated={isAuthenticated} user={user} />
           <Box textAlign="center" >
             {isAuthenticated ? (
               <>
 
-<Typography variant="h6">
-        환영합니다, {user?.userId || '사용자'}님!
-      </Typography>
-
                 <div className="content-area">
-                  <Box className="problem-card-container">
-                    <ProblemCard />
-                  </Box>
                   <Box
                     sx={{
                       //height: '50vh', // 높이를 화면의 50vh로 설정
@@ -151,23 +190,14 @@ function MainPage() {
                           height: '100%',
                         }}
                       >
-                        <LineChart
-                          data={[
-                            {
-                              id: '1111',
-                              data: [
-                                { x: '24년 3월 모의고사', y: 72 },
-                                { x: '24년 6월 모의고사', y: 75 },
-                                { x: '24년 9월 모의고사', y: 81 },
-                                { x: '24년 수능', y: 75 },
-                                { x: '23년 3월 모의고사', y: 71 },
-                                { x: '23년 6월 모의고사', y: 93 },
-                                { x: '23년 9월 모의고사', y: 78 },
-                                { x: '23년 수능', y: 95 },
-                              ],
-                            },
-                          ]}
-                        />
+                       <LineChart
+                        data={[
+                          {
+                            id: 'test',
+                            data: chartData,
+                          },
+                        ]}
+                      />
                       </Box>
 
                       {/* 두 번째 박스 */}

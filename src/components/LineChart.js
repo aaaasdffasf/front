@@ -25,6 +25,11 @@ function LineChart({ data }) {
           legend: '최근 푼 시험',
           legendOffset: 36,
           legendPosition: 'middle',
+          format: (value) => {
+            // 각 x축에 대해 대응되는 yearAndMonth 라벨을 표시
+            const point = data[0].data.find((d) => d.x === value);
+            return point ? point.label : value;
+          },
         }}
         axisLeft={{
           orient: 'left',
@@ -40,6 +45,7 @@ function LineChart({ data }) {
         pointColor={{ theme: 'background' }}
         pointBorderWidth={2}
         pointBorderColor={{ from: 'serieColor' }}
+        pointLabel={(point) => point.data.label} // 각 포인트의 라벨을 yearAndMonth로 표시
         pointLabelYOffset={-12}
         useMesh={true}
         legends={[
