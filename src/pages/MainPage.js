@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom';
 import useQuestionStorage from '../hooks/useQuestionStorage';
 import { ImageContext } from '../context/ImageContext';
 import LineChart from '../components/LineChart';
+import Chatbot from '../components/Chatbot';
 import { fetchEightTests } from '../api/questionsApi'; // fetchEightTests API 함수 가져오기
 
 function MainPage() {
@@ -153,14 +154,14 @@ function MainPage() {
                   <Box
                     sx={{
                       //height: '50vh', // 높이를 화면의 50vh로 설정
-                      flex: 1, // 남은 공간을 모두 차지하도록 설정
+                      //flex: 1, // 남은 공간을 모두 차지하도록 설정
                       backgroundColor: 'white', // 내용의 가독성을 위해 흰색 배경 설정
                       borderRadius: 3,
                       textAlign: 'center',
-                      //p: 1, // 패딩을 줄여 여백을 줄임
+                      p: 1, // 패딩을 줄여 여백을 줄임
                       mx: 2, // 좌우 여백 추가
                       //my: 2, // 상하 여백 추가
-                      position: 'relative', // 작은 박스를 위한 상대 위치 설정
+                      //position: 'relative', // 작은 박스를 위한 상대 위치 설정
                     }}
                   >
                     {/* 시험 문제 영역을 두 개의 박스로 나누기 */}
@@ -203,7 +204,7 @@ function MainPage() {
                       {/* 두 번째 박스 */}
                       <Box
                         sx={{
-                          //flex: 1, // 남은 공간을 모두 차지하도록 설정
+                          flex: 1, // 남은 공간을 모두 차지하도록 설정
                           backgroundColor: '#d0d0d0', // 두 번째 박스의 배경색
                           borderRadius: '0 3px 3px 0', // 둥근 모서리
                           display: 'flex',
@@ -211,6 +212,7 @@ function MainPage() {
                           justifyContent: 'center',
                         }}
                       >
+                        
                       </Box>
                     </Box>
                   </Box>
@@ -326,6 +328,7 @@ function MainPage() {
                           justifyContent: 'center',
                         }}
                       >
+                        <Chatbot />
                       </Box>
                     </Box>
                   </Box>
