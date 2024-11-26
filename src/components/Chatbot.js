@@ -77,7 +77,6 @@ const Chatbot = () => {
 
    return (
       <div id="Chatbot" onClick={handleChatbotClick}>
-         <h1>챗봇</h1>
          <div className="chatDiv" style={{ height: chatbotHeight }}>
             {loading && <span className="messageWait">답변을 기다리고 있습니다</span>}
             {messages.map((msg, index) => (

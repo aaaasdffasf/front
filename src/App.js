@@ -12,7 +12,6 @@ import { ImageProvider } from './context/ImageContext'; // ImageProvider import 
 import theme from './theme';
 import QuestionsPage from './pages/QuestionsPage';
 import PrivateRoute from './components/PrivateRoute';
-import AlertsPage from './pages/AlertsPage';
 import AnalysisPage from './pages/AnalysisPage';
 import HistoryPage from './pages/HistoryPage';
 import SolutionsPage from './pages/SolutionsPage';
@@ -35,7 +34,6 @@ function App() {
               {/* 인증이 필요한 라우트 */}
               <Route element={<PrivateRoute />}>
                 <Route path="/questions/:year/:month" element={<QuestionsPage />} />
-                <Route path="/alerts" element={<AlertsPage />} />
                 <Route path="/analysis" element={<AnalysisPage />} />
                 <Route path="/history" element={<HistoryPage />} />
 

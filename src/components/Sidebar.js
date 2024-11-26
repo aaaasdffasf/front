@@ -92,13 +92,6 @@ const Sidebar = () => {
         </li>
       </ul>
 
-      <h3 className="sidebar-title">계정</h3>
-      <ul className="sidebar-section">
-        <li className={isActive('/settings') ? 'active' : ''}>
-          <Link to="/settings" className="sidebar-link"><FaUser className="sidebar-icon" /> 사용자 설정</Link>
-        </li>
-      </ul>
-
       <div className="logout-section">
         {isAuthenticated ? (
           <button className="logout-button" onClick={handleLogoutClick}>

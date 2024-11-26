@@ -136,14 +136,11 @@ const QuestionInfoBox = ({
 
       <Box className="button-box">
         {/* 메뉴 아이콘은 hideMenuIcon이 false일 때만 표시 */}
-        {/* {!hideMenuIcon && (
+        {!hideMenuIcon && (
           <IconButton onClick={toggleModal} className="nav-button">
             <MenuIcon />
           </IconButton>
-        )} */}
-          <IconButton onClick={toggleModal} className="nav-button">
-            <MenuIcon />
-          </IconButton>
+        )}
         <Button onClick={handlePreviousQuestion} className="nav-button" disabled={currentQuestionIndex === 0}>
           <ArrowBackIcon />
         </Button>

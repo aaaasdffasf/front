@@ -401,7 +401,7 @@ function MainPage() {
                   환영합니다!
                 </Typography>
                 <Typography variant="body1">
-                  Memo에 오신 것을 환영합니다. 로그인하거나 회원가입을 통해 더 많은 기능을 이용해보세요!
+                 로그인 후 이용해주세요!
                 </Typography>
               </>
             )}
