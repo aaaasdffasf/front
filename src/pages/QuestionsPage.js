@@ -14,6 +14,7 @@ import { fetchQuestions, submitAnswers } from '../api/questionsApi';
 import { AuthContext } from '../context/AuthContext';
 import useQuestionStorage from '../hooks/useQuestionStorage';
 import './QuestionsPage.css';
+import YearSelectionTable from '../components/YearSelectionTable';
 
 function QuestionsPage() {
   const { user } = useContext(AuthContext);
@@ -39,9 +40,6 @@ function QuestionsPage() {
     clearStorageData 
   } = useQuestionStorage(user?.userId, `${year}-${month}`);
   
-  
-  
-
   useEffect(() => {
     const loadQuestions = async () => {
       try {

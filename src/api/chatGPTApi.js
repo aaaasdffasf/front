@@ -21,7 +21,6 @@ export const analyzeImage = async (imageFile) => {
       },
     });
 
-
     // 서버에서 받은 해설 및 정답 반환
     return response.data;
   } catch (error) {
