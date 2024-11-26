@@ -1,0 +1,61 @@
+/* MainPage.css */
+
+/* 전체 컨테이너 */
+.main-container {
+  display: flex;
+}
+
+/* 내용 영역 */
+.content-area {
+  text-align: center;
+  background-color: white;
+  padding: 1rem;
+  margin: 0 2rem;
+  height: 400px;
+}
+
+/* 그래프와 질문 테이블 영역 */
+.chart-section {
+  background-color: #e0e0e0;
+  height: 400px;
+  width: 50%;
+}
+
+.question-table-section {
+  background-color: #d0d0d0;
+  height: 400px;
+  width: 50%;
+}
+
+/* 버튼 그룹 */
+.button-group-container {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.file-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  font-size: 12px;
+  padding: 4px 8px;
+}
+
+/* 챗봇 영역 */
+.chatbot-section {
+  background-color: #d0d0d0;
+}
+
+/* LineChart 컨테이너 */
+.content-box {
+  height: 400px; /* 고정 높이 */
+  width: 800px;  /* 고정 너비 */
+  margin: 0 auto; /* 화면 중앙 정렬 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f9f9f9; /* 배경색 추가 */
+  overflow: hidden; /* 확장 방지 */
+  border: 1px solid #ddd; /* 디버깅용 테두리 */
+}

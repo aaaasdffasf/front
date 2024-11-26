@@ -1,29 +1,34 @@
-// theme.js 파일
 import { createTheme } from '@mui/material/styles';
 
 const theme = createTheme({
   palette: {
     primary: {
-      main: '#1976d2', // 기본 파란색
+      main: '#1976d2',
+      light: '#63a4ff',
+      dark: '#004ba0',
+      contrastText: '#ffffff',
     },
     secondary: {
-      main: '#dc004e', // 기본 빨간색
+      main: '#dc004e',
+      light: '#ff616f',
+      dark: '#9a0036',
+      contrastText: '#ffffff',
     },
     error: {
-      main: '#f44336', // 오류 색상 (빨강)
+      main: '#f44336',
     },
     warning: {
-      main: '#ff9800', // 경고 색상 (주황)
+      main: '#ff9800',
     },
     info: {
-      main: '#2196f3', // 정보 색상 (파랑)
+      main: '#2196f3',
     },
     success: {
-      main: '#4caf50', // 성공 색상 (초록)
+      main: '#4caf50',
     },
     background: {
-      default: '#f5f5f5', // 기본 배경 색상 (밝은 회색)
-      paper: '#ffffff', // 카드나 종이 배경 색상 (흰색)
+      default: '#f5f5f5',
+      paper: '#ffffff',
     },
   },
   typography: {
@@ -40,16 +45,18 @@ const theme = createTheme({
       fontSize: '1.75rem',
       fontWeight: 500,
     },
-    body1: {
+    subtitle1: {
       fontSize: '1rem',
-      lineHeight: 1.5,
+      fontWeight: 500,
+      color: '#757575',
     },
-    body2: {
-      fontSize: '0.875rem',
-      lineHeight: 1.43,
+    caption: {
+      fontSize: '0.8rem',
+      fontWeight: 400,
+      color: '#9e9e9e',
     },
     button: {
-      textTransform: 'none', // 버튼 텍스트 대문자 변환 비활성화
+      textTransform: 'none',
       fontWeight: 600,
     },
   },
@@ -57,7 +64,7 @@ const theme = createTheme({
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: '8px', // 버튼의 둥근 모서리
+          borderRadius: '8px',
           padding: '8px 16px',
         },
         containedPrimary: {
@@ -67,13 +74,32 @@ const theme = createTheme({
             backgroundColor: '#115293',
           },
         },
+        outlinedPrimary: {
+          borderColor: '#1976d2',
+          color: '#1976d2',
+          '&:hover': {
+            borderColor: '#115293',
+            backgroundColor: 'rgba(25, 118, 210, 0.1)',
+          },
+        },
+        textPrimary: {
+          color: '#1976d2',
+          '&:hover': {
+            backgroundColor: 'rgba(25, 118, 210, 0.1)',
+          },
+        },
       },
     },
-    MuiAppBar: {
+    MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          backgroundColor: '#1976d2', // AppBar 기본 배경색
-          color: '#ffffff',
+          borderRadius: '8px',
+        },
+        input: {
+          padding: '12px',
+        },
+        notchedOutline: {
+          borderColor: '#1976d2',
         },
       },
     },
@@ -83,6 +109,7 @@ const theme = createTheme({
           padding: '16px',
           borderRadius: '12px',
           boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+          margin: '16px 0',
         },
       },
     },
