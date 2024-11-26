@@ -45,7 +45,7 @@ function YearSelectionTable({
       }}
     >
       {/* 파일 불러오기 버튼 */}
-      <input
+      {/* <input
         type="file"
         accept="image/*"
         onChange={handleFileChange}
@@ -65,7 +65,7 @@ function YearSelectionTable({
         onClick={() => fileInputRef.current.click()}
       >
         파일 불러오기
-      </Button>
+      </Button> */}
 
       {/* 카테고리 버튼 그룹
       <Box textAlign="center" mb={1}>

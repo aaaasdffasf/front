@@ -131,7 +131,6 @@ function MainPage() {
       loadCorrectQuestionCounts();
     }
   }, [lastTestData]);
-  
 
   // 파일 선택 핸들러
   const handleFileChange = (event) => {
