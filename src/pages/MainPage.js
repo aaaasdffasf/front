@@ -1,197 +1,112 @@
-//Mainpage.js
-
 import React, { useContext, useEffect, useState, useRef } from 'react';
-import { Box, Typography, ButtonGroup, Button } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
 import { AuthContext } from '../context/AuthContext';
 import LoginModal from '../components/LoginModal';
 import YearSelectionTable from '../components/YearSelectionTable';
-import { useNavigate } from 'react-router-dom';
-import useQuestionStorage from '../hooks/useQuestionStorage';
-import { ImageContext } from '../context/ImageContext';
 import LineChart from '../components/LineChart';
 import Chatbot from '../components/Chatbot';
 import QuestionTypeTable from '../components/QuestionTypeTable';
-import { fetchEightTests, fetchLastTest, fetchCorrectQuestionCounts } from '../api/questionsApi'; // fetchEightTests API 함수 가져오기
+import { useNavigate } from 'react-router-dom';
+import {
+  fetchEightTests,
+  fetchCorrectQuestionCounts,
+  fetchLastTest,
+} from '../api/questionsApi';
 
 function MainPage() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedYear, setSelectedYear] = useState('2024');
-  const [selectedCategory, setSelectedCategory] = useState('문제풀이'); // 카테고리 상태 추가
-  const [chartData, setChartData] = useState([{ x: "No Data", y: 0 }]); // LineChart에 사용할 데이터 상태 추가
-  const [correctQuestionCounts, setCorrectQuestionCounts] = useState({}); // 맞은 문제 유형 개수 상태 추가
-  const [lastTestData, setLastTestData] = useState(null); // lastTestData 상태 정의
-  
-  const { clearStorageData } = useQuestionStorage();
-  const { setImageUrl } = useContext(ImageContext); // ImageContext에서 setImageUrl을 사용
-  const [imageFile, setImageFile] = React.useState(null);
+  const [chartData, setChartData] = useState([{ x: "No Data", y: 0 }]);
+  const [correctQuestionCounts, setCorrectQuestionCounts] = useState({});
+  const [selectedCategory, setSelectedCategory] = useState('문제풀이');
+  const [lastTestData, setLastTestData] = useState(null);
 
-  // fileInputRef 정의
   const fileInputRef = useRef(null);
 
+  // 최근 시험 데이터 로드
   useEffect(() => {
     const loadRecentTests = async () => {
+      if (!user?.userId) return;
+
       try {
-        if (isAuthenticated === null) {
-          return; // 아직 인증 여부가 결정되지 않은 상태
-        }
-  
-        if (!user || !user.userId) {
-          console.warn("사용자 정보가 유효하지 않습니다. userId를 확인하세요.");
-          return;
-        }
-  
-        setLoading(true);
-        setIsModalOpen(!isAuthenticated);
-  
-        // 최근 8개의 시험 기록 가져오기
         const tests = await fetchEightTests(user.userId);
-        console.log(`최근 8개의 시험 기록 데이터 (userId: ${user.userId}):`, tests); // 데이터 콘솔에 출력
-  
         if (tests && tests.length > 0) {
-          // id를 기준으로 오름차순 정렬 (id가 큰 값이 나중에 나옴)
-          const sortedTests = tests.sort((a, b) => a.id - b.id);
-  
-          // id를 x축, score를 y축으로 설정하여 chartData 구성
-          const chartData = sortedTests.map((test) => ({
-            x: test.id, // x축에 id 사용
-            y: parseInt(test.score), // 점수를 숫자로 변환
-            label: test.yearAndMonth, // 추가로 라벨을 yearAndMonth로 설정
-          }));
-          
+          const chartData = tests
+            .sort((a, b) => a.id - b.id)
+            .map((test) => ({
+              x: test.id,
+              y: parseInt(test.score),
+              label: test.yearAndMonth,
+            }));
           setChartData(chartData);
-        } else {
-          setChartData([{ x: "No Data", y: 0 }]);
         }
       } catch (error) {
-        console.error("최근 8개의 시험 기록 가져오는 중 오류 발생:", error);
-        setChartData([{ x: "Error", y: 0 }]);
+        console.error("최근 8개의 시험 기록 로드 중 오류:", error);
       } finally {
         setLoading(false);
       }
     };
-  
+
     loadRecentTests();
-  }, [user, isAuthenticated]);
-  
+  }, [user]);
+
+  // 마지막 시험 데이터 로드
   useEffect(() => {
     const loadLastTest = async () => {
+      if (!user?.userId) return;
+
       try {
-        if (isAuthenticated === null) {
-          return; // 아직 인증 여부가 결정되지 않은 상태
-        }
-  
-        if (!user || !user.userId) {
-          console.warn("사용자 정보가 유효하지 않습니다. userId를 확인하세요.");
-          return;
-        }
-  
-        // 가장 최근의 시험 데이터 가져오기
         const lastTest = await fetchLastTest(user.userId);
-        console.log("가장 최근 시험 데이터:", lastTest); // 데이터 확인
-  
-        if (lastTest) {
-          setLastTestData(lastTest);
-        }
+        setLastTestData(lastTest);
       } catch (error) {
-        console.error("가장 최근 시험 데이터를 가져오는 중 오류 발생:", error);
+        console.error("마지막 시험 데이터 로드 중 오류:", error);
       }
     };
-  
-    if (user && isAuthenticated) {
-      loadLastTest();
-    }
-  }, [user, isAuthenticated]);
-  
 
+    loadLastTest();
+  }, [user]);
+
+  // 맞은 문제 유형 데이터 로드
   useEffect(() => {
     const loadCorrectQuestionCounts = async () => {
+      if (!user?.userId || !lastTestData?.id) return;
+
       try {
-        if (!lastTestData || !lastTestData.id) {
-          return; // 가장 최근 시험 데이터가 없을 경우 반환
-        }
-  
-        // lastTestData에서 필요한 데이터 추출
-        const { id, yearAndMonth, userId } = lastTestData;
-  
-        // 맞은 문제 유형 개수 요청 보내기
-        const counts = await fetchCorrectQuestionCounts(id, userId, yearAndMonth);
-        console.log("맞은 문제 유형 개수:", counts);
-  
-        // 상태 업데이트
+        const counts = await fetchCorrectQuestionCounts(
+          lastTestData.id,
+          user.userId,
+          lastTestData.yearAndMonth
+        );
         setCorrectQuestionCounts(counts);
       } catch (error) {
-        console.error("맞은 문제 유형 개수를 가져오는 중 오류 발생:", error);
+        console.error("맞은 문제 유형 로드 중 오류:", error);
       }
     };
-  
-    if (lastTestData) {
-      loadCorrectQuestionCounts();
-    }
-  }, [lastTestData]);
-  
 
-  // 파일 선택 핸들러
+    loadCorrectQuestionCounts();
+  }, [user, lastTestData]);
+
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-    setImageFile(file);
-
     if (file) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        setImageUrl(reader.result); // 이미지 URL을 ImageContext에 저장
-        navigate('/analysis'); // 파일이 선택되면 자동으로 Analysis 화면으로 이동
+        console.log("업로드된 파일:", reader.result);
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleButtonClick = () => {
-    // fileInputRef.current.click()을 통해 파일 선택
-    fileInputRef.current.click();
-  };
-
   const handleExamClick = (year, month) => {
-    clearStorageData();
-    localStorage.setItem('lastSelectedYear', year.slice(2)); // 연도 저장
-    localStorage.setItem('lastSelectedMonth', month);        // 월 저장
     navigate(`/questions/${year.slice(2)}/${month}`);
   };
-  
+
   const handleSolutionClick = (year, month) => {
-    clearStorageData();
-    localStorage.setItem('lastSelectedYear', year.slice(2)); // 연도 저장
-    localStorage.setItem('lastSelectedMonth', month);        // 월 저장
     navigate(`/solutions/${year.slice(2)}/${month}`);
-  };
-  
-
-  const historyData = [
-    { year: '2024', date: '2024-11-14', examInfo: '2024년 수능' },
-    { year: '2024', date: '2024-09-04', examInfo: '2024년 9월 모의고사' },
-    { year: '2024', date: '2024-06-04', examInfo: '2024년 6월 모의고사' },
-    { year: '2024', date: '2024-03-28', examInfo: '2024년 3월 모의고사' },
-    { year: '2023', date: '2023-09-25', examInfo: '2023년 9월 시험' },
-    { year: '2023', date: '2023-06-15', examInfo: '2023년 5월 시험' },
-    { year: '2022', date: '2022-12-11', examInfo: '2022년 11월 시험' },
-  ];
-
-  const years = [...new Set(historyData.map((item) => item.year))];
-  const filteredData = historyData.filter((record) => record.year === selectedYear);
-
-  useEffect(() => {
-    if (isAuthenticated !== null) {
-      setLoading(false);
-      setIsModalOpen(!isAuthenticated);
-    }
-  }, [isAuthenticated]);
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
   };
 
   const handleCategoryChange = (category) => {
@@ -210,7 +125,6 @@ function MainPage() {
         <Box textAlign="center">
           {isAuthenticated ? (
             <div className="content-area">
-              {/* 첫 번째 박스: LineChart와 QuestionTypeTable */}
               <Box
                 sx={{
                   backgroundColor: 'white',
@@ -222,13 +136,11 @@ function MainPage() {
               >
                 <Box
                   sx={{
-                    flex: 1,
                     display: 'flex',
                     flexDirection: 'row',
                     borderRadius: 3,
                   }}
                 >
-                  {/* LineChart */}
                   <Box
                     sx={{
                       flex: 1,
@@ -238,9 +150,7 @@ function MainPage() {
                       flexDirection: 'column',
                       justifyContent: 'center',
                       alignItems: 'center',
-                      position: 'relative',
                       p: 1,
-                      height: '100%',
                     }}
                   >
                     <LineChart
@@ -252,8 +162,6 @@ function MainPage() {
                       ]}
                     />
                   </Box>
-  
-                  {/* QuestionTypeTable */}
                   <Box
                     sx={{
                       flex: 1,
@@ -268,8 +176,7 @@ function MainPage() {
                   </Box>
                 </Box>
               </Box>
-  
-              {/* 두 번째 박스: YearSelectionTable */}
+
               <Box
                 sx={{
                   backgroundColor: 'white',
@@ -284,10 +191,8 @@ function MainPage() {
                     display: 'flex',
                     flexDirection: 'row',
                     borderRadius: 3,
-                    overflow: 'hidden',
                   }}
                 >
-                  {/* YearSelectionTable */}
                   <Box
                     sx={{
                       flex: 1,
@@ -297,24 +202,21 @@ function MainPage() {
                       flexDirection: 'column',
                       justifyContent: 'center',
                       alignItems: 'center',
-                      position: 'relative',
                       p: 1,
                     }}
                   >
                     <YearSelectionTable
-                      years={years}
-                      selectedYear={selectedYear}
-                      setSelectedYear={setSelectedYear}
-                      filteredData={filteredData}
-                      onExamClick={selectedCategory === '문제풀이' ? handleExamClick : handleSolutionClick}
-                      selectedCategory={selectedCategory}
-                      handleCategoryChange={handleCategoryChange}
                       handleFileChange={handleFileChange}
                       fileInputRef={fileInputRef}
+                      selectedCategory={selectedCategory}
+                      handleCategoryChange={handleCategoryChange}
+                      onExamClick={
+                        selectedCategory === '문제풀이'
+                          ? handleExamClick
+                          : handleSolutionClick
+                      }
                     />
                   </Box>
-  
-                  {/* Chatbot */}
                   <Box
                     sx={{
                       flex: 1,
@@ -339,14 +241,13 @@ function MainPage() {
             </>
           )}
         </Box>
-  
+
         {isAuthenticated === false && (
-          <LoginModal isOpen={isModalOpen} onClose={handleModalClose} />
+          <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} />
         )}
       </div>
     </div>
   );
-  
 }
 
 export default MainPage;
