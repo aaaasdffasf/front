@@ -3,12 +3,10 @@ import { ResponsiveLine } from '@nivo/line';
 
 function LineChart({ data }) {
   return (
-    // 부모 컨테이너 크기 고정
-    <div style={{ height: '400px', width: '800px', margin: '0 auto' }}>
-
+    <div style={{ height: '400px', width: '100%' }}>
       <ResponsiveLine
         data={data}
-        margin={{ top: 10, right: 70, bottom: 45, left: 50 }}
+        margin={{ top: 50, right: 50, bottom: 50, left: 60 }}
         xScale={{ type: 'point' }}
         yScale={{
           type: 'linear',
@@ -29,7 +27,7 @@ function LineChart({ data }) {
           legendPosition: 'middle',
           format: (value) => {
             // 각 x축에 대해 대응되는 yearAndMonth 라벨을 표시
-            const point = data[0]?.data.find((d) => d.x === value);
+            const point = data[0].data.find((d) => d.x === value);
             return point ? point.label : value;
           },
         }}

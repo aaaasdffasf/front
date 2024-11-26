@@ -7,23 +7,19 @@ function YearSelectionTable({
   setSelectedYear,
   filteredData,
   onExamClick,
-  onSolutionClick,
+  handleFileChange,
+  fileInputRef,
   selectedCategory,
   handleCategoryChange,
-  clearStorageData, // 추가: 로컬 스토리지 초기화 함수
+  handleButtonClick,
 }) {
-  const handleExamStart = (year, month, testId) => {
-    // 진행 상태와 시간 초기화
-    clearStorageData(); // 저장된 모든 데이터를 초기화
-    localStorage.setItem(`${testId}_elapsedTime`, '0'); // 초기 시간 설정
-    localStorage.setItem(`${testId}_currentQuestionIndex`, '0'); // 초기 문제 인덱스 설정
+  const handleExamClick = (year, month) => {
+    // 진행 상태 초기화
+    localStorage.removeItem('lastQuestionIndex');
+    localStorage.removeItem('lastSelectedTime');
 
-    // 문제풀이 혹은 문제해설에 따라 이동
-    if (selectedCategory === '문제풀이') {
-      onExamClick(year, month);
-    } else {
-      onSolutionClick(year, month);
-    }
+    // 해당 시험 페이지로 이동
+    onExamClick(year, month);
   };
 
   return (
@@ -35,12 +31,26 @@ function YearSelectionTable({
             onClick={() => setSelectedYear(year)}
             variant={selectedYear === year ? 'contained' : 'outlined'}
             style={{ marginRight: 8 }}
+            sx={{
+              padding: '4px 8px',
+              fontSize: '12px',
+              minWidth: '60px',
+            }}
           >
             {year}년
           </Button>
         ))}
       </Box>
+
+      {/* 파일 업로드와 버튼 그룹 */}
       <Box className="button-group-container" mt={2}>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          ref={fileInputRef}
+          style={{ display: 'none' }}
+        />
         <ButtonGroup>
           <Button
             variant={selectedCategory === '문제풀이' ? 'contained' : 'outlined'}
@@ -55,27 +65,40 @@ function YearSelectionTable({
             문제해설
           </Button>
         </ButtonGroup>
+        <Button
+          className="file-button"
+          variant="contained"
+          sx={{
+            marginLeft: 1,
+            fontSize: '12px',
+            padding: '4px 8px',
+          }}
+          onClick={handleButtonClick}
+        >
+          파일 불러오기
+        </Button>
       </Box>
+
       <TableContainer component={Paper} className="examTable" sx={{ mt: 2 }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell>날짜</TableCell>
-              <TableCell>시험 정보</TableCell>
+              <TableCell sx={{ padding: '6px', fontSize: '14px' }}>날짜</TableCell>
+              <TableCell sx={{ padding: '6px', fontSize: '14px' }}>시험 정보</TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
             {filteredData.map((record, index) => {
               const year = record.year;
               const month = record.examInfo.split(' ')[1].replace('월', '');
-              const testId = `${year.slice(2)}_${month}`; // testId 생성
 
               return (
-                <TableRow key={index}>
-                  <TableCell>{record.date}</TableCell>
-                  <TableCell>
+                <TableRow key={index} sx={{ height: '36px' }}>
+                  {/* 행 높이 조정 */}
+                  <TableCell sx={{ padding: '6px', fontSize: '12px' }}>{record.date}</TableCell>
+                  <TableCell sx={{ padding: '6px', fontSize: '12px' }}>
                     <span
-                      onClick={() => handleExamStart(year, month, testId)} // 클릭 시 초기화 후 이동
+                      onClick={() => handleExamClick(year, month)}
                       style={{ cursor: 'pointer', color: 'blue' }}
                     >
                       {record.examInfo}
