@@ -63,18 +63,11 @@ const Sidebar = () => {
 
   return (
     <div className="sidebar">
-      <h3 className="sidebar-title">Quick Access</h3>
-      <ul className="sidebar-section">
-        <li className={isActive('/') ? 'active' : ''}>
-          <Link to="/" className="sidebar-link">
-            <FaHome className="sidebar-icon" />
-            홈
-          </Link>
-        </li>
-      </ul>
-
       <h3 className="sidebar-title">Service</h3>
       <ul className="sidebar-section">
+        <li className={isActive('/') ? 'active' : ''}>
+          <Link to="/" className="sidebar-link">홈</Link>
+        </li>
         <li className={isActive(questionsPath) ? 'active' : ''}>
           <Link to={questionsPath} className="sidebar-link">문제풀이</Link>
         </li>
