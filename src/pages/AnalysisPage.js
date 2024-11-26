@@ -4,16 +4,17 @@ import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
 import { ImageContext } from '../context/ImageContext';
 import { analyzeImage, similarProblem, similarProblem_text, similarProblemAnswer } from '../api/chatGPTApi';
-
+import { AuthContext } from '../context/AuthContext'; // AuthContext 추가
 function Analysis() {
   const { imageUrl, setImageUrl } = useContext(ImageContext);
   const [imageFile, setImageFile] = React.useState(null);
+  
   const [analysisResult, setAnalysisResult] = useState(null);
   const [loading, setLoading] = useState(false);
   const [isMerged, setIsMerged] = useState(false);
   const [similarProblemText, setSimilarProblemText] = useState(null);
   const [similarProblemAnswerText, setSimilarProblemAnswerText] = useState(null);
-
+  const { user, isAuthenticated } = useContext(AuthContext); // AuthContext에서 user와 isAuthenticated 가져오기
   // fileInputRef 정의
   const fileInputRef = useRef(null);
 
@@ -117,7 +118,8 @@ function Analysis() {
       <Sidebar />
 
       <div style={{ flex: 1 }}>
-        <TopNav />
+      <TopNav isAuthenticated={isAuthenticated} user={user} />
+
 
         <div style={{ backgroundColor: '#F3F6FE', minHeight: '91vh', paddingTop: '2px', display: 'flex', flexDirection: 'column' }}>
           <Box

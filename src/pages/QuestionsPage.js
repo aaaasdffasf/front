@@ -1,8 +1,11 @@
+//QuestionsPage.js
+
 import React, { useEffect, useState, useContext } from 'react';
 import { Box, Typography } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
-import ProblemCard from '../components/Problem_Card';
+import { CSSTransition, SwitchTransition } from 'react-transition-group';
+import './QuestionAnimation.css'; // 애니메이션 스타일 정의
 import ProblemBox from '../components/Problem_Box';
 import ScoreModal from '../components/ScoreModal';
 import QuestionInfoBox from '../components/QuestionInfoBox';
@@ -20,6 +23,7 @@ function QuestionsPage() {
   const [error, setError] = useState(null);
   const [isScoreModalOpen, setIsScoreModalOpen] = useState(false);
   const [scoreData, setScoreData] = useState(null);
+  const [direction, setDirection] = useState('forward');
 
   const userId = user?.userId || 'guest'; // 사용자 ID를 가져옵니다. 없으면 'guest'로 처리
   
@@ -61,12 +65,14 @@ function QuestionsPage() {
   }, [year, month]);
 
   const handleNextQuestion = () => {
-    setCurrentQuestionIndex((prevIndex) => Math.min(prevIndex + 1, questionData.length - 1));
-  };
+  setDirection('forward');
+  setCurrentQuestionIndex((prevIndex) => Math.min(prevIndex + 1, questionData.length - 1));
+};
 
-  const handlePreviousQuestion = () => {
-    setCurrentQuestionIndex((prevIndex) => Math.max(prevIndex - 1, 0));
-  };
+const handlePreviousQuestion = () => {
+  setDirection('backward');
+  setCurrentQuestionIndex((prevIndex) => Math.max(prevIndex - 1, 0));
+};
 
   const handleAnswerChange = (newAnswer) => {
     setAnswers({
@@ -123,11 +129,8 @@ function QuestionsPage() {
     <div className="problems-container">
       <Sidebar />
       <div className="content-wrapper">
-        <TopNav />
+        <TopNav isAuthenticated={!!user} user={user} />
         <div className="content-area">
-          {/* <Box className="problem-card-container">
-            <ProblemCard problemNumber={currentQuestionIndex + 1} />
-          </Box> */}
           <Box className="problem-main-box">
             <QuestionInfoBox
               year={year}
@@ -136,35 +139,53 @@ function QuestionsPage() {
               time={elapsedTime}
               currentQuestionIndex={currentQuestionIndex}
               isLastQuestion={isLastQuestion}
-              handlePreviousQuestion={handlePreviousQuestion}
-              handleNextQuestion={handleNextQuestion}
+              handlePreviousQuestion={() => {
+                setDirection('backward'); // 방향 설정
+                handlePreviousQuestion();
+              }}
+              handleNextQuestion={() => {
+                setDirection('forward'); // 방향 설정
+                handleNextQuestion();
+              }}
               isSolutionPage={false}
               hideMenuIcon={true}
-              isQuestionPage = {true}
+              isQuestionPage={true}
             />
-
+  
             {loading ? (
               <Typography>Loading question data...</Typography>
             ) : error ? (
               <Typography color="error">{error}</Typography>
             ) : (
-              <ProblemBox
-                customClass="custom-problem-style"
-                isQuestionPage={true}
-                questionData={currentQuestion}
-                initialAnswer={currentAnswer}
-                onAnswerChange={handleAnswerChange}
-                isLastQuestion={isLastQuestion}
-                onComplete={handleComplete}
-                onTimeUpdate={setElapsedTime}
-                showAnswerField={true} // 답 입력 필드 표시
-                showExplanation={false} // 해설 표시
-              />
+              <div className="problem-box-container">
+                <SwitchTransition>
+                  <CSSTransition
+                    key={currentQuestionIndex} // 애니메이션이 인덱스 변경에 따라 트리거
+                    classNames={`slide-${direction}`} // forward 또는 backward 방향
+                    timeout={300} // 애니메이션 시간
+                  >
+                    <div>
+                      <ProblemBox
+                        customClass="custom-problem-style"
+                        isQuestionPage={true}
+                        questionData={currentQuestion}
+                        initialAnswer={currentAnswer}
+                        onAnswerChange={handleAnswerChange}
+                        isLastQuestion={isLastQuestion}
+                        onComplete={handleComplete}
+                        onTimeUpdate={setElapsedTime}
+                        showAnswerField={true} // 답 입력 필드 표시
+                        showExplanation={false} // 해설 표시
+                      />
+                    </div>
+                  </CSSTransition>
+                </SwitchTransition>
+              </div>
             )}
           </Box>
         </div>
       </div>
-
+  
       {scoreData && (
         <ScoreModal open={isScoreModalOpen} onClose={() => setIsScoreModalOpen(false)} scoreData={scoreData} />
       )}

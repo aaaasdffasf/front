@@ -1,14 +1,18 @@
+//SolutionsPage.js
+
 import React, { useEffect, useState, useContext, useRef } from 'react';
 import { Box, Typography } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
-import SolutionCard from '../components/Problem_Card';
 import ProblemBox from '../components/Problem_Box';
 import QuestionInfoBox from '../components/QuestionInfoBox';
 import { useParams } from 'react-router-dom';
 import { fetchQuestions, fetchRecentTest, fetchIncorrectQuestions } from '../api/questionsApi';
 import { AuthContext } from '../context/AuthContext';
 import './SolutionsPage.css';
+import { CSSTransition, SwitchTransition } from 'react-transition-group';
+import './QuestionAnimation.css'; // 애니메이션 스타일 정의
+
 
 function SolutionsPage() {
   const { year, month } = useParams(); // URL에서 연도와 월을 가져옵니다.
@@ -20,6 +24,7 @@ function SolutionsPage() {
   const [testResult, setTestResult] = useState(null); // 최신 시험 결과 데이터
   const [incorrectQuestions, setIncorrectQuestions] = useState([]); // 틀린 문제 데이터
   const testIdRef = useRef(null); // 동적으로 설정되는 testId를 저장하기 위한 ref
+  const [direction, setDirection] = useState('forward'); // 방향 상태 추가
 
   const userId = user?.userId; // 사용자 ID를 가져옵니다.
   const yearAndMonth = `${year}-${month}`; // 연도와 월을 조합한 문자열
@@ -69,13 +74,13 @@ function SolutionsPage() {
   const currentAnswer = testResult?.userAnswer?.[currentQuestionIndex] || ''; // 현재 문제의 사용자 답안
   const totalScore = testResult?.score || 0; // 총점
 
-  // 다음 문제로 이동
   const handleNextQuestion = () => {
+    setDirection('forward'); // 애니메이션 방향 설정
     setCurrentQuestionIndex((prevIndex) => Math.min(prevIndex + 1, questionData.length - 1));
   };
 
-  // 이전 문제로 이동
   const handlePreviousQuestion = () => {
+    setDirection('backward'); // 애니메이션 방향 설정
     setCurrentQuestionIndex((prevIndex) => Math.max(prevIndex - 1, 0));
   };
 
@@ -99,12 +104,8 @@ function SolutionsPage() {
     <div className="solutions-container">
       <Sidebar />
       <div className="content-wrapper">
-        <TopNav />
+        <TopNav isAuthenticated={!!user} user={user} />
         <div className="content-area">
-          {/* <Box className="solution-card-container">
-            <SolutionCard problemNumber={currentQuestionIndex + 1} />
-          </Box> */}
-
           <Box className="solution-main-box">
             <QuestionInfoBox
               year={year}
@@ -123,31 +124,38 @@ function SolutionsPage() {
               setCurrentQuestionIndex={setCurrentQuestionIndex}
               totalScore={totalScore}
             />
-
+  
             {loading ? (
               <Typography>문제 데이터를 불러오는 중입니다...</Typography>
             ) : error ? (
               <Typography color="error">{error}</Typography>
             ) : (
-              <>
-                <ProblemBox
-                  customClass="custom-solutions-style"
-                  questionData={currentQuestion}
-                  showAnswerField={false} // 답 입력 필드 표시
-                  showExplanation={true} // 해설 표시
-                  userAnswer={currentAnswer}
-                  showUserAnswer={true}
-                />
-                {/* <Box mt={4} display="flex" justifyContent="center">
-                  <Typography variant="h6">총점: {totalScore}점</Typography>
-                </Box> */}
-              </>
+              <div className="problem-box-container">
+                <SwitchTransition>
+                  <CSSTransition
+                    key={currentQuestionIndex} // 애니메이션 트리거 키
+                    classNames={`slide-${direction}`} // forward 또는 backward 방향
+                    timeout={300} // 애니메이션 시간
+                  >
+                    <div>
+                      <ProblemBox
+                        customClass="custom-solutions-style"
+                        questionData={currentQuestion}
+                        showAnswerField={false} // 답 입력 필드 표시
+                        showExplanation={true} // 해설 표시
+                        userAnswer={currentAnswer}
+                        showUserAnswer={true}
+                      />
+                    </div>
+                  </CSSTransition>
+                </SwitchTransition>
+              </div>
             )}
           </Box>
         </div>
       </div>
     </div>
   );
-}
+}  
 
 export default SolutionsPage;

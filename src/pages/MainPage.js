@@ -1,3 +1,5 @@
+//Mainpage.js
+
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { Box, Typography, ButtonGroup, Button } from '@mui/material';
 import Sidebar from '../components/Sidebar';

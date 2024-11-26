@@ -1,3 +1,5 @@
+//MistakeNotePage.js
+
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Container, Box, Typography, List, ListItem, ListItemText } from '@mui/material';
@@ -99,7 +101,7 @@ function MistakeNotePage() {
     <div style={{ display: 'flex' }}>
       <Sidebar />
       <div style={{ flex: 1 }}>
-        <TopNav />
+      <TopNav isAuthenticated={!!user} user={user} />
         <Container maxWidth="md" sx={{ mt: 4, ml: 2 }}>
           <Box textAlign="center" mt={4}>
             <Typography variant="h4" gutterBottom>

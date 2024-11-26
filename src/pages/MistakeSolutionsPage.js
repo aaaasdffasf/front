@@ -1,3 +1,5 @@
+//MistakeSolutionsPage.js
+
 import React, { useState, useEffect, useContext, useCallback } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import { Box, Typography, Snackbar, Alert } from '@mui/material'; // Snackbar, Alert 추가
@@ -5,21 +7,23 @@ import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
 import ProblemBox from '../components/Problem_Box';
 import QuestionInfoBox from '../components/QuestionInfoBox';
-import ProblemCard from '../components/Problem_Card';
 import { AuthContext } from '../context/AuthContext';
 import { updateUserAnswer, fetchIncorrectQuestions } from '../api/questionsApi';
 import './SolutionsPage.css';
+import { CSSTransition, SwitchTransition } from 'react-transition-group';
+import './QuestionAnimation.css'; // 애니메이션 스타일 정의
 
 function MistakeSolutionsPage() {
   const { year, month } = useParams();
   const location = useLocation();
-  const { score, testId: stateTestId } = location.state || {};
+  const { testId: stateTestId } = location.state || {};
   const { user } = useContext(AuthContext);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [userAnswers, setUserAnswers] = useState({});
   const [incorrectDetails, setIncorrectDetails] = useState([]);
   const [feedbackMessage, setFeedbackMessage] = useState('');
   const [showSnackbar, setShowSnackbar] = useState(false);
+  const [direction, setDirection] = useState('forward'); // 애니메이션 방향 설정
 
   const userId = user?.userId;
   const testId = stateTestId;
@@ -39,11 +43,13 @@ function MistakeSolutionsPage() {
     fetchData();
   }, [fetchData]);
 
-  const handlePreviousQuestion = () => {
+ const handlePreviousQuestion = () => {
+    setDirection('backward'); // 이전 문제 애니메이션 방향 설정
     setCurrentQuestionIndex((prevIndex) => Math.max(prevIndex - 1, 0));
   };
 
   const handleNextQuestion = () => {
+    setDirection('forward'); // 다음 문제 애니메이션 방향 설정
     setCurrentQuestionIndex((prevIndex) => Math.min(prevIndex + 1, incorrectDetails.length - 1));
   };
 
@@ -89,50 +95,59 @@ function MistakeSolutionsPage() {
 
   const currentQuestion = incorrectDetails[currentQuestionIndex];
 
-  return (
+   return (
     <div className="solutions-container">
       <Sidebar />
       <div className="content-wrapper">
-        <TopNav />
+        <TopNav isAuthenticated={!!user} user={user} />
         <div className="content-area">
-          {currentQuestion ? (
-            <>
-              {/* <Box className="solution-card-container">
-                <ProblemCard problemNumber={currentQuestion.number} />
-              </Box> */}
-              <Box className="solution-main-box">
-                <QuestionInfoBox
-                  year={year}
-                  month={month}
-                  currentQuestion={currentQuestion}
-                  currentQuestionIndex={currentQuestionIndex}
-                  totalQuestions={incorrectDetails.length}
-                  handlePreviousQuestion={handlePreviousQuestion}
-                  handleNextQuestion={handleNextQuestion}
-                  isSolutionPage={false}
-                  hideMenuIcon
-                  hideTime
-                />
-                <ProblemBox
-                  alwaysShowCompleteButton
-                  customClass="custom-solutions-style"
-                  questionData={currentQuestion}
-                  showAnswerField
-                  showExplanation
-                  onAnswerChange={handleAnswerChange}
-                  initialAnswer={userAnswers[currentQuestion?.number] || ''}
-                  isLastQuestion={currentQuestionIndex === incorrectDetails.length - 1}
-                  onComplete={handleComplete}
-                  withToggleExplanation = {true} // 해설 보기 버튼 활성화 여부
-                  isQuestionPage = {true}
-                />
-              </Box>
-            </>
-          ) : (
-            <Typography>모든 문제를 해결했습니다.</Typography>
-          )}
+          <Box className="problem-main-box">
+            <QuestionInfoBox
+              year={year}
+              month={month}
+              currentQuestion={currentQuestion}
+              currentQuestionIndex={currentQuestionIndex}
+              totalQuestions={incorrectDetails.length}
+              handlePreviousQuestion={handlePreviousQuestion}
+              handleNextQuestion={handleNextQuestion}
+              isSolutionPage={false}
+              hideMenuIcon
+              hideTime
+            />
+
+            <div className="problem-box-container">
+              <SwitchTransition>
+                <CSSTransition
+                  key={currentQuestionIndex} // 애니메이션 트리거 키
+                  classNames={`slide-${direction}`} // forward 또는 backward 방향
+                  timeout={300} // 애니메이션 시간
+                >
+                  <div>
+                    {currentQuestion ? (
+                      <ProblemBox
+                      alwaysShowCompleteButton
+                      customClass="custom-solutions-style"
+                      questionData={currentQuestion}
+                      showAnswerField
+                      showExplanation
+                      onAnswerChange={handleAnswerChange}
+                      initialAnswer={userAnswers[currentQuestion?.number] || ''}
+                      isLastQuestion={currentQuestionIndex === incorrectDetails.length - 1}
+                      onComplete={handleComplete}
+                      withToggleExplanation = {true} // 해설 보기 버튼 활성화 여부
+                      isQuestionPage = {true}
+                    />
+                    ) : (
+                      <Typography>모든 문제를 해결했습니다.</Typography>
+                    )}
+                  </div>
+                </CSSTransition>
+              </SwitchTransition>
+            </div>
+          </Box>
         </div>
       </div>
+
       <Snackbar
         open={showSnackbar}
         autoHideDuration={3000}
