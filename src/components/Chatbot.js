@@ -6,7 +6,7 @@ const Chatbot = () => {
    const [userInput, setUserInput] = useState('');
    const [loading, setLoading] = useState(false);
    const [chatbotHeight, setChatbotHeight] = useState('auto'); // 챗봇 높이를 동적으로 설정
-   const [isFocused, setIsFocused] = useState(false); // 입력창 포커스 상태
+   const [setIsFocused] = useState(false); // 입력창 포커스 상태
 
    const apiKey = process.env.REACT_APP_CHATGPT_API_KEY;
    const apiEndpoint = 'https://api.openai.com/v1/chat/completions';

@@ -26,7 +26,7 @@ function MainPage() {
   
   const { clearStorageData } = useQuestionStorage();
   const { setImageUrl } = useContext(ImageContext); // ImageContext에서 setImageUrl을 사용
-  const [imageFile, setImageFile] = React.useState(null);
+  const [setImageFile] = React.useState(null);
 
   // fileInputRef 정의
   const fileInputRef = useRef(null);

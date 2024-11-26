@@ -7,7 +7,7 @@ import { analyzeImage, similarProblem, similarProblem_text, similarProblemAnswer
 import { AuthContext } from '../context/AuthContext'; // AuthContext 추가
 function Analysis() {
   const { imageUrl, setImageUrl } = useContext(ImageContext);
-  const [imageFile, setImageFile] = React.useState(null);
+  const [ setImageFile] = React.useState(null);
   
   const [analysisResult, setAnalysisResult] = useState(null);
   const [loading, setLoading] = useState(false);
