@@ -1,7 +1,7 @@
 //QuestionInfoBox.js
 
 import React, { useState, useContext } from 'react';
-import { Box, Typography, Button, IconButton, Modal, TextField } from '@mui/material';
+import { Box, Typography, Button, IconButton, Modal} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -37,8 +37,7 @@ const QuestionInfoBox = ({
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
-  const { imageUrl, setImageUrl } = useContext(ImageContext);
-  const [answer, setAnswer] = useState(initialAnswer);
+  const {setImageUrl } = useContext(ImageContext);
 
   // 비슷한 유형 문제 호출 함수
   const handleSimilarProblem = async () => {
@@ -70,12 +69,6 @@ const QuestionInfoBox = ({
 
   // 현재 문제 번호가 틀린 문제 목록에 있는지 확인
   const isIncorrect = incorrectQuestions.some(q => q.number === currentQuestion?.number);
-
-  const handleInputChange = (event) => {
-    const newAnswer = event.target.value;
-    setAnswer(newAnswer);
-    if (onAnswerChange) onAnswerChange(newAnswer); // 상위 컴포넌트로 답안 전달
-  };
 
   return (
     <Box className="question-info-box">

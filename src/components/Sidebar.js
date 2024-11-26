@@ -3,7 +3,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import './Sidebar.css';
-import { FaHome, FaBell, FaUser, FaQuestionCircle, FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
+import {FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
 import { AuthContext } from '../context/AuthContext';
 import useQuestionStorage from '../hooks/useQuestionStorage';
 

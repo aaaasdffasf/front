@@ -14,7 +14,7 @@ import { fetchQuestions, submitAnswers } from '../api/questionsApi';
 import { AuthContext } from '../context/AuthContext';
 import useQuestionStorage from '../hooks/useQuestionStorage';
 import './QuestionsPage.css';
-import YearSelectionTable from '../components/YearSelectionTable';
+
 
 function QuestionsPage() {
   const { user } = useContext(AuthContext);
@@ -112,7 +112,7 @@ const handlePreviousQuestion = () => {
       <div className="problems-container">
         <Sidebar />
         <div className="content-wrapper">
-          <TopNav />
+        <TopNav isAuthenticated={!!user} user={user} />
           <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
             <Typography variant="h4" color="error">
               시험을 풀고 오세요.
