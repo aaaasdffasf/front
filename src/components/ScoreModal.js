@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import './ScoreModal.css'; // CSS 파일을 import
 
 const ScoreModal = ({ open, onClose, scoreData }) => {
-  const { userId, year, month, totalScore = 0, number = 'number' } = scoreData; // 필요한 데이터와 number 기본값
+  const { userId, year, month, totalScore = 0} = scoreData; // 필요한 데이터와 number 기본값
   const navigate = useNavigate();
 
   // 대시보드로 이동하는 함수
