@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react';
-import { Box, Typography, Button, IconButton, Modal } from '@mui/material';
+import { Box, Typography, Button, IconButton, Modal, TextField } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -18,17 +18,25 @@ const QuestionInfoBox = ({
   isLastQuestion,
   handlePreviousQuestion,
   handleNextQuestion,
+  totalScore,
+  isQuestionPage = false,
   isSolutionPage = false,
   questionData = [],
   incorrectQuestions = [],
   setCurrentQuestionIndex,
-  hideMenuIcon = false, // 기존 메뉴 아이콘 숨기기
+  hideMenuIcon,  // 기존 메뉴 아이콘 숨기기
   hideTime = false, // 학습 시간 숨기기
+  showAnswerField = true,
+  initialAnswer = '',
+  onComplete,
+  alwaysShowCompleteButton = false,
+  onAnswerChange,
 }) => {
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const { imageUrl, setImageUrl } = useContext(ImageContext);
+  const [answer, setAnswer] = useState(initialAnswer);
 
   // 비슷한 유형 문제 호출 함수
   const handleSimilarProblem = async () => {
@@ -61,6 +69,12 @@ const QuestionInfoBox = ({
   // 현재 문제 번호가 틀린 문제 목록에 있는지 확인
   const isIncorrect = incorrectQuestions.some(q => q.number === currentQuestion?.number);
 
+  const handleInputChange = (event) => {
+    const newAnswer = event.target.value;
+    setAnswer(newAnswer);
+    if (onAnswerChange) onAnswerChange(newAnswer); // 상위 컴포넌트로 답안 전달
+  };
+
   return (
     <Box className="question-info-box">
       <Typography variant="h6" className="left-text">
@@ -73,17 +87,33 @@ const QuestionInfoBox = ({
         )}
       </Typography>
 
-      {/* 정답/오답 텍스트 표시 (isSolutionPage가 true일 때만 표시) */}
       {isSolutionPage && (
-        <Typography
-          className={`result-text ${isIncorrect ? 'incorrect' : 'correct'}`}
-          variant="h3"
-        >
-          {isIncorrect ? '오답입니다.' : '정답입니다.'}
-        </Typography>
+        <Box display="flex" alignItems="center">
+          {/* 총점 표시 */}
+          <Typography variant="h6" className="score-text" >
+            총점: {totalScore}점
+          </Typography>
+        </Box>
       )}
 
       {isSolutionPage && (
+        <Box display="flex" alignItems="center">
+          {/* 총점 표시 */}
+          {/* <Typography variant="h6" className="score-text" >
+            총점: {totalScore}점
+          </Typography> */}
+
+          {/* 정답/오답 텍스트 표시 */}
+          <Typography
+            className={`result-text ${isIncorrect ? 'incorrect' : 'correct'}`}
+            variant="h3"
+          >
+            {isIncorrect ? '오답입니다.' : '정답입니다.'}
+          </Typography>
+        </Box>
+      )}
+
+      {!isQuestionPage && (
         <Button
           variant="contained"
           color="primary"
@@ -104,11 +134,14 @@ const QuestionInfoBox = ({
 
       <Box className="button-box">
         {/* 메뉴 아이콘은 hideMenuIcon이 false일 때만 표시 */}
-        {!hideMenuIcon && (
+        {/* {!hideMenuIcon && (
           <IconButton onClick={toggleModal} className="nav-button">
             <MenuIcon />
           </IconButton>
-        )}
+        )} */}
+          <IconButton onClick={toggleModal} className="nav-button">
+            <MenuIcon />
+          </IconButton>
         <Button onClick={handlePreviousQuestion} className="nav-button" disabled={currentQuestionIndex === 0}>
           <ArrowBackIcon />
         </Button>

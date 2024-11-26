@@ -44,13 +44,12 @@
   flex: 1;
   background-color: #f5f5f5; /* 더 밝은 색으로 배경 설정 */
   border-radius: 0 3px 3px 0;
-  display: flex;
+  /* display: flex; */
   align-items: flex-start;
-  justify-content: center;
+  /* justify-content: center; */
   padding: 20px 30px; /* 좌우 여백을 넉넉히 설정하여 책 페이지 같은 느낌 */
   text-align: justify; /* 양쪽 정렬로 텍스트가 깔끔하게 맞춰짐 */
   line-height: 1.8; /* 더 여유 있는 줄 간격 */
-  text-indent: 2em; /* 첫 줄 들여쓰기 */
   font-size: 1rem; /* 가독성을 높이기 위한 적당한 글씨 크기 */
   color: #333; /* 어두운 색상으로 텍스트 색 설정 */
   white-space: pre-wrap;

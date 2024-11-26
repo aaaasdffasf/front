@@ -32,9 +32,34 @@ function MainPage() {
     { year: '2024', date: '2024-09-04', examInfo: '2024년 9월 모의고사' },
     { year: '2024', date: '2024-06-04', examInfo: '2024년 6월 모의고사' },
     { year: '2024', date: '2024-03-28', examInfo: '2024년 3월 모의고사' },
-    { year: '2023', date: '2023-09-25', examInfo: '2023년 9월 시험' },
-    { year: '2023', date: '2023-06-15', examInfo: '2023년 5월 시험' },
-    { year: '2022', date: '2022-12-11', examInfo: '2022년 11월 시험' },
+    { year: '2023', date: '2023-11-16', examInfo: '2023년 수능' },
+    { year: '2023', date: '2023-09-06', examInfo: '2023년 9월 모의고사' },
+    { year: '2023', date: '2023-06-01', examInfo: '2023년 6월 모의고사' },
+    { year: '2023', date: '2023-03-23', examInfo: '2023년 3월 모의고사' },
+    { year: '2022', date: '2022-11-17', examInfo: '2022년 수능' },
+    { year: '2022', date: '2022-08-31', examInfo: '2022년 9월 모의고사' },
+    { year: '2022', date: '2022-06-09', examInfo: '2022년 6월 모의고사' },
+    { year: '2022', date: '2022-03-24', examInfo: '2022년 3월 모의고사' },
+    { year: '2021', date: '2021-11-18', examInfo: '2021년 수능' },
+    { year: '2021', date: '2021-09-01', examInfo: '2021년 9월 모의고사' },
+    { year: '2021', date: '2021-06-03', examInfo: '2021년 6월 모의고사' },
+    { year: '2021', date: '2021-03-25', examInfo: '2021년 3월 모의고사' },
+    { year: '2020', date: '2020-12-03', examInfo: '2020년 수능' },
+    { year: '2020', date: '2020-09-16', examInfo: '2020년 9월 모의고사' },
+    { year: '2020', date: '2020-06-18', examInfo: '2020년 6월 모의고사' },
+    { year: '2020', date: '2020-04-24', examInfo: '2020년 3월 모의고사' },
+    { year: '2019', date: '2020-12-03', examInfo: '2020년 수능' },
+    { year: '2019', date: '2020-09-16', examInfo: '2020년 9월 모의고사' },
+    { year: '2019', date: '2020-06-18', examInfo: '2020년 6월 모의고사' },
+    { year: '2019', date: '2020-04-24', examInfo: '2020년 3월 모의고사' },
+    { year: '2018', date: '2020-12-03', examInfo: '2020년 수능' },
+    { year: '2018', date: '2020-09-16', examInfo: '2020년 9월 모의고사' },
+    { year: '2018', date: '2020-06-18', examInfo: '2020년 6월 모의고사' },
+    { year: '2018', date: '2020-04-24', examInfo: '2020년 3월 모의고사' },
+    { year: '2017', date: '2017-12-03', examInfo: '2017년 수능' },
+    { year: '2017', date: '2017-09-16', examInfo: '2017년 9월 모의고사' },
+    { year: '2017', date: '2017-06-18', examInfo: '2017년 6월 모의고사' },
+    { year: '2017', date: '2017-04-24', examInfo: '2017년 3월 모의고사' },
   ];
 
   useEffect(() => {
@@ -185,6 +210,7 @@ function MainPage() {
           )}
         </MainBox>
         {isAuthenticated === false && <LoginModal isOpen={isModalOpen} onClose={handleModalClose} />}
+
       </div>
     </div>
   );

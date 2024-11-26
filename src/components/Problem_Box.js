@@ -15,6 +15,7 @@ const ProblemBox = ({
   showUserAnswer = false,
   alwaysShowCompleteButton = false, // 항상 완료 버튼 표시 여부
   withToggleExplanation = false, // 해설 보기 버튼 활성화 여부
+  isQuestionPage = false,
 }) => {
   const [answer, setAnswer] = useState(initialAnswer);
   const [showExplanationContent, setShowExplanationContent] = useState(!withToggleExplanation); // 해설 보이기 상태
@@ -39,14 +40,13 @@ const ProblemBox = ({
   return (
     <Box className={`problemArea ${customClass}`}>
       <Box className="problemBox">
-        {/* 문제 이미지 */}
+        {/* 문제 이미지와 답 입력 필드 */}
         <Box className="imageContainer">
+          {/* 문제 이미지 */}
           <img src={questionData.text} alt="문제 이미지" className="questionImage" />
         </Box>
-
-        {/* 답 입력 필드 */}
-        {showAnswerField && (
-          <Box mt={2} display="flex" alignItems="center" justifyContent="center">
+        {isQuestionPage && showAnswerField && (
+          <Box>
             <TextField
               variant="outlined"
               placeholder="답을 입력하세요"
@@ -67,16 +67,9 @@ const ProblemBox = ({
             )}
           </Box>
         )}
-
-        {/* 사용자 답안 표시 */}
-        {showUserAnswer && userAnswer && (
-          <Box mt={2} display="flex" justifyContent="center">
-            <Typography variant="body1" style={{ color: 'black' }}>
-              사용자 답안: {userAnswer}
-            </Typography>
-          </Box>
-        )}
       </Box>
+
+          
 
       {/* 해설 보기 버튼 */}
       {withToggleExplanation && questionData.description && (
@@ -95,7 +88,16 @@ const ProblemBox = ({
       {/* 해설(설명) 박스 */}
       {showExplanation && showExplanationContent && questionData.description && (
         <Box mt={2} className="explanationBox">
-          <Typography variant="body2">설명: {questionData.description}</Typography>
+          <Typography variant="body2">{questionData.description}</Typography>
+
+          {/* 사용자 답안 */}
+          {showUserAnswer && userAnswer && (
+            <Box mt={2} display="flex" >
+              <Typography variant="body1" style={{ color: 'black' }}>
+                사용자 답안: {userAnswer}
+              </Typography>
+            </Box>
+          )}
         </Box>
       )}
     </Box>

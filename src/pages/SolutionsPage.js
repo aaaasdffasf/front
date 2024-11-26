@@ -101,9 +101,9 @@ function SolutionsPage() {
       <div className="content-wrapper">
         <TopNav />
         <div className="content-area">
-          <Box className="solution-card-container">
+          {/* <Box className="solution-card-container">
             <SolutionCard problemNumber={currentQuestionIndex + 1} />
-          </Box>
+          </Box> */}
 
           <Box className="solution-main-box">
             <QuestionInfoBox
@@ -121,6 +121,7 @@ function SolutionsPage() {
               questionData={questionData}
               incorrectQuestions={incorrectQuestions}
               setCurrentQuestionIndex={setCurrentQuestionIndex}
+              totalScore={totalScore}
             />
 
             {loading ? (
@@ -137,9 +138,9 @@ function SolutionsPage() {
                   userAnswer={currentAnswer}
                   showUserAnswer={true}
                 />
-                <Box mt={4} display="flex" justifyContent="center">
+                {/* <Box mt={4} display="flex" justifyContent="center">
                   <Typography variant="h6">총점: {totalScore}점</Typography>
-                </Box>
+                </Box> */}
               </>
             )}
           </Box>

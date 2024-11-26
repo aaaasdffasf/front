@@ -80,7 +80,7 @@ function QuestionTypeTable({ correctQuestionCounts }) {
   };
 
   return (
-    <div style={{ width: '80%', height: '400px', margin: 'auto' }}>
+    <div style={{ width: '80%', height: '350px', margin: 'auto' }}>
       <Bar data={data} options={options} />
     </div>
   );

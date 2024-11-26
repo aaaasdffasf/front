@@ -13,14 +13,14 @@
 
 .left-text {
   margin-left: 8px;
-  width: 35%;
+  width: 25%;
   text-align: left;
 }
 
 .center-text {
   flex: 1;
-  text-align: left; /* 텍스트를 왼쪽으로 더 가까이 위치시킴 */
-  padding-left: 10px; /* 왼쪽에 여백 추가 */
+  padding-right: 10px;
+  text-align: center; 
 }
 
 .button-box {
@@ -89,4 +89,8 @@
 .incorrect {
   color: #ff0000; /* 더욱 강렬한 빨간색 */
   font-weight: bold;
+}
+
+.score-text {
+  margin-left: auto; /* 왼쪽으로 밀어주기 */
 }

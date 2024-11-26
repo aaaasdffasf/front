@@ -5,9 +5,10 @@ function LineChart({ data }) {
   return (
     // 부모 컨테이너 크기 고정
     <div style={{ height: '400px', width: '800px', margin: '0 auto' }}>
+
       <ResponsiveLine
         data={data}
-        margin={{ top: 50, right: 50, bottom: 50, left: 60 }}
+        margin={{ top: 10, right: 70, bottom: 45, left: 50 }}
         xScale={{ type: 'point' }}
         yScale={{
           type: 'linear',

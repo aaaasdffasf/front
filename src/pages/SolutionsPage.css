@@ -29,7 +29,6 @@
 }
 
 .solution-main-box {
-  height: 80vh; /* 부모 컨테이너의 높이를 채우도록 설정 */
   flex-direction: column;
   display: flex;
   background-color: white;
@@ -77,5 +76,5 @@
 }
 
 .custom-solutions-style .explanationBox {
-  height:800px;
+  height:600px;
 }

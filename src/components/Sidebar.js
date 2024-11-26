@@ -66,7 +66,7 @@ const Sidebar = () => {
         <li className={isActive('/') ? 'active' : ''}>
           <Link to="/" className="sidebar-link">
             <FaHome className="sidebar-icon" />
-            Dashboard
+            홈
           </Link>
         </li>
       </ul>
@@ -74,38 +74,26 @@ const Sidebar = () => {
       <h3 className="sidebar-title">Service</h3>
       <ul className="sidebar-section">
         <li className={isActive(questionsPath) ? 'active' : ''}>
-          <Link to={questionsPath} className="sidebar-link">문제풀이 화면</Link>
+          <Link to={questionsPath} className="sidebar-link">문제풀이</Link>
         </li>
         <li className={isActive(solutionsPath) ? 'active' : ''}>
-          <Link to={solutionsPath} className="sidebar-link">문제 해설 화면</Link>
+          <Link to={solutionsPath} className="sidebar-link">문제해설</Link>
         </li>
         <li className={isActive(mistakePath) ? 'active' : ''}>
-          <Link to={mistakePath} className="sidebar-link">오답 노트 페이지 화면</Link>
+          <Link to={mistakePath} className="sidebar-link">오답노트</Link>
         </li>
         <li className={isActive('/analysis') ? 'active' : ''}>
-          <Link to="/analysis" className="sidebar-link">분석 or 피드백 화면</Link>
+          <Link to="/analysis" className="sidebar-link">비슷한 유형 문제풀기</Link>
         </li>
         <li className={isActive('/history') ? 'active' : ''}>
           <Link to="/history" className="sidebar-link">학습 기록</Link>
-        </li>
-        <li className={isActive('/comparison') ? 'active' : ''}>
-          <Link to="/comparison" className="sidebar-link">친구와 성적 비교</Link>
-        </li>
-        <li className={isActive('/etc') ? 'active' : ''}>
-          <Link to="/etc" className="sidebar-link">기타</Link>
         </li>
       </ul>
 
       <h3 className="sidebar-title">계정</h3>
       <ul className="sidebar-section">
-        <li className={isActive('/alerts') ? 'active' : ''}>
-          <Link to="/alerts" className="sidebar-link"><FaBell className="sidebar-icon" /> 알림</Link>
-        </li>
         <li className={isActive('/settings') ? 'active' : ''}>
           <Link to="/settings" className="sidebar-link"><FaUser className="sidebar-icon" /> 사용자 설정</Link>
-        </li>
-        <li className={isActive('/help') ? 'active' : ''}>
-          <Link to="/help" className="sidebar-link"><FaQuestionCircle className="sidebar-icon" /> 도움말</Link>
         </li>
       </ul>
 

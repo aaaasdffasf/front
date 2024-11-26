@@ -142,11 +142,11 @@ function Analysis() {
             <Box
               sx={{
                 marginTop: '10px',
-                height: '1000px',
+                height: '780px',
                 display: 'flex',
                 flexDirection: isMerged ? 'column' : 'row',
                 borderRadius: 3,
-                overflow: 'hidden',
+                //overflow: 'hidden',
               }}
             >
               <Box

@@ -97,9 +97,9 @@ function MistakeSolutionsPage() {
         <div className="content-area">
           {currentQuestion ? (
             <>
-              <Box className="solution-card-container">
+              {/* <Box className="solution-card-container">
                 <ProblemCard problemNumber={currentQuestion.number} />
-              </Box>
+              </Box> */}
               <Box className="solution-main-box">
                 <QuestionInfoBox
                   year={year}
@@ -124,10 +124,8 @@ function MistakeSolutionsPage() {
                   isLastQuestion={currentQuestionIndex === incorrectDetails.length - 1}
                   onComplete={handleComplete}
                   withToggleExplanation = {true} // 해설 보기 버튼 활성화 여부
+                  isQuestionPage = {true}
                 />
-                <Box mt={4} display="flex" justifyContent="center">
-                  <Typography variant="h6">총점: {score}점</Typography>
-                </Box>
               </Box>
             </>
           ) : (

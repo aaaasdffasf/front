@@ -60,7 +60,7 @@ function HistoryPage() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '10  0vh' }}>
         <CircularProgress />
       </div>
     );
@@ -110,7 +110,7 @@ function HistoryPage() {
               backgroundColor: 'white',
               borderRadius: 3,
               textAlign: 'center',
-              p: 2,
+              p: 1,
               mx: 2,
               my: 2,
             }}
@@ -146,7 +146,16 @@ function HistoryPage() {
                         <TableCell>{`${test.testTime}분`}</TableCell>
                         <TableCell>{test.score}</TableCell>
                         <TableCell>
-                          <Button variant="contained" size="small" onClick={() => handleOpenDialog(test)}>
+                          <Button
+                            variant="contained"
+                            size="small" // 버튼 크기를 줄이는 기본 Prop
+                            sx={{
+                              minWidth: 'auto', // 최소 너비 설정
+                              padding: '4px 8px', // 내부 여백 조정
+                              fontSize: '0.75rem', // 텍스트 크기 줄이기
+                            }}
+                            onClick={() => handleOpenDialog(test)}
+                          >
                             상세 보기
                           </Button>
                         </TableCell>
@@ -165,22 +174,34 @@ function HistoryPage() {
               justifyContent: 'space-between',
               alignItems: 'center',
               px: 2,
-              py: 1,
+              py: 0,
               backgroundColor: '#f0f0f0',
             }}
           >
             <Button
               startIcon={<ArrowBackIcon />}
               variant="outlined"
+              // size="small" // 버튼 크기를 줄이는 Prop
+              // sx={{
+              //   minWidth: 'auto', // 기본 너비를 최소화
+              //   padding: '4px 8px', // 패딩 조정
+              //   fontSize: '0.75rem', // 글꼴 크기 조정
+              // }}
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
               이전 페이지
             </Button>
-            <Typography>{`${currentPage} / ${totalPages}`}</Typography>
+            <Typography sx={{ fontSize: '0.875rem' }}>{`${currentPage} / ${totalPages}`}</Typography>
             <Button
               endIcon={<ArrowForwardIcon />}
               variant="outlined"
+              // size="small" // 버튼 크기를 줄이는 Prop
+              // sx={{
+              //   minWidth: 'auto', // 기본 너비를 최소화
+              //   padding: '4px 8px', // 패딩 조정
+              //   fontSize: '0.75rem', // 글꼴 크기 조정
+              // }}
               onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
             >

@@ -22,6 +22,7 @@ function QuestionsPage() {
   const [scoreData, setScoreData] = useState(null);
 
   const userId = user?.userId || 'guest'; // 사용자 ID를 가져옵니다. 없으면 'guest'로 처리
+  
 
   // 사용자 ID와 시험 정보를 포함한 키로 로컬 스토리지 상태 관리
   const { 
@@ -124,9 +125,9 @@ function QuestionsPage() {
       <div className="content-wrapper">
         <TopNav />
         <div className="content-area">
-          <Box className="problem-card-container">
+          {/* <Box className="problem-card-container">
             <ProblemCard problemNumber={currentQuestionIndex + 1} />
-          </Box>
+          </Box> */}
           <Box className="problem-main-box">
             <QuestionInfoBox
               year={year}
@@ -139,6 +140,7 @@ function QuestionsPage() {
               handleNextQuestion={handleNextQuestion}
               isSolutionPage={false}
               hideMenuIcon={true}
+              isQuestionPage = {true}
             />
 
             {loading ? (
@@ -148,6 +150,7 @@ function QuestionsPage() {
             ) : (
               <ProblemBox
                 customClass="custom-problem-style"
+                isQuestionPage={true}
                 questionData={currentQuestion}
                 initialAnswer={currentAnswer}
                 onAnswerChange={handleAnswerChange}
