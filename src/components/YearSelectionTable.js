@@ -1,18 +1,8 @@
+// YearSelectionTable.js
 import React from 'react';
-import { Box, Button, ButtonGroup, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import { Box, Button, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
 
-function YearSelectionTable({
-  years,
-  selectedYear,
-  setSelectedYear,
-  filteredData,
-  onExamClick,
-  handleFileChange,
-  fileInputRef,
-  selectedCategory,
-  handleCategoryChange,
-  handleButtonClick,
-}) {
+function YearSelectionTable({ years, selectedYear, setSelectedYear, filteredData, onExamClick }) {
   const handleExamClick = (year, month) => {
     // 진행 상태 초기화
     localStorage.removeItem('lastQuestionIndex');
@@ -26,8 +16,8 @@ function YearSelectionTable({
     <>
       <Box className="yearCategories" mt={0}>
         {years.map((year) => (
-          <Button
-            key={year}
+          <Button 
+            key={year} 
             onClick={() => setSelectedYear(year)}
             variant={selectedYear === year ? 'contained' : 'outlined'}
             style={{ marginRight: 8 }}
@@ -42,44 +32,7 @@ function YearSelectionTable({
         ))}
       </Box>
 
-      {/* 파일 업로드와 버튼 그룹 */}
-      <Box className="button-group-container" mt={2}>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          ref={fileInputRef}
-          style={{ display: 'none' }}
-        />
-        <ButtonGroup>
-          <Button
-            variant={selectedCategory === '문제풀이' ? 'contained' : 'outlined'}
-            onClick={() => handleCategoryChange('문제풀이')}
-          >
-            문제풀이
-          </Button>
-          <Button
-            variant={selectedCategory === '문제해설' ? 'contained' : 'outlined'}
-            onClick={() => handleCategoryChange('문제해설')}
-          >
-            문제해설
-          </Button>
-        </ButtonGroup>
-        <Button
-          className="file-button"
-          variant="contained"
-          sx={{
-            marginLeft: 1,
-            fontSize: '12px',
-            padding: '4px 8px',
-          }}
-          onClick={handleButtonClick}
-        >
-          파일 불러오기
-        </Button>
-      </Box>
-
-      <TableContainer component={Paper} className="examTable" sx={{ mt: 2 }}>
+      <TableContainer component={Paper} className="examTable" sx={{ mt: 1 }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -93,8 +46,7 @@ function YearSelectionTable({
               const month = record.examInfo.split(' ')[1].replace('월', '');
 
               return (
-                <TableRow key={index} sx={{ height: '36px' }}>
-                  {/* 행 높이 조정 */}
+                <TableRow key={index} sx={{ height: '36px' }}> {/* 행 높이 조정 */}
                   <TableCell sx={{ padding: '6px', fontSize: '12px' }}>{record.date}</TableCell>
                   <TableCell sx={{ padding: '6px', fontSize: '12px' }}>
                     <span
@@ -110,6 +62,7 @@ function YearSelectionTable({
           </TableBody>
         </Table>
       </TableContainer>
+
     </>
   );
 }
