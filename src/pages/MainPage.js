@@ -213,6 +213,7 @@ function MainPage() {
                       mx: 2, // 좌우 여백 추가
                       //my: 2, // 상하 여백 추가
                       //position: 'relative', // 작은 박스를 위한 상대 위치 설정
+                      
                     }}
                   >
                     {/* 시험 문제 영역을 두 개의 박스로 나누기 */}
@@ -225,6 +226,7 @@ function MainPage() {
                         flexDirection: 'row', // 두 개의 박스를 가로로 배치
                         borderRadius: 3, // 둥근 모서리
                         //overflow: 'hidden', // 내용이 넘치는 것을 방지
+                        
                       }}
                     >
                       {/* 첫 번째 박스 */}
@@ -240,6 +242,9 @@ function MainPage() {
                           position: 'relative', // 상대 위치 설정
                           p: 1, // 패딩 추가
                           height: '100%',
+                           marginright: '0.5%',
+                          borderradius: '12px'
+                          
                         }}
                       >
                        <LineChart
@@ -261,6 +266,7 @@ function MainPage() {
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',
+                          
                         }}
                       >
                         <QuestionTypeTable correctQuestionCounts={correctQuestionCounts} />
@@ -289,6 +295,7 @@ function MainPage() {
                         flexDirection: 'row', // 두 개의 박스를 가로로 배치
                         borderRadius: 3, // 둥근 모서리
                         overflow: 'hidden', // 내용이 넘치는 것을 방지
+                        
                       }}
                     >
                       {/* 첫 번째 박스 */}
@@ -303,6 +310,7 @@ function MainPage() {
                           alignItems: 'center', // 수평 중앙 정렬
                           position: 'relative', // 상대 위치 설정
                           p: 1, // 패딩 추가
+                          
                         }}
                       >
                         <input
@@ -328,33 +336,62 @@ function MainPage() {
                         </Button>
                         {/* 카테고리 버튼 그룹 추가 */}
                         {isAuthenticated && (
-                          <Box textAlign="center" mb={1}>
-                            <ButtonGroup>
-                              <Button
-                                variant={selectedCategory === '문제풀이' ? 'contained' : 'outlined'}
-                                sx={{
-                                  padding: '4px 8px',
-                                  fontSize: '12px',
-                                  minWidth: '60px',
-                                }}
-                                onClick={() => handleCategoryChange('문제풀이')}
-                              >
-                                문제풀이
-                              </Button>
-                              <Button
-                                variant={selectedCategory === '문제해설' ? 'contained' : 'outlined'}
-                                sx={{
-                                  padding: '4px 8px',
-                                  fontSize: '12px',
-                                  minWidth: '60px',
-                                }}
-                                onClick={() => handleCategoryChange('문제해설')}
-                              >
-                                문제해설
-                              </Button>
-                            </ButtonGroup> 
-                          </Box> 
-                        )}
+  <Box textAlign="center" mb={1}>
+    <ButtonGroup>
+      <Button
+        variant={selectedCategory === '문제풀이' ? 'contained' : 'outlined'}
+        sx={{
+          padding: '4px 8px',
+          fontSize: '12px',
+          minWidth: '60px',
+          position: 'relative',
+          overflow: 'hidden',
+          // 기본 상태
+          backgroundColor: selectedCategory === '문제풀이' ? '#1976d2' : 'transparent',
+          color: selectedCategory === '문제풀이' ? '#fff' : '#1976d2',
+          // 애니메이션
+          transition: 'transform 0.2s, background-color 0.2s',
+          '&:hover': {
+            backgroundColor: selectedCategory === '문제풀이' ? '#115293' : '#e3f2fd',
+            transform: 'scale(1.05)', // 버튼 크기 확대
+          },
+          '&:active': {
+            transform: 'scale(0.95)', // 버튼 클릭 시 축소
+          },
+        }}
+        onClick={() => handleCategoryChange('문제풀이')}
+      >
+        문제풀이
+      </Button>
+      <Button
+        variant={selectedCategory === '문제해설' ? 'contained' : 'outlined'}
+        sx={{
+          padding: '4px 8px',
+          fontSize: '12px',
+          minWidth: '60px',
+          position: 'relative',
+          overflow: 'hidden',
+          // 기본 상태
+          backgroundColor: selectedCategory === '문제해설' ? '#1976d2' : 'transparent',
+          color: selectedCategory === '문제해설' ? '#fff' : '#1976d2',
+          // 애니메이션
+          transition: 'transform 0.2s, background-color 0.2s',
+          '&:hover': {
+            backgroundColor: selectedCategory === '문제해설' ? '#115293' : '#e3f2fd',
+            transform: 'scale(1.05)', // 버튼 크기 확대
+          },
+          '&:active': {
+            transform: 'scale(0.95)', // 버튼 클릭 시 축소
+          },
+        }}
+        onClick={() => handleCategoryChange('문제해설')}
+      >
+        문제해설
+      </Button>
+    </ButtonGroup>
+  </Box>
+)}
+
 
 
                         {/* 선택된 카테고리에 따라 YearSelectionTable 표시 */}
