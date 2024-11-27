@@ -112,7 +112,7 @@ const handlePreviousQuestion = () => {
       <div className="problems-container">
         <Sidebar />
         <div className="content-wrapper">
-        <TopNav isAuthenticated={!!user} user={user} />
+        
           <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
             <Typography variant="h4" color="error">
               시험을 풀고 오세요.
@@ -134,6 +134,7 @@ const handlePreviousQuestion = () => {
               year={year}
               month={month}
               currentQuestion={currentQuestion}
+              onComplete={handleComplete}
               time={elapsedTime}
               currentQuestionIndex={currentQuestionIndex}
               isLastQuestion={isLastQuestion}
@@ -178,6 +179,7 @@ const handlePreviousQuestion = () => {
                         showAnswerField={true} // 답 입력 필드 표시
                         showExplanation={false} // 해설 표시
                       />
+                      
                     </div>
                   </CSSTransition>
                 </SwitchTransition>

@@ -89,7 +89,7 @@ function SolutionsPage() {
       <div className="problems-container">
         <Sidebar />
         <div className="content-wrapper">
-        <TopNav isAuthenticated={!!user} user={user} />
+        
           <Box display="flex" justifyContent="center" alignItems="center" height="100vh">
             <Typography variant="h4" color="error">
               시험을 풀고 오세요.
@@ -104,7 +104,6 @@ function SolutionsPage() {
     <div className="solutions-container">
       <Sidebar />
       <div className="content-wrapper">
-        <TopNav isAuthenticated={!!user} user={user} />
         <div className="content-area">
           <Box className="solution-main-box">
             <QuestionInfoBox

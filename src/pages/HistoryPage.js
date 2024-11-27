@@ -100,9 +100,8 @@ function HistoryPage() {
 
       <div style={{ flex: 1 }}>
         {/* 상단 네비게이션 바 */}
-        <TopNav isAuthenticated={isAuthenticated} user={user} />
 
-        <div style={{ backgroundColor: '#F3F6FE', minHeight: '91vh', paddingTop: '2px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ backgroundColor: '#F3F6FE', minHeight: '100vh', paddingTop: '2px', display: 'flex', flexDirection: 'column' }}>
           {/* 컨텐츠 영역 */}
           <Box
             sx={{

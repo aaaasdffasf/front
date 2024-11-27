@@ -7,6 +7,8 @@
   flex-direction: column;
   padding: 20px;
   height: 100vh;
+  overflow-y: auto;
+  transition: height 0.3s ease;
 }
 
 .sidebar-title {

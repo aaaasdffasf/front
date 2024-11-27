@@ -58,20 +58,18 @@ const ProblemBox = ({
               onChange={handleInputChange}
             />
             {(isLastQuestion || alwaysShowCompleteButton) && (
-              <Button
-                variant="contained"
-                className="complete-button"
-                onClick={onComplete}
-                size="small"
-              >
-                완료
-              </Button>
+            <Button
+              variant="contained"
+              className="complete-button"
+              onClick={onComplete}
+              size="small"
+            >
+              완료
+            </Button>
             )}
           </Box>
         )}
       </Box>
-
-          
 
       {/* 해설 보기 버튼 */}
       {withToggleExplanation && questionData.description && (

@@ -16,6 +16,28 @@ const Sidebar = () => {
 
   const isActive = (path) => location.pathname === path;
 
+  const [sidebarHeight, setSidebarHeight] = useState(window.innerHeight);
+
+  // 스크롤 및 윈도우 리사이즈 이벤트 핸들러
+  const updateSidebarHeight = () => {
+    setSidebarHeight(document.body.scrollHeight);
+  };
+
+  useEffect(() => {
+    // 스크롤 및 윈도우 리사이즈 이벤트 등록
+    window.addEventListener('scroll', updateSidebarHeight);
+    window.addEventListener('resize', updateSidebarHeight);
+
+    // 초기 높이 설정
+    updateSidebarHeight();
+
+    // 컴포넌트 언마운트 시 이벤트 제거
+    return () => {
+      window.removeEventListener('scroll', updateSidebarHeight);
+      window.removeEventListener('resize', updateSidebarHeight);
+    };
+  }, []);
+
   const handleLogoutClick = () => {
     console.log(`로그인 before data (${user?.userId || user?.email || 'Unknown User'}):`, {
       currentQuestionIndex: localStorage.getItem('currentQuestionIndex'),
@@ -62,7 +84,7 @@ const Sidebar = () => {
   const mistakePath = `/mistake/${lastYear}/${lastMonth}`;
 
   return (
-    <div className="sidebar">
+    <div className="sidebar" style={{ height: `${sidebarHeight}px` }}>
       <h3 className="sidebar-title">Service</h3>
       <ul className="sidebar-section">
         <li className={isActive('/') ? 'active' : ''}>

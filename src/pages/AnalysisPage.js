@@ -118,10 +118,8 @@ function Analysis() {
       <Sidebar />
 
       <div style={{ flex: 1 }}>
-      <TopNav isAuthenticated={isAuthenticated} user={user} />
 
-
-        <div style={{ backgroundColor: '#F3F6FE', minHeight: '91vh', paddingTop: '2px', display: 'flex', flexDirection: 'column' }}>
+        <div style={{ backgroundColor: '#F3F6FE', minHeight: '100vh', paddingTop: '2px', display: 'flex', flexDirection: 'column' }}>
           <Box
             sx={{
               height: '50vh',

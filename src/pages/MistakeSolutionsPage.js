@@ -113,6 +113,7 @@ function MistakeSolutionsPage() {
               isSolutionPage={false}
               hideMenuIcon
               hideTime
+              // alwaysShowCompleteButton = {true}
             />
 
             <div className="problem-box-container">
@@ -137,6 +138,7 @@ function MistakeSolutionsPage() {
                       withToggleExplanation = {true} // 해설 보기 버튼 활성화 여부
                       isQuestionPage = {true}
                     />
+                    
                     ) : (
                       <Typography>모든 문제를 해결했습니다.</Typography>
                     )}

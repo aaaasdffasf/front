@@ -116,6 +116,19 @@ const QuestionInfoBox = ({
         </Typography>
       )}
 
+      {(isLastQuestion || alwaysShowCompleteButton) && (
+        <Button
+          variant="contained"
+          className="complete-button"
+          onClick={onComplete}
+          size="small"
+        >
+          완료
+        </Button>
+      )}
+
+
+
       <Box className="button-box">
         {!hideMenuIcon && (
           <IconButton onClick={toggleModal} className="nav-button">

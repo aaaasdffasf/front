@@ -101,15 +101,16 @@ function MistakeNotePage() {
     <div style={{ display: 'flex' }}>
       <Sidebar />
       <div style={{ flex: 1 }}>
-      <TopNav isAuthenticated={!!user} user={user} />
+      
         <Container maxWidth="md" sx={{ mt: 4, ml: 2 }}>
           <Box textAlign="center" mt={4}>
+            <Box >
             <Typography variant="h4" gutterBottom>
               오답노트
             </Typography>
             <Typography variant="body1">틀린 문제를 다시 풀어보세요.</Typography>
+            </Box>
           </Box>
-
           {loading ? (
             <Typography>Loading categories...</Typography>
           ) : error ? (

@@ -20,7 +20,7 @@
 .center-text {
   flex: 1;
   padding-right: 10px;
-  text-align: center; 
+  /* text-align: center;  */
 }
 
 .button-box {
