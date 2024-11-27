@@ -102,14 +102,15 @@ function MistakeNotePage() {
       <Sidebar />
       <div style={{ flex: 1 }}>
       
-        <Container maxWidth="md" sx={{ mt: 4, ml: 2 }}>
-          <Box textAlign="center" mt={4}>
-            <Box >
+        <Container sx={{ mt: 4, ml: 2 }}>
+          <Box sx={{ backgroundColor: '#FFFFFF', padding: 2, width: '1610px', height: '890px' }}>
+            <Box textAlign="center" mt={4}>
+            
             <Typography variant="h4" gutterBottom>
               오답노트
             </Typography>
             <Typography variant="body1">틀린 문제를 다시 풀어보세요.</Typography>
-            </Box>
+            
           </Box>
           {loading ? (
             <Typography>Loading categories...</Typography>
@@ -133,6 +134,7 @@ function MistakeNotePage() {
               ))}
             </List>
           )}
+          </Box>
         </Container>
       </div>
     </div>

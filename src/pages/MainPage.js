@@ -234,7 +234,9 @@ function MainPage() {
                         sx={{
                           flex: 1, // 남은 공간을 모두 차지하도록 설정
                           backgroundColor: '#ffffff', // 첫 번째 박스의 배경색
-                          borderRadius: '3px 0 0 3px', // 둥근 모서리
+                          //borderRadius: '3px 0 0 3px', // 둥근 모서리
+                          borderRadius: 3,
+                          marginRight: '1%',
                           display: 'flex',
                           flexDirection: 'column', // 세로 방향으로 배치
                           justifyContent: 'center', // 수직 중앙 정렬
@@ -262,7 +264,8 @@ function MainPage() {
                         sx={{
                           flex: 1, // 남은 공간을 모두 차지하도록 설정
                           backgroundColor: '#ffffff', // 두 번째 박스의 배경색
-                          borderRadius: '0 3px 3px 0', // 둥근 모서리
+                          //borderRadius: '0 3px 3px 0', // 둥근 모서리
+                          borderRadius: 3,
                           display: 'flex',
                           alignItems: 'center',
                           justifyContent: 'center',

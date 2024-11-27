@@ -42,7 +42,7 @@ function Signup() {
 
   return (
     <Container maxWidth="sm">
-      <Box mt={8} p={4} boxShadow={3} borderRadius={2}>
+      <Box mt={8} p={4} boxShadow={3} borderRadius={2} sx={{ backgroundColor: '#FFFFFF'}}>
         <Typography variant="h4" component="h1" gutterBottom align="center">
           회원가입
         </Typography>
