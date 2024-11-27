@@ -3,7 +3,6 @@ import { Box, Typography, ButtonGroup, Button } from '@mui/material';
 import Sidebar from '../components/Sidebar';
 import TopNav from '../components/TopNav';
 import { AuthContext } from '../context/AuthContext';
-import LoginModal from '../components/LoginModal';
 import YearSelectionTable from '../components/YearSelectionTable';
 import { useNavigate } from 'react-router-dom';
 import useQuestionStorage from '../hooks/useQuestionStorage';
@@ -17,7 +16,6 @@ function MainPage() {
   const navigate = useNavigate();
   const { isAuthenticated, user } = useContext(AuthContext);
   const [loading, setLoading] = useState(true);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedYear, setSelectedYear] = useState('2024');
   const [selectedCategory, setSelectedCategory] = useState('문제풀이'); // 카테고리 상태 추가
   const [chartData, setChartData] = useState([{ x: "No Data", y: 0 }]); // LineChart에 사용할 데이터 상태 추가
@@ -44,7 +42,6 @@ function MainPage() {
         }
   
         setLoading(true);
-        setIsModalOpen(!isAuthenticated);
   
         // 최근 8개의 시험 기록 가져오기
         const tests = await fetchEightTests(user.userId);
@@ -184,17 +181,8 @@ function MainPage() {
 
   const years = [...new Set(historyData.map((item) => item.year))];
   const filteredData = historyData.filter((record) => record.year === selectedYear);
+;
 
-  useEffect(() => {
-    if (isAuthenticated !== null) {
-      setLoading(false);
-      setIsModalOpen(!isAuthenticated);
-    }
-  }, [isAuthenticated]);
-
-  const handleModalClose = () => {
-    setIsModalOpen(false);
-  };
 
   const handleCategoryChange = (category) => {
     setSelectedCategory(category);
@@ -340,33 +328,62 @@ function MainPage() {
                         </Button>
                         {/* 카테고리 버튼 그룹 추가 */}
                         {isAuthenticated && (
-                          <Box textAlign="center" mb={1}>
-                            <ButtonGroup>
-                              <Button
-                                variant={selectedCategory === '문제풀이' ? 'contained' : 'outlined'}
-                                sx={{
-                                  padding: '4px 8px',
-                                  fontSize: '12px',
-                                  minWidth: '60px',
-                                }}
-                                onClick={() => handleCategoryChange('문제풀이')}
-                              >
-                                문제풀이
-                              </Button>
-                              <Button
-                                variant={selectedCategory === '문제해설' ? 'contained' : 'outlined'}
-                                sx={{
-                                  padding: '4px 8px',
-                                  fontSize: '12px',
-                                  minWidth: '60px',
-                                }}
-                                onClick={() => handleCategoryChange('문제해설')}
-                              >
-                                문제해설
-                              </Button>
-                            </ButtonGroup> 
-                          </Box> 
-                        )}
+  <Box textAlign="center" mb={1}>
+    <ButtonGroup>
+      <Button
+        variant={selectedCategory === '문제풀이' ? 'contained' : 'outlined'}
+        sx={{
+          padding: '4px 8px',
+          fontSize: '12px',
+          minWidth: '60px',
+          position: 'relative',
+          overflow: 'hidden',
+          // 기본 상태
+          backgroundColor: selectedCategory === '문제풀이' ? '#1976d2' : 'transparent',
+          color: selectedCategory === '문제풀이' ? '#fff' : '#1976d2',
+          // 애니메이션
+          transition: 'transform 0.2s, background-color 0.2s',
+          '&:hover': {
+            backgroundColor: selectedCategory === '문제풀이' ? '#115293' : '#e3f2fd',
+            transform: 'scale(1.05)', // 버튼 크기 확대
+          },
+          '&:active': {
+            transform: 'scale(0.95)', // 버튼 클릭 시 축소
+          },
+        }}
+        onClick={() => handleCategoryChange('문제풀이')}
+      >
+        문제풀이
+      </Button>
+      <Button
+        variant={selectedCategory === '문제해설' ? 'contained' : 'outlined'}
+        sx={{
+          padding: '4px 8px',
+          fontSize: '12px',
+          minWidth: '60px',
+          position: 'relative',
+          overflow: 'hidden',
+          // 기본 상태
+          backgroundColor: selectedCategory === '문제해설' ? '#1976d2' : 'transparent',
+          color: selectedCategory === '문제해설' ? '#fff' : '#1976d2',
+          // 애니메이션
+          transition: 'transform 0.2s, background-color 0.2s',
+          '&:hover': {
+            backgroundColor: selectedCategory === '문제해설' ? '#115293' : '#e3f2fd',
+            transform: 'scale(1.05)', // 버튼 크기 확대
+          },
+          '&:active': {
+            transform: 'scale(0.95)', // 버튼 클릭 시 축소
+          },
+        }}
+        onClick={() => handleCategoryChange('문제해설')}
+      >
+        문제해설
+      </Button>
+    </ButtonGroup>
+  </Box>
+)}
+
 
                         {/* 선택된 카테고리에 따라 YearSelectionTable 표시 */}
                         {isAuthenticated && (
@@ -519,10 +536,6 @@ function MainPage() {
               </>
             )}
           </Box>
-        
-        {isAuthenticated === false && (
-          <LoginModal isOpen={isModalOpen} onClose={handleModalClose} />
-        )}
       </div>
     </div>
   );

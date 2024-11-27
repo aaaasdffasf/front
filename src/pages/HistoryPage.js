@@ -128,7 +128,6 @@ function HistoryPage() {
                     <TableCell>시험 이름</TableCell>
                     <TableCell>시험 시간</TableCell>
                     <TableCell>점수</TableCell>
-                    <TableCell>상세 보기</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -145,20 +144,6 @@ function HistoryPage() {
                         <TableCell>{formatYearAndMonth(test.yearAndMonth)}</TableCell>
                         <TableCell>{`${test.testTime}분`}</TableCell>
                         <TableCell>{test.score}</TableCell>
-                        <TableCell>
-                          <Button
-                            variant="contained"
-                            size="small" // 버튼 크기를 줄이는 기본 Prop
-                            sx={{
-                              minWidth: 'auto', // 최소 너비 설정
-                              padding: '4px 8px', // 내부 여백 조정
-                              fontSize: '0.75rem', // 텍스트 크기 줄이기
-                            }}
-                            onClick={() => handleOpenDialog(test)}
-                          >
-                            상세 보기
-                          </Button>
-                        </TableCell>
                       </TableRow>
                     ))
                   )}
