@@ -16,7 +16,7 @@ function HistoryPage() {
   const [selectedTest, setSelectedTest] = useState(null); // 선택된 시험 데이터
   const [isDialogOpen, setIsDialogOpen] = useState(false); // 다이얼로그 열림 상태
   const itemsPerPage = 10; // 페이지당 항목 수
-
+  const isAuthenticated = !!user; // 사용자가 있으면 true, 없으면 false
   // yearAndMonth를 사람이 읽을 수 있는 형식으로 변환
   const formatYearAndMonth = (value) => {
     const [year, month] = value.split('-');
@@ -100,7 +100,7 @@ function HistoryPage() {
 
       <div style={{ flex: 1 }}>
         {/* 상단 네비게이션 바 */}
-        <TopNav />
+        <TopNav isAuthenticated={isAuthenticated} user={user} />
 
         <div style={{ backgroundColor: '#F3F6FE', minHeight: '91vh', paddingTop: '2px', display: 'flex', flexDirection: 'column' }}>
           {/* 컨텐츠 영역 */}
