@@ -27,7 +27,7 @@ const theme = createTheme({
       main: '#4caf50',
     },
     background: {
-      default: '#f5f5f5',
+      default: '#c8d2eb;',
       paper: '#ffffff',
     },
   },

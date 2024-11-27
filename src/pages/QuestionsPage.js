@@ -127,7 +127,7 @@ const handlePreviousQuestion = () => {
     <div className="problems-container">
       <Sidebar />
       <div className="content-wrapper">
-        <TopNav isAuthenticated={!!user} user={user} />
+        {/* <TopNav isAuthenticated={!!user} user={user} /> */}
         <div className="content-area">
           <Box className="problem-main-box">
             <QuestionInfoBox

@@ -206,7 +206,7 @@ function MainPage() {
                     sx={{
                       //height: '500px', // 높이를 화면의 50vh로 설정
                       //flex: 1, // 남은 공간을 모두 차지하도록 설정
-                      backgroundColor: 'white', // 내용의 가독성을 위해 흰색 배경 설정
+                      backgroundColor: '#c8d2eb;', // 내용의 가독성을 위해 흰색 배경 설정
                       borderRadius: 3,
                       textAlign: 'center',
                       p: 1, // 패딩을 줄여 여백을 줄임
@@ -231,7 +231,7 @@ function MainPage() {
                       <Box
                         sx={{
                           flex: 1, // 남은 공간을 모두 차지하도록 설정
-                          backgroundColor: '#e0e0e0', // 첫 번째 박스의 배경색
+                          backgroundColor: '#ffffff', // 첫 번째 박스의 배경색
                           borderRadius: '3px 0 0 3px', // 둥근 모서리
                           display: 'flex',
                           flexDirection: 'column', // 세로 방향으로 배치
@@ -256,7 +256,7 @@ function MainPage() {
                       <Box
                         sx={{
                           flex: 1, // 남은 공간을 모두 차지하도록 설정
-                          backgroundColor: '#d0d0d0', // 두 번째 박스의 배경색
+                          backgroundColor: '#ffffff', // 두 번째 박스의 배경색
                           borderRadius: '0 3px 3px 0', // 둥근 모서리
                           display: 'flex',
                           alignItems: 'center',
@@ -271,7 +271,7 @@ function MainPage() {
                     sx={{
                       //height: '50vh', // 높이를 화면의 50vh로 설정
                       //flex: 1, // 남은 공간을 모두 차지하도록 설정
-                      backgroundColor: 'white', // 내용의 가독성을 위해 흰색 배경 설정
+                      backgroundColor: '#c8d2eb;', // 내용의 가독성을 위해 흰색 배경 설정
                       borderRadius: 3,
                       textAlign: 'center',
                       p: 1, // 패딩을 줄여 여백을 줄임
@@ -295,7 +295,7 @@ function MainPage() {
                       <Box
                         sx={{
                           flex: 1, // 남은 공간을 모두 차지하도록 설정
-                          backgroundColor: '#e0e0e0', // 첫 번째 박스의 배경색
+                          backgroundColor: '#ffffff', // 첫 번째 박스의 배경색
                           borderRadius: '3px 0 0 3px', // 둥근 모서리
                           display: 'flex',
                           flexDirection: 'column', // 세로 방향으로 배치
@@ -373,7 +373,7 @@ function MainPage() {
                       <Box
                         sx={{
                           flex: 1, // 남은 공간을 모두 차지하도록 설정
-                          backgroundColor: '#d0d0d0', // 두 번째 박스의 배경색
+                          backgroundColor: '#ffffff', // 두 번째 박스의 배경색
                           borderRadius: '0 3px 3px 0', // 둥근 모서리
                           display: 'flex',
                           alignItems: 'center',
@@ -418,7 +418,7 @@ function MainPage() {
                       <Box
                         sx={{
                           flex: 1, // 남은 공간을 모두 차지하도록 설정
-                          backgroundColor: '#e0e0e0', // 첫 번째 박스의 배경색
+                          backgroundColor: '#ffffff', // 첫 번째 박스의 배경색
                           borderRadius: '3px 0 0 3px', // 둥근 모서리
                           display: 'flex',
                           flexDirection: 'column', // 세로 방향으로 배치
@@ -436,7 +436,7 @@ function MainPage() {
                       <Box
                         sx={{
                           flex: 1, // 남은 공간을 모두 차지하도록 설정
-                          backgroundColor: '#d0d0d0', // 두 번째 박스의 배경색
+                          backgroundColor: '#ffffff', // 두 번째 박스의 배경색
                           borderRadius: '0 3px 3px 0', // 둥근 모서리
                           display: 'flex',
                           alignItems: 'center',
@@ -475,7 +475,7 @@ function MainPage() {
                       <Box
                         sx={{
                           flex: 1, // 남은 공간을 모두 차지하도록 설정
-                          backgroundColor: '#e0e0e0', // 첫 번째 박스의 배경색
+                          backgroundColor: '#ffffff', // 첫 번째 박스의 배경색
                           borderRadius: '3px 0 0 3px', // 둥근 모서리
                           display: 'flex',
                           flexDirection: 'column', // 세로 방향으로 배치
@@ -493,7 +493,7 @@ function MainPage() {
                       <Box
                         sx={{
                           flex: 1, // 남은 공간을 모두 차지하도록 설정
-                          backgroundColor: '#d0d0d0', // 두 번째 박스의 배경색
+                          backgroundColor: '#ffffff', // 두 번째 박스의 배경색
                           borderRadius: '0 3px 3px 0', // 둥근 모서리
                           display: 'flex',
                           alignItems: 'center',

@@ -9,7 +9,7 @@
 }
 
 .content-area {
-  background-color: #F3F6FE;
+  background-color: #c8d2eb;
   min-height: 91vh;
   padding-top: 2px;
   display: flex;
@@ -17,7 +17,7 @@
 }
 
 .solution-card-container {
-  background-color: #F3F6FE;
+  background-color: white;
   border-radius: 3px;
   padding: 1px;
   margin-left: 16px;
