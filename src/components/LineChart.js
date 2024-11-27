@@ -6,7 +6,7 @@ function LineChart({ data }) {
     <div style={{ height: '500px', width: '100%' }}>
       <ResponsiveLine
         data={data}
-        margin={{ top: 50, right: 70, bottom: 50, left: 60 }}
+        margin={{ top: 50, right: 100, bottom: 50, left: 60 }}
         xScale={{ type: 'point' }}
         yScale={{
           type: 'linear',

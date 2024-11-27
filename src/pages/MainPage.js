@@ -172,9 +172,14 @@ function MainPage() {
     { year: '2024', date: '2024-09-04', examInfo: '2024년 9월 모의고사' },
     { year: '2024', date: '2024-06-04', examInfo: '2024년 6월 모의고사' },
     { year: '2024', date: '2024-03-28', examInfo: '2024년 3월 모의고사' },
-    { year: '2023', date: '2023-09-25', examInfo: '2023년 9월 시험' },
-    { year: '2023', date: '2023-06-15', examInfo: '2023년 5월 시험' },
-    { year: '2022', date: '2022-12-11', examInfo: '2022년 11월 시험' },
+    { year: '2023', date: '2023-11-14', examInfo: '2023년 수능' },
+    { year: '2023', date: '2023-09-04', examInfo: '2023년 9월 모의고사' },
+    { year: '2023', date: '2023-06-04', examInfo: '2023년 6월 모의고사' },
+    { year: '2023', date: '2023-03-28', examInfo: '2023년 3월 모의고사' },
+    { year: '2022', date: '2022-11-14', examInfo: '2022년 수능' },
+    { year: '2022', date: '2022-09-04', examInfo: '2022년 9월 모의고사' },
+    { year: '2022', date: '2022-06-04', examInfo: '2022년 6월 모의고사' },
+    { year: '2022', date: '2022-03-28', examInfo: '2022년 3월 모의고사' },
   ];
 
   const years = [...new Set(historyData.map((item) => item.year))];
@@ -211,7 +216,7 @@ function MainPage() {
                 <div className="content-area">
                   <Box
                     sx={{
-                      //height: '50vh', // 높이를 화면의 50vh로 설정
+                      //height: '500px', // 높이를 화면의 50vh로 설정
                       //flex: 1, // 남은 공간을 모두 차지하도록 설정
                       backgroundColor: 'white', // 내용의 가독성을 위해 흰색 배경 설정
                       borderRadius: 3,
@@ -252,7 +257,7 @@ function MainPage() {
                        <LineChart
                         data={[
                           {
-                            id: 'test',
+                            id: 'CodeCraft',
                             data: chartData,
                           },
                         ]}
@@ -394,12 +399,123 @@ function MainPage() {
               </>
             ) : (
               <>
-                <Typography variant="h3" gutterBottom>
-                  환영합니다!
-                </Typography>
-                <Typography variant="body1">
-                  Memo에 오신 것을 환영합니다. 로그인하거나 회원가입을 통해 더 많은 기능을 이용해보세요!
-                </Typography>
+                <div className="content-area">
+                  <Box
+                    sx={{
+                      //height: '50vh', // 높이를 화면의 50vh로 설정
+                      //flex: 1, // 남은 공간을 모두 차지하도록 설정
+                      backgroundColor: 'white', // 내용의 가독성을 위해 흰색 배경 설정
+                      borderRadius: 3,
+                      textAlign: 'center',
+                      p: 1, // 패딩을 줄여 여백을 줄임
+                      mx: 2, // 좌우 여백 추가
+                      //my: 2, // 상하 여백 추가
+                      //position: 'relative', // 작은 박스를 위한 상대 위치 설정
+                    }}
+                  >
+                    {/* 시험 문제 영역을 두 개의 박스로 나누기 */}
+                    <Box
+                      sx={{
+                        flex: 1,
+                        //marginTop: '10px', // 작은 박스 아래로 밀어내기 위해 여백 추가
+                        //height: '100%', // 남은 공간을 모두 차지하도록 높이 계산
+                        display: 'flex', // 내부 콘텐츠 정렬을 위한 flex 설정
+                        flexDirection: 'row', // 두 개의 박스를 가로로 배치
+                        borderRadius: 3, // 둥근 모서리
+                        //overflow: 'hidden', // 내용이 넘치는 것을 방지
+                      }}
+                    >
+                      {/* 첫 번째 박스 */}
+                      <Box
+                        sx={{
+                          flex: 1, // 남은 공간을 모두 차지하도록 설정
+                          backgroundColor: '#e0e0e0', // 첫 번째 박스의 배경색
+                          borderRadius: '3px 0 0 3px', // 둥근 모서리
+                          display: 'flex',
+                          flexDirection: 'column', // 세로 방향으로 배치
+                          justifyContent: 'center', // 수직 중앙 정렬
+                          alignItems: 'center', // 수평 중앙 정렬
+                          position: 'relative', // 상대 위치 설정
+                          p: 1, // 패딩 추가
+                          height: '500px',
+                        }}
+                      >
+                       <Typography variant='h4'>성적 그래프</Typography>
+                      </Box>
+
+                      {/* 두 번째 박스 */}
+                      <Box
+                        sx={{
+                          flex: 1, // 남은 공간을 모두 차지하도록 설정
+                          backgroundColor: '#d0d0d0', // 두 번째 박스의 배경색
+                          borderRadius: '0 3px 3px 0', // 둥근 모서리
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Typography variant='h4'>문제 유형 그래프</Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                  <Box
+                    sx={{
+                      //height: '50vh', // 높이를 화면의 50vh로 설정
+                      //flex: 1, // 남은 공간을 모두 차지하도록 설정
+                      backgroundColor: 'white', // 내용의 가독성을 위해 흰색 배경 설정
+                      borderRadius: 3,
+                      textAlign: 'center',
+                      p: 1, // 패딩을 줄여 여백을 줄임
+                      mx: 2, // 좌우 여백 추가
+                      //my: 2, // 상하 여백 추가
+                      //position: 'relative', // 작은 박스를 위한 상대 위치 설정
+                    }}
+                  >
+                    {/* 시험 문제 영역을 두 개의 박스로 나누기 */}
+                    <Box
+                      sx={{
+                        //flex: 1,
+                        //height: '275px', // 남은 공간을 모두 차지하도록 높이 계산
+                        display: 'flex', // 내부 콘텐츠 정렬을 위한 flex 설정
+                        flexDirection: 'row', // 두 개의 박스를 가로로 배치
+                        borderRadius: 3, // 둥근 모서리
+                        overflow: 'hidden', // 내용이 넘치는 것을 방지
+                      }}
+                    >
+                      {/* 첫 번째 박스 */}
+                      <Box
+                        sx={{
+                          flex: 1, // 남은 공간을 모두 차지하도록 설정
+                          backgroundColor: '#e0e0e0', // 첫 번째 박스의 배경색
+                          borderRadius: '3px 0 0 3px', // 둥근 모서리
+                          display: 'flex',
+                          flexDirection: 'column', // 세로 방향으로 배치
+                          justifyContent: 'center', // 수직 중앙 정렬
+                          alignItems: 'center', // 수평 중앙 정렬
+                          position: 'relative', // 상대 위치 설정
+                          p: 1, // 패딩 추가
+                          height: '350px',
+                        }}
+                      >
+                        <Typography variant='h4'>시험 선택</Typography>
+                      </Box>
+
+                      {/* 두 번째 박스 */}
+                      <Box
+                        sx={{
+                          flex: 1, // 남은 공간을 모두 차지하도록 설정
+                          backgroundColor: '#d0d0d0', // 두 번째 박스의 배경색
+                          borderRadius: '0 3px 3px 0', // 둥근 모서리
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                        }}
+                      >
+                        <Typography variant='h4'>챗봇</Typography>
+                      </Box>
+                    </Box>
+                  </Box>
+                </div>
               </>
             )}
           </Box>
