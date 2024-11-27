@@ -328,61 +328,33 @@ function MainPage() {
                         </Button>
                         {/* 카테고리 버튼 그룹 추가 */}
                         {isAuthenticated && (
-  <Box textAlign="center" mb={1}>
-    <ButtonGroup>
-      <Button
-        variant={selectedCategory === '문제풀이' ? 'contained' : 'outlined'}
-        sx={{
-          padding: '4px 8px',
-          fontSize: '12px',
-          minWidth: '60px',
-          position: 'relative',
-          overflow: 'hidden',
-          // 기본 상태
-          backgroundColor: selectedCategory === '문제풀이' ? '#1976d2' : 'transparent',
-          color: selectedCategory === '문제풀이' ? '#fff' : '#1976d2',
-          // 애니메이션
-          transition: 'transform 0.2s, background-color 0.2s',
-          '&:hover': {
-            backgroundColor: selectedCategory === '문제풀이' ? '#115293' : '#e3f2fd',
-            transform: 'scale(1.05)', // 버튼 크기 확대
-          },
-          '&:active': {
-            transform: 'scale(0.95)', // 버튼 클릭 시 축소
-          },
-        }}
-        onClick={() => handleCategoryChange('문제풀이')}
-      >
-        문제풀이
-      </Button>
-      <Button
-        variant={selectedCategory === '문제해설' ? 'contained' : 'outlined'}
-        sx={{
-          padding: '4px 8px',
-          fontSize: '12px',
-          minWidth: '60px',
-          position: 'relative',
-          overflow: 'hidden',
-          // 기본 상태
-          backgroundColor: selectedCategory === '문제해설' ? '#1976d2' : 'transparent',
-          color: selectedCategory === '문제해설' ? '#fff' : '#1976d2',
-          // 애니메이션
-          transition: 'transform 0.2s, background-color 0.2s',
-          '&:hover': {
-            backgroundColor: selectedCategory === '문제해설' ? '#115293' : '#e3f2fd',
-            transform: 'scale(1.05)', // 버튼 크기 확대
-          },
-          '&:active': {
-            transform: 'scale(0.95)', // 버튼 클릭 시 축소
-          },
-        }}
-        onClick={() => handleCategoryChange('문제해설')}
-      >
-        문제해설
-      </Button>
-    </ButtonGroup>
-  </Box>
-)}
+                          <Box textAlign="center" mb={1}>
+                            <ButtonGroup>
+                              <Button
+                                variant={selectedCategory === '문제풀이' ? 'contained' : 'outlined'}
+                                sx={{
+                                  padding: '4px 8px',
+                                  fontSize: '12px',
+                                  minWidth: '60px',
+                                }}
+                                onClick={() => handleCategoryChange('문제풀이')}
+                              >
+                                문제풀이
+                              </Button>
+                              <Button
+                                variant={selectedCategory === '문제해설' ? 'contained' : 'outlined'}
+                                sx={{
+                                  padding: '4px 8px',
+                                  fontSize: '12px',
+                                  minWidth: '60px',
+                                }}
+                                onClick={() => handleCategoryChange('문제해설')}
+                              >
+                                문제해설
+                              </Button>
+                            </ButtonGroup> 
+                          </Box> 
+                        )}
 
 
                         {/* 선택된 카테고리에 따라 YearSelectionTable 표시 */}

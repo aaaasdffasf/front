@@ -116,6 +116,7 @@ function SolutionsPage() {
               isLastQuestion={isLastQuestion}
               handlePreviousQuestion={handlePreviousQuestion}
               handleNextQuestion={handleNextQuestion}
+              mode="solution" // O/X 결과 표시
               isSolutionPage={true}
               userId={userId}
               yearAndMonth={yearAndMonth}

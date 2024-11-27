@@ -1,7 +1,5 @@
-//QuestionInfoBox.js
-
 import React, { useState, useContext } from 'react';
-import { Box, Typography, Button, IconButton, Modal} from '@mui/material';
+import { Box, Typography, Button, IconButton, Modal } from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -25,8 +23,10 @@ const QuestionInfoBox = ({
   isSolutionPage = false,
   questionData = [],
   incorrectQuestions = [],
+  answers = {}, // 사용자 답안 (QuestionsPage용)
   setCurrentQuestionIndex,
-  hideMenuIcon,  // 기존 메뉴 아이콘 숨기기
+  mode = 'question', // 페이지 타입 구분 ('question' 또는 'solution')
+  hideMenuIcon, // 기존 메뉴 아이콘 숨기기
   hideTime = false, // 학습 시간 숨기기
   showAnswerField = true,
   initialAnswer = '',
@@ -34,15 +34,13 @@ const QuestionInfoBox = ({
   alwaysShowCompleteButton = false,
   onAnswerChange,
 }) => {
-
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
-  const {setImageUrl } = useContext(ImageContext);
+  const { setImageUrl } = useContext(ImageContext);
 
   // 비슷한 유형 문제 호출 함수
   const handleSimilarProblem = async () => {
     try {
-      // 현재 페이지에서 이미지 URL을 가져오도록 수정
       const imageElement = document.querySelector('img'); // 페이지 내 이미지 요소 선택
       const currentImageUrl = imageElement ? imageElement.src : null; // 이미지 URL 가져오기
 
@@ -51,9 +49,8 @@ const QuestionInfoBox = ({
         const result = await similarProblem(imageFile);
         console.log('비슷한 문제:', result);
 
-        // Analysis 페이지로 이동하고, 이미지 URL을 전달
         setImageUrl(currentImageUrl);
-        navigate('/analysis');
+        navigate('/analysis'); // Analysis 페이지로 이동
       } else {
         alert('이미지가 없습니다.');
       }
@@ -67,8 +64,14 @@ const QuestionInfoBox = ({
     setIsModalOpen((prev) => !prev);
   };
 
+  // ComparisonTable에 전달할 데이터 설정
+  const tableData = {
+    incorrectQuestionNumbers: incorrectQuestions.map((q) => q.number),
+    answers, // 사용자 답안
+  };
+
   // 현재 문제 번호가 틀린 문제 목록에 있는지 확인
-  const isIncorrect = incorrectQuestions.some(q => q.number === currentQuestion?.number);
+  const isIncorrect = incorrectQuestions.some((q) => q.number === currentQuestion?.number);
 
   return (
     <Box className="question-info-box">
@@ -84,8 +87,7 @@ const QuestionInfoBox = ({
 
       {isSolutionPage && (
         <Box display="flex" alignItems="center">
-          {/* 총점 표시 */}
-          <Typography variant="h6" className="score-text" >
+          <Typography variant="h6" className="score-text">
             총점: {totalScore}점
           </Typography>
         </Box>
@@ -93,12 +95,6 @@ const QuestionInfoBox = ({
 
       {isSolutionPage && (
         <Box display="flex" alignItems="center">
-          {/* 총점 표시 */}
-          {/* <Typography variant="h6" className="score-text" >
-            총점: {totalScore}점
-          </Typography> */}
-
-          {/* 정답/오답 텍스트 표시 */}
           <Typography
             className={`result-text ${isIncorrect ? 'incorrect' : 'correct'}`}
             variant="h3"
@@ -109,18 +105,11 @@ const QuestionInfoBox = ({
       )}
 
       {!isQuestionPage && (
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleSimilarProblem}
-        >
+        <Button variant="contained" color="primary" onClick={handleSimilarProblem}>
           비슷한 유형 문제 풀기
         </Button>
       )}
 
-      
-
-      {/* 학습 시간 표시 (hideTime이 false일 때만) */}
       {!isSolutionPage && !hideTime && (
         <Typography variant="h6" className="center-text">
           학습 시간 : {`${Math.floor(time / 3600)}시간 ${Math.floor((time % 3600) / 60)}분 ${time % 60}초`}
@@ -128,7 +117,6 @@ const QuestionInfoBox = ({
       )}
 
       <Box className="button-box">
-        {/* 메뉴 아이콘은 hideMenuIcon이 false일 때만 표시 */}
         {!hideMenuIcon && (
           <IconButton onClick={toggleModal} className="nav-button">
             <MenuIcon />
@@ -146,8 +134,10 @@ const QuestionInfoBox = ({
         <Box style={{ padding: 20, backgroundColor: 'white', margin: '50px auto', maxWidth: '600px' }}>
           <ComparisonTable
             questionData={questionData}
-            incorrectQuestionNumbers={incorrectQuestions.map((q) => q.number)}
+            incorrectQuestionNumbers={tableData.incorrectQuestionNumbers}
+            answers={tableData.answers}
             setCurrentQuestionIndex={setCurrentQuestionIndex}
+            mode={mode} // 'question' 또는 'solution' 전달
           />
         </Box>
       </Modal>

@@ -146,8 +146,11 @@ const handlePreviousQuestion = () => {
                 handleNextQuestion();
               }}
               isSolutionPage={false}
-              hideMenuIcon={true}
+              mode="question" // 사용자 답안 표시
               isQuestionPage={true}
+              questionData={questionData} // 문제 데이터를 넘겨줌 (추가됨)
+              answers={answers} // 사용자가 작성한 답안을 넘겨줌 (추가됨)
+              setCurrentQuestionIndex={setCurrentQuestionIndex} // 문제 번호 클릭 시 이동을 위한 함수 전달 (추가됨)
             />
   
             {loading ? (
