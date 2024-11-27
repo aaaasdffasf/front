@@ -58,25 +58,9 @@ const Chatbot = () => {
          handleSendMessage();
       }
    };
-
-   const handleFocus = () => {
-      setIsFocused(true);
-      setChatbotHeight('500px'); // 입력창 클릭 시 챗봇 영역 높이 증가
-   };
-
-   const handleBlur = () => {
-      if (!userInput) {
-         setIsFocused(false);
-         setChatbotHeight('auto'); // 입력창이 비었을 때 챗봇 영역 높이 원상복귀
-      }
-   };
-
-   const handleChatbotClick = () => {
-      setChatbotHeight('500px'); // 챗봇 영역 클릭 시 높이 증가
-   };
-
+   
    return (
-      <div id="Chatbot" onClick={handleChatbotClick}>
+      <div id="Chatbot" >
          <div className="chatDiv" style={{ height: chatbotHeight }}>
             {loading && <span className="messageWait">답변을 기다리고 있습니다</span>}
             {messages.map((msg, index) => (
@@ -95,8 +79,8 @@ const Chatbot = () => {
                value={userInput}
                onChange={(e) => setUserInput(e.target.value)}
                onKeyDown={handleKeyDown}
-               onFocus={handleFocus}
-               onBlur={handleBlur}
+               // onFocus={handleFocus}
+               // onBlur={handleBlur}
             />
             <button onClick={handleSendMessage}>전송</button>
          </div>
