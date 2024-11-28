@@ -1,5 +1,21 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { Box, Typography, CircularProgress, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Dialog, DialogTitle, DialogContent, DialogActions } from '@mui/material';
+import {
+  Box,
+  Typography,
+  CircularProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from '@mui/material';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import ArrowForwardIcon from '@mui/icons-material/ArrowForward';
 import Sidebar from '../components/Sidebar';
@@ -17,6 +33,7 @@ function HistoryPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false); // 다이얼로그 열림 상태
   const itemsPerPage = 10; // 페이지당 항목 수
   const isAuthenticated = !!user; // 사용자가 있으면 true, 없으면 false
+
   // yearAndMonth를 사람이 읽을 수 있는 형식으로 변환
   const formatYearAndMonth = (value) => {
     const [year, month] = value.split('-');
@@ -27,6 +44,13 @@ function HistoryPage() {
   const formatDate = (dateTime) => {
     const date = new Date(dateTime);
     return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일`;
+  };
+
+  // 시험 시간을 분초 형식으로 변환
+  const formatTestTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}분 ${secs}초`;
   };
 
   useEffect(() => {
@@ -43,11 +67,11 @@ function HistoryPage() {
           (a, b) => new Date(b.testDay) - new Date(a.testDay)
         );
 
-        console.log("Fetched Tests:", combinedData); // 콘솔에 데이터 출력
+        console.log('Fetched Tests:', combinedData); // 콘솔에 데이터 출력
         setTests(combinedData); // 정렬된 데이터 저장
         setLoading(false);
       } catch (err) {
-        console.error("Error fetching tests:", err); // 콘솔에 에러 출력
+        console.error('Error fetching tests:', err); // 콘솔에 에러 출력
         setError('학습 기록을 불러오는 데 실패했습니다.');
         setLoading(false);
       }
@@ -60,7 +84,14 @@ function HistoryPage() {
 
   if (loading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '10  0vh' }}>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
         <CircularProgress />
       </div>
     );
@@ -101,7 +132,15 @@ function HistoryPage() {
       <div style={{ flex: 1 }}>
         {/* 상단 네비게이션 바 */}
 
-        <div style={{ backgroundColor: '#F3F6FE', minHeight: '100vh', paddingTop: '2px', display: 'flex', flexDirection: 'column' }}>
+        <div
+          style={{
+            backgroundColor: '#F3F6FE',
+            minHeight: '100vh',
+            paddingTop: '2px',
+            display: 'flex',
+            flexDirection: 'column',
+          }}
+        >
           {/* 컨텐츠 영역 */}
           <Box
             sx={{
@@ -141,7 +180,7 @@ function HistoryPage() {
                       <TableRow key={index}>
                         <TableCell>{formatDate(test.testDay)}</TableCell>
                         <TableCell>{formatYearAndMonth(test.yearAndMonth)}</TableCell>
-                        <TableCell>{`${test.testTime}분`}</TableCell>
+                        <TableCell>{formatTestTime(test.testTime)}</TableCell>
                         <TableCell>{test.score}</TableCell>
                       </TableRow>
                     ))
@@ -165,12 +204,6 @@ function HistoryPage() {
             <Button
               startIcon={<ArrowBackIcon />}
               variant="outlined"
-              // size="small" // 버튼 크기를 줄이는 Prop
-              // sx={{
-              //   minWidth: 'auto', // 기본 너비를 최소화
-              //   padding: '4px 8px', // 패딩 조정
-              //   fontSize: '0.75rem', // 글꼴 크기 조정
-              // }}
               onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
             >
@@ -180,12 +213,6 @@ function HistoryPage() {
             <Button
               endIcon={<ArrowForwardIcon />}
               variant="outlined"
-              // size="small" // 버튼 크기를 줄이는 Prop
-              // sx={{
-              //   minWidth: 'auto', // 기본 너비를 최소화
-              //   padding: '4px 8px', // 패딩 조정
-              //   fontSize: '0.75rem', // 글꼴 크기 조정
-              // }}
               onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
               disabled={currentPage === totalPages}
             >
@@ -203,9 +230,8 @@ function HistoryPage() {
             <>
               <Typography>시험 날짜: {formatDate(selectedTest.testDay)}</Typography>
               <Typography>시험 이름: {formatYearAndMonth(selectedTest.yearAndMonth)}</Typography>
-              <Typography>시험 시간: {`${selectedTest.testTime}분`}</Typography>
+              <Typography>시험 시간: {formatTestTime(selectedTest.testTime)}</Typography>
               <Typography>점수: {selectedTest.score}</Typography>
-              {/* <Typography>사용자 답안: {selectedTest.userAnswer}</Typography> */}
             </>
           )}
         </DialogContent>
